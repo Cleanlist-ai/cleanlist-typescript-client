@@ -1,0 +1,57 @@
+{
+  "name": "@cleanlist-ai/sdk",
+  "version": "2.0.0",
+  "description": "Official TypeScript/JavaScript SDK for the Cleanlist API (v2) — B2B lead discovery, waterfall enrichment, lead lists, smart agents, and export.",
+  "license": "MIT",
+  "author": "Cleanlist <sal@cleanlist.ai>",
+  "homepage": "https://github.com/Cleanlist-ai/cleanlist-typescript-client#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Cleanlist-ai/cleanlist-typescript-client.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Cleanlist-ai/cleanlist-typescript-client/issues"
+  },
+  "keywords": [
+    "cleanlist",
+    "b2b",
+    "leads",
+    "enrichment",
+    "sales",
+    "prospecting",
+    "api",
+    "sdk",
+    "typescript"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "module": "./dist/esm/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "generate": "bash scripts/generate.sh",
+    "build": "tsc && tsc -p tsconfig.esm.json",
+    "clean": "rm -rf dist",
+    "prepare": "npm run clean && npm run build",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "typescript": "^5.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -1,0 +1,10 @@
+# Ship only dist/ (see package.json "files"). Everything else is dev-only.
+src/
+examples/
+openapi/
+scripts/
+overlay/
+docs/
+.build/
+tsconfig*.json
+.gitignore
