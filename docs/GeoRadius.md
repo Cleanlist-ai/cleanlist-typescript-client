@@ -8,7 +8,7 @@
 Name | Type
 ------------ | -------------
 `center` | string
-`radius` | [Radius](Radius.md)
+`radius` | number
 `unit` | string
 
 ## Example

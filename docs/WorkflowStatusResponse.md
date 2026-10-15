@@ -24,7 +24,7 @@ Name | Type
 `refund_status` | string
 `refund_message` | string
 `result` | [SingleEnrichmentResultRead](SingleEnrichmentResultRead.md)
-`credits_charged` | [CreditsCharged](CreditsCharged.md)
+`credits_charged` | number
 `credits_refunded` | number
 
 ## Example

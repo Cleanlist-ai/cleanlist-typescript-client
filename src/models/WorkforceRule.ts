@@ -13,14 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { Threshold } from './Threshold';
-import {
-    ThresholdFromJSON,
-    ThresholdFromJSONTyped,
-    ThresholdToJSON,
-    ThresholdToJSONTyped,
-} from './Threshold';
-
 /**
  * One CompanyDB role distribution or role growth rule.
  * @export
@@ -46,11 +38,11 @@ export interface WorkforceRule {
      */
     op: WorkforceRuleOpEnum;
     /**
-     * 
-     * @type {Threshold}
+     * Finite percentage threshold; growth thresholds may be negative.
+     * @type {number}
      * @memberof WorkforceRule
      */
-    threshold: Threshold;
+    threshold: number;
 }
 
 
@@ -98,7 +90,7 @@ export function WorkforceRuleFromJSONTyped(json: any, ignoreDiscriminator: boole
         'role': json['role'],
         'metric': json['metric'],
         'op': json['op'],
-        'threshold': ThresholdFromJSON(json['threshold']),
+        'threshold': json['threshold'],
     };
 }
 
@@ -116,7 +108,7 @@ export function WorkforceRuleToJSONTyped(value?: WorkforceRule | null, ignoreDis
         'role': value['role'],
         'metric': value['metric'],
         'op': value['op'],
-        'threshold': ThresholdToJSON(value['threshold']),
+        'threshold': value['threshold'],
     };
 }
 

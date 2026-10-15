@@ -10,7 +10,7 @@ Name | Type
 `role` | string
 `metric` | string
 `op` | string
-`threshold` | [Threshold](Threshold.md)
+`threshold` | number
 
 ## Example
 

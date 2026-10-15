@@ -7768,17 +7768,10 @@
             "default": ""
           },
           "radius": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "number"
-              }
-            ],
             "title": "Radius",
             "description": "Distance from the center; must be greater than 0 to apply.",
-            "default": 0
+            "default": 0,
+            "type": "number"
           },
           "unit": {
             "type": "string",
@@ -11385,9 +11378,6 @@
           "credits_charged": {
             "anyOf": [
               {
-                "type": "integer"
-              },
-              {
                 "type": "number"
               },
               {
@@ -11486,16 +11476,9 @@
             "description": "Comparison direction."
           },
           "threshold": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "number"
-              }
-            ],
             "title": "Threshold",
-            "description": "Finite percentage threshold; growth thresholds may be negative."
+            "description": "Finite percentage threshold; growth thresholds may be negative.",
+            "type": "number"
           }
         },
         "additionalProperties": false,

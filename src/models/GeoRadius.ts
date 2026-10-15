@@ -13,14 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { Radius } from './Radius';
-import {
-    RadiusFromJSON,
-    RadiusFromJSONTyped,
-    RadiusToJSON,
-    RadiusToJSONTyped,
-} from './Radius';
-
 /**
  * ``SearchFilters.geoRadius``: a free-text center plus a distance.
  * @export
@@ -34,11 +26,11 @@ export interface GeoRadius {
      */
     center?: string;
     /**
-     * 
-     * @type {Radius}
+     * Distance from the center; must be greater than 0 to apply.
+     * @type {number}
      * @memberof GeoRadius
      */
-    radius?: Radius;
+    radius?: number;
     /**
      * Distance unit: km or mi.
      * @type {string}
@@ -76,7 +68,7 @@ export function GeoRadiusFromJSONTyped(json: any, ignoreDiscriminator: boolean):
     return {
         
         'center': json['center'] == null ? undefined : json['center'],
-        'radius': json['radius'] == null ? undefined : RadiusFromJSON(json['radius']),
+        'radius': json['radius'] == null ? undefined : json['radius'],
         'unit': json['unit'] == null ? undefined : json['unit'],
     };
 }
@@ -93,7 +85,7 @@ export function GeoRadiusToJSONTyped(value?: GeoRadius | null, ignoreDiscriminat
     return {
         
         'center': value['center'],
-        'radius': RadiusToJSON(value['radius']),
+        'radius': value['radius'],
         'unit': value['unit'],
     };
 }
