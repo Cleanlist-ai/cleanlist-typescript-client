@@ -240,6 +240,133 @@
         ]
       }
     },
+    "/api/v2/credits/estimate": {
+      "post": {
+        "tags": [
+          "Public Workspace"
+        ],
+        "summary": "Estimate cost & get a signed quote",
+        "description": "Pre-flight a paid operation and mint a signed, single-use `quote_id`.\nThe quote binds the canonical request (tool, list_id|filters|cohort, scope,\nrow_count, org) via HMAC and must be presented at execution time by every\npaid bulk tool (`enrich_list`, `run_smart_agent`, `sync_to_crm`,\n`sync_to_sequencer`, cohort enrichments). Row count is derived\nauthoritatively from the list or cohort — never trusted from the caller —\nso a small quote can't be replayed against a large job. Requires the\n`credits:read` scope; estimating itself is free, and the response reports\nwhether the org has `sufficient` credits to proceed.\n\n**📖 Docs:** https://docs.cleanlist.ai/api-reference/credits",
+        "operationId": "credits_estimate_api_v2_credits_estimate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EstimateCostRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EstimateCostResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Request failed validation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied or feature not enabled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Resource conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream provider error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
     "/api/v2/api-keys": {
       "get": {
         "tags": [
@@ -7173,6 +7300,416 @@
           "task_id": "task_9f2c1a",
           "timestamp_ms": 1751404800000,
           "workflow_id": "wf_enrich_7c2a"
+        }
+      },
+      "EstimateCostRequest": {
+        "properties": {
+          "tool": {
+            "type": "string",
+            "title": "Tool",
+            "description": "Tool to price. Must be a key in the server's cost table (e.g. `enrich_list`, `enrich_person`, `run_smart_agent`, `sync_to_crm`, `add_person_enrichments`). Unknown tools return a 400.",
+            "examples": [
+              "enrich_list"
+            ]
+          },
+          "list_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "List Id",
+            "description": "Target lead list. When present, `row_count` is derived AUTHORITATIVELY from the list and any caller-supplied `row_count` is ignored — this prevents quoting a small count then enriching a large list.",
+            "examples": [
+              "list_7a1b2c3d"
+            ]
+          },
+          "filters": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Filters",
+            "description": "Free-form filter object bound into the signed `filter_hash` for filter-backed tools. Ignored when `list_id` (or a cohort `task_id`) is supplied, since those define the canonical filter shape. Sync tools also accept legacy destination fields here, but reject conflicts with typed fields and bind actual saved list membership.",
+            "examples": [
+              {
+                "headcount": "51-200",
+                "title": "VP of Sales"
+              }
+            ]
+          },
+          "row_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Row Count",
+            "description": "Explicit row count for tools that aren't list- or cohort-backed. Trusted ONLY when neither `list_id` nor a cohort `task_id` is present; otherwise the count is derived server-side.",
+            "examples": [
+              250
+            ]
+          },
+          "scope": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scope",
+            "description": "Enrichment scope for `enrich_list`: `partial` (email, 1cr), `full` (email + phone, 11cr), or `phone-only` (10cr). Binds into the quote's canonical extras.",
+            "examples": [
+              "full"
+            ]
+          },
+          "agent_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agent Type",
+            "description": "Smart-agent type for `run_smart_agent` pricing (e.g. `custom_ai`, `cold_intro_email`, `company_intel`). Binds into the quote.",
+            "examples": [
+              "cold_intro_email"
+            ]
+          },
+          "column_name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Column Name"
+          },
+          "prompt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prompt",
+            "description": "Instruction for custom_ai quotes"
+          },
+          "template_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Template Id",
+            "description": "Cold intro email template UUID; defaults to the organization's active default"
+          },
+          "lead_scope": {
+            "type": "string",
+            "enum": [
+              "subset",
+              "all"
+            ],
+            "title": "Lead Scope",
+            "default": "subset"
+          },
+          "max_rows": {
+            "type": "integer",
+            "maximum": 10000.0,
+            "minimum": 1.0,
+            "title": "Max Rows",
+            "default": 100
+          },
+          "overwrite": {
+            "type": "boolean",
+            "title": "Overwrite",
+            "default": false
+          },
+          "include_phone": {
+            "type": "boolean",
+            "title": "Include Phone",
+            "description": "Legacy boolean that requests phone enrichment when `enrichment_type`/`scope` are not set. Kept for back-compat; prefer `scope`/`enrichment_type`.",
+            "default": false,
+            "examples": [
+              true
+            ]
+          },
+          "provider": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provider",
+            "description": "Destination provider for sync tools (`sync_to_crm` / `sync_to_sequencer`), e.g. `hubspot`, `salesforce`, `smartlead`. Binds into the quote's canonical extras.",
+            "examples": [
+              "hubspot"
+            ]
+          },
+          "sub_action": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sub Action",
+            "description": "Record type for `sync_to_crm`: HubSpot contacts, Salesforce contacts or leads. Omission uses the same provider default as execution and binds that resolved value.",
+            "examples": [
+              "contacts"
+            ]
+          },
+          "campaign_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Campaign Id",
+            "description": "Target campaign for sync_to_sequencer; must match execution."
+          },
+          "field_mapping": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Field Mapping",
+            "description": "Sync source-column to destination-field mapping; must match execution."
+          },
+          "enrichment_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Enrichment Type",
+            "description": "Explicit per-lead price tier for tools that quote against an `enrichment_type` enum rather than `enrich_list`'s `scope` (e.g. `bulk_import_csv`: `partial` / `full` / `phone_only`). Leave null for tools that don't use it.",
+            "examples": [
+              "full"
+            ]
+          },
+          "task_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Task Id",
+            "description": "Prior search cohort handle for cohort-enrichment tools (`add_person_enrichments` / `add_company_enrichments`). The priced row count is derived from this task server-side — never trusted from the caller — and the task_id binds into the quote's `filter_hash`.",
+            "examples": [
+              "task_c0h0rt42"
+            ]
+          },
+          "data_points": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data Points",
+            "description": "Cohort enrichment data points that set the price tier (e.g. `Email`, `Phone`; `LinkedIn` is free). Sorted and bound into the quote so HMAC matches regardless of caller ordering.",
+            "examples": [
+              [
+                "Email",
+                "Phone"
+              ]
+            ]
+          },
+          "entity_ids": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entity Ids",
+            "description": "Optional subset of the cohort's entities to price. Must be a strict subset of the task's cohort; when present, only these are priced, otherwise the full cohort is.",
+            "examples": [
+              [
+                "ent_a1",
+                "ent_b2",
+                "ent_c3"
+              ]
+            ]
+          },
+          "extra": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Extra",
+            "description": "Escape hatch for additional canonical-extra keys the tool binds. Keys outside the tool's declared canonical set are rejected at quote-issue time (400) rather than silently dropped.",
+            "examples": [
+              {
+                "priority": "high"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "tool"
+        ],
+        "title": "EstimateCostRequest",
+        "example": {
+          "include_phone": true,
+          "list_id": "list_7a1b2c3d",
+          "scope": "full",
+          "tool": "enrich_list"
+        }
+      },
+      "EstimateCostResponse": {
+        "properties": {
+          "quote_id": {
+            "type": "string",
+            "title": "Quote Id",
+            "description": "HMAC-signed quote handle (`qte_<kid>_<issued_at>_<sig>`) that the paired paid tool must present at execution time. Single-use and bound to the canonical request (tool, list/filters, scope, row_count, org).",
+            "examples": [
+              "qte_v1_1751404800_9a3f2c1b8e7d6a5f4c3b2a1908f7e6d5c4b3a2910f8e7d6c5b4a3928170"
+            ]
+          },
+          "expires_at": {
+            "type": "integer",
+            "title": "Expires At",
+            "description": "Unix epoch SECONDS at which the quote expires (issue time + `CLEANLIST_QUOTE_TTL_SECONDS`, 5 min default). Re-estimate after this to obtain a fresh quote.",
+            "examples": [
+              1751405100
+            ]
+          },
+          "estimated_cost": {
+            "type": "integer",
+            "title": "Estimated Cost",
+            "description": "Credits this operation will cost — the authoritative signed spend cap. Execution rejects (`spend_cap_exceeded`) if the recomputed cost would exceed it.",
+            "examples": [
+              275
+            ]
+          },
+          "tool": {
+            "type": "string",
+            "title": "Tool",
+            "description": "Echo of the priced tool.",
+            "examples": [
+              "enrich_list"
+            ]
+          },
+          "row_count": {
+            "type": "integer",
+            "title": "Row Count",
+            "description": "Number of rows/entities the estimate priced — derived from the list or cohort when applicable, not the caller's raw input.",
+            "examples": [
+              25
+            ]
+          },
+          "filter_hash": {
+            "type": "string",
+            "title": "Filter Hash",
+            "description": "Stable digest of the canonical filter/list/cohort shape bound into the quote signature; `none` when there is no filter object.",
+            "examples": [
+              "3f8a1c9d2e4b6a70"
+            ]
+          },
+          "available_credits": {
+            "type": "integer",
+            "title": "Available Credits",
+            "description": "The organization's current credit balance at estimate time.",
+            "examples": [
+              4820
+            ]
+          },
+          "sufficient": {
+            "type": "boolean",
+            "title": "Sufficient",
+            "description": "True when `available_credits >= estimated_cost`. False signals the org must top up at billing before the operation can run.",
+            "examples": [
+              true
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "quote_id",
+          "expires_at",
+          "estimated_cost",
+          "tool",
+          "row_count",
+          "filter_hash",
+          "available_credits",
+          "sufficient"
+        ],
+        "title": "EstimateCostResponse",
+        "example": {
+          "available_credits": 4820,
+          "estimated_cost": 275,
+          "expires_at": 1751405100,
+          "filter_hash": "3f8a1c9d2e4b6a70",
+          "quote_id": "qte_v1_1751404800_9a3f2c1b8e7d6a5f4c3b2a1908f7e6d5c4b3a2910f8e7d6c5b4a3928170",
+          "row_count": 25,
+          "sufficient": true,
+          "tool": "enrich_list"
         }
       },
       "ExportCsvRequest": {
