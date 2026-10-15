@@ -21,10 +21,13 @@ import type {
   CsvImportRequest,
   CsvImportResponse,
   DeleteListResponse,
-  HTTPValidationError,
+  FindPeopleRequest,
+  FindPeopleResponse,
+  FindPeopleStatusResponse,
   LeadsPageResponse,
   ListDetailResponse,
   ListsPageResponse,
+  PublicApiError,
   PublicLeadListUpdate,
   RemoveLeadsRequest,
   RemoveLeadsResponse,
@@ -42,14 +45,20 @@ import {
     CsvImportResponseToJSON,
     DeleteListResponseFromJSON,
     DeleteListResponseToJSON,
-    HTTPValidationErrorFromJSON,
-    HTTPValidationErrorToJSON,
+    FindPeopleRequestFromJSON,
+    FindPeopleRequestToJSON,
+    FindPeopleResponseFromJSON,
+    FindPeopleResponseToJSON,
+    FindPeopleStatusResponseFromJSON,
+    FindPeopleStatusResponseToJSON,
     LeadsPageResponseFromJSON,
     LeadsPageResponseToJSON,
     ListDetailResponseFromJSON,
     ListDetailResponseToJSON,
     ListsPageResponseFromJSON,
     ListsPageResponseToJSON,
+    PublicApiErrorFromJSON,
+    PublicApiErrorToJSON,
     PublicLeadListUpdateFromJSON,
     PublicLeadListUpdateToJSON,
     RemoveLeadsRequestFromJSON,
@@ -74,6 +83,16 @@ export interface CsvImportOperationRequest {
 
 export interface DeleteListRequest {
     listId: string;
+}
+
+export interface FindPeopleOperationRequest {
+    listId: string;
+    findPeopleRequest: FindPeopleRequest;
+}
+
+export interface FindPeopleStatusRequest {
+    listId: string;
+    workflowId: string;
 }
 
 export interface GetListRequest {
@@ -314,6 +333,118 @@ export class PublicLeadListsApi extends runtime.BaseAPI {
      */
     async deleteList(requestParameters: DeleteListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<DeleteListResponse> {
         const response = await this.deleteListRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Start an async job that finds people at the given companies (which must already belong to ``list_id``) and imports them into that list.  Returns a ``workflow_id`` immediately; poll ``poll_url`` (GET /lead-lists/{list_id}/find-people/status/{workflow_id}) until ``status`` is terminal. Discovery is free; imports bill the standard per-new-lead cost.
+     * Find people at companies already in a list and import them (async)
+     */
+    async findPeopleRaw(requestParameters: FindPeopleOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FindPeopleResponse>> {
+        if (requestParameters['listId'] == null) {
+            throw new runtime.RequiredError(
+                'listId',
+                'Required parameter "listId" was null or undefined when calling findPeople().'
+            );
+        }
+
+        if (requestParameters['findPeopleRequest'] == null) {
+            throw new runtime.RequiredError(
+                'findPeopleRequest',
+                'Required parameter "findPeopleRequest" was null or undefined when calling findPeople().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("HTTPBearer", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/api/v2/lead-lists/{list_id}/find-people`;
+        urlPath = urlPath.replace(`{${"list_id"}}`, encodeURIComponent(String(requestParameters['listId'])));
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: FindPeopleRequestToJSON(requestParameters['findPeopleRequest']),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => FindPeopleResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Start an async job that finds people at the given companies (which must already belong to ``list_id``) and imports them into that list.  Returns a ``workflow_id`` immediately; poll ``poll_url`` (GET /lead-lists/{list_id}/find-people/status/{workflow_id}) until ``status`` is terminal. Discovery is free; imports bill the standard per-new-lead cost.
+     * Find people at companies already in a list and import them (async)
+     */
+    async findPeople(requestParameters: FindPeopleOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FindPeopleResponse> {
+        const response = await this.findPeopleRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Poll a find-people job started by ``POST /lead-lists/{list_id}/find-people``. Free and idempotent — call until ``status`` is terminal (``completed`` / ``failed`` / ``cancelled``). Cross-tenant workflow ids fail closed as 404. ``list_id`` is for path nesting; the lookup is by ``workflow_id`` + org.
+     * Poll a find-people job
+     */
+    async findPeopleStatusRaw(requestParameters: FindPeopleStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FindPeopleStatusResponse>> {
+        if (requestParameters['listId'] == null) {
+            throw new runtime.RequiredError(
+                'listId',
+                'Required parameter "listId" was null or undefined when calling findPeopleStatus().'
+            );
+        }
+
+        if (requestParameters['workflowId'] == null) {
+            throw new runtime.RequiredError(
+                'workflowId',
+                'Required parameter "workflowId" was null or undefined when calling findPeopleStatus().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("HTTPBearer", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/api/v2/lead-lists/{list_id}/find-people/status/{workflow_id}`;
+        urlPath = urlPath.replace(`{${"list_id"}}`, encodeURIComponent(String(requestParameters['listId'])));
+        urlPath = urlPath.replace(`{${"workflow_id"}}`, encodeURIComponent(String(requestParameters['workflowId'])));
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => FindPeopleStatusResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Poll a find-people job started by ``POST /lead-lists/{list_id}/find-people``. Free and idempotent — call until ``status`` is terminal (``completed`` / ``failed`` / ``cancelled``). Cross-tenant workflow ids fail closed as 404. ``list_id`` is for path nesting; the lookup is by ``workflow_id`` + org.
+     * Poll a find-people job
+     */
+    async findPeopleStatus(requestParameters: FindPeopleStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FindPeopleStatusResponse> {
+        const response = await this.findPeopleStatusRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

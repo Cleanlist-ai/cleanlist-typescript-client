@@ -20,6 +20,13 @@ import {
     SingleEnrichmentResultReadToJSON,
     SingleEnrichmentResultReadToJSONTyped,
 } from './SingleEnrichmentResultRead';
+import type { CreditsCharged } from './CreditsCharged';
+import {
+    CreditsChargedFromJSON,
+    CreditsChargedFromJSONTyped,
+    CreditsChargedToJSON,
+    CreditsChargedToJSONTyped,
+} from './CreditsCharged';
 
 /**
  * 
@@ -137,10 +144,10 @@ export interface WorkflowStatusResponse {
     result?: SingleEnrichmentResultRead | null;
     /**
      * 
-     * @type {number}
+     * @type {CreditsCharged}
      * @memberof WorkflowStatusResponse
      */
-    credits_charged?: number | null;
+    credits_charged?: CreditsCharged | null;
     /**
      * 
      * @type {number}
@@ -197,7 +204,7 @@ export function WorkflowStatusResponseFromJSONTyped(json: any, ignoreDiscriminat
         'refund_status': json['refund_status'] == null ? undefined : json['refund_status'],
         'refund_message': json['refund_message'] == null ? undefined : json['refund_message'],
         'result': json['result'] == null ? undefined : SingleEnrichmentResultReadFromJSON(json['result']),
-        'credits_charged': json['credits_charged'] == null ? undefined : json['credits_charged'],
+        'credits_charged': json['credits_charged'] == null ? undefined : CreditsChargedFromJSON(json['credits_charged']),
         'credits_refunded': json['credits_refunded'] == null ? undefined : json['credits_refunded'],
     };
 }
@@ -231,7 +238,7 @@ export function WorkflowStatusResponseToJSONTyped(value?: WorkflowStatusResponse
         'refund_status': value['refund_status'],
         'refund_message': value['refund_message'],
         'result': SingleEnrichmentResultReadToJSON(value['result']),
-        'credits_charged': value['credits_charged'],
+        'credits_charged': CreditsChargedToJSON(value['credits_charged']),
         'credits_refunded': value['credits_refunded'],
     };
 }

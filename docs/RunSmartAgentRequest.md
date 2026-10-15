@@ -10,6 +10,7 @@ Name | Type
 `agent_type` | string
 `prompt` | string
 `column_name` | string
+`template_id` | string
 `lead_scope` | string
 `max_rows` | number
 `quote_id` | string
@@ -26,6 +27,7 @@ const example = {
   "agent_type": null,
   "prompt": null,
   "column_name": null,
+  "template_id": null,
   "lead_scope": null,
   "max_rows": null,
   "quote_id": null,

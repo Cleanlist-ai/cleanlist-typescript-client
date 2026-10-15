@@ -23,7 +23,7 @@ import type {
   EnrichListResponse,
   EnrichPersonRequest,
   EnrichPersonResponse,
-  HTTPValidationError,
+  PublicApiError,
   WorkflowStatusResponse,
 } from '../models/index';
 import {
@@ -43,8 +43,8 @@ import {
     EnrichPersonRequestToJSON,
     EnrichPersonResponseFromJSON,
     EnrichPersonResponseToJSON,
-    HTTPValidationErrorFromJSON,
-    HTTPValidationErrorToJSON,
+    PublicApiErrorFromJSON,
+    PublicApiErrorToJSON,
     WorkflowStatusResponseFromJSON,
     WorkflowStatusResponseToJSON,
 } from '../models/index';

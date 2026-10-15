@@ -12,6 +12,7 @@ Name | Type
 `usage` | string
 `message` | string
 `entity_kind` | string
+`list_id` | string
 `workflow_id` | string
 `status` | string
 `total_entities` | number
@@ -31,6 +32,7 @@ const example = {
   "usage": null,
   "message": null,
   "entity_kind": null,
+  "list_id": null,
   "workflow_id": null,
   "status": null,
   "total_entities": null,
