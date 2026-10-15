@@ -9,6 +9,7 @@ Name | Type
 `list_id` | string
 `scope` | string
 `quote_id` | string
+`lead_ids` | Array&lt;string&gt;
 
 ## Example
 
@@ -20,6 +21,7 @@ const example = {
   "list_id": null,
   "scope": null,
   "quote_id": null,
+  "lead_ids": null,
 } satisfies EnrichListRequest
 
 console.log(example)

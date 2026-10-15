@@ -18,7 +18,7 @@ import type {
   ExportCsvRequest,
   ExportCsvResponse,
   ExportJsonResponse,
-  HTTPValidationError,
+  PublicApiError,
 } from '../models/index';
 import {
     ExportCsvRequestFromJSON,
@@ -27,8 +27,8 @@ import {
     ExportCsvResponseToJSON,
     ExportJsonResponseFromJSON,
     ExportJsonResponseToJSON,
-    HTTPValidationErrorFromJSON,
-    HTTPValidationErrorToJSON,
+    PublicApiErrorFromJSON,
+    PublicApiErrorToJSON,
 } from '../models/index';
 
 export interface ExportCsvOperationRequest {

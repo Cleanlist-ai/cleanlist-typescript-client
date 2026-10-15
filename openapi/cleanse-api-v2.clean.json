@@ -24,6 +24,96 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied or feature not enabled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Resource conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream provider error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Request failed validation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -51,50 +141,93 @@
                 }
               }
             }
-          }
-        },
-        "security": [
-          {
-            "HTTPBearer": []
-          }
-        ]
-      }
-    },
-    "/api/v2/credits/estimate": {
-      "post": {
-        "tags": [
-          "Public Workspace"
-        ],
-        "summary": "Estimate cost & get a signed quote",
-        "description": "Pre-flight a paid operation and mint a signed, single-use `quote_id`.\nThe quote binds the canonical request (tool, list_id|filters|cohort, scope,\nrow_count, org) via HMAC and must be presented at execution time by every\npaid bulk tool (`enrich_list`, `run_smart_agent`, `sync_to_crm`,\n`sync_to_sequencer`, cohort enrichments). Row count is derived\nauthoritatively from the list or cohort \u2014 never trusted from the caller \u2014\nso a small quote can't be replayed against a large job. Requires the\n`credits:read` scope; estimating itself is free, and the response reports\nwhether the org has `sufficient` credits to proceed.\n\n**\ud83d\udcd6 Docs:** https://docs.cleanlist.ai/api-reference/credits",
-        "operationId": "credits_estimate",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/EstimateCostRequest"
-              }
-            }
           },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Successful Response",
+          "400": {
+            "description": "Bad request.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EstimateCostResponse"
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied or feature not enabled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Resource conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream provider error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
                 }
               }
             }
           },
           "422": {
-            "description": "Validation Error",
+            "description": "Request failed validation.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/PublicApiError"
                 }
               }
             }
@@ -122,6 +255,96 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ApiKeysResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied or feature not enabled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Resource conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream provider error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Request failed validation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
                 }
               }
             }
@@ -189,11 +412,91 @@
             }
           },
           "422": {
-            "description": "Validation Error",
+            "description": "Request failed validation.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied or feature not enabled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Resource conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream provider error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
                 }
               }
             }
@@ -235,12 +538,102 @@
               }
             }
           },
-          "422": {
-            "description": "Validation Error",
+          "200": {
+            "description": "Existing same-name list reused (idempotent); `reused` is true.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/ListDetailResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Request failed validation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied or feature not enabled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Resource conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream provider error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
                 }
               }
             }
@@ -317,11 +710,91 @@
             }
           },
           "422": {
-            "description": "Validation Error",
+            "description": "Request failed validation.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied or feature not enabled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Resource conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream provider error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
                 }
               }
             }
@@ -365,11 +838,91 @@
             }
           },
           "422": {
-            "description": "Validation Error",
+            "description": "Request failed validation.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied or feature not enabled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Resource conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream provider error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
                 }
               }
             }
@@ -421,11 +974,91 @@
             }
           },
           "422": {
-            "description": "Validation Error",
+            "description": "Request failed validation.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied or feature not enabled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Resource conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream provider error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
                 }
               }
             }
@@ -467,11 +1100,91 @@
             }
           },
           "422": {
-            "description": "Validation Error",
+            "description": "Request failed validation.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied or feature not enabled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Resource conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream provider error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
                 }
               }
             }
@@ -543,11 +1256,91 @@
             }
           },
           "422": {
-            "description": "Validation Error",
+            "description": "Request failed validation.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied or feature not enabled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Resource conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream provider error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
                 }
               }
             }
@@ -607,11 +1400,91 @@
             }
           },
           "422": {
-            "description": "Validation Error",
+            "description": "Request failed validation.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied or feature not enabled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Resource conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream provider error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
                 }
               }
             }
@@ -663,11 +1536,91 @@
             }
           },
           "422": {
-            "description": "Validation Error",
+            "description": "Request failed validation.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied or feature not enabled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Resource conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream provider error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
                 }
               }
             }
@@ -721,11 +1674,1029 @@
             }
           },
           "422": {
-            "description": "Validation Error",
+            "description": "Request failed validation.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied or feature not enabled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Resource conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream provider error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/people/find/filters": {
+      "get": {
+        "tags": [
+          "Public People Finder"
+        ],
+        "summary": "Search Filters People",
+        "description": "Valid filter values for people search. ZERO CREDITS.\n\nFixed-enum fields (seniority, management_levels, departments,\njob_functions, company_headcount) return a canned list \u2014 Crustdata\naccepts these values verbatim, no autocomplete needed.\n\nAutocompletable fields (titles, locations, company_industries)\ndelegate to Crustdata's autocomplete with the friendly field name\ntranslated via `_PEOPLE_AUTOCOMPLETE_FIELD_MAP`.",
+        "operationId": "search_filters_people",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "field",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "enum": [
+                "titles",
+                "seniority",
+                "departments",
+                "job_functions",
+                "management_levels",
+                "locations",
+                "company_headcount",
+                "company_industries"
+              ],
+              "type": "string",
+              "title": "Field"
+            }
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Query"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeopleFiltersResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Request failed validation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied or feature not enabled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Resource conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream provider error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/people/find": {
+      "post": {
+        "tags": [
+          "Public People Finder"
+        ],
+        "summary": "Search People",
+        "description": "Search people. FREE \u2014 credits are spent at enrichment / save time.\n\nDelegates to the internal staging handler so the 5-step filter\npipeline (location component expansion \u2192 region contains expansion\n\u2192 column mapping \u2192 enum alias expansion \u2192 Crustdata format\ntransform) runs unchanged. We pass the caller's actual tier so\nFREE-tier callers get the 25-row preview cap.",
+        "operationId": "search_people",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PeopleSearchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeopleSearchResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Request failed validation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied or feature not enabled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Resource conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream provider error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v2/people/find/compile": {
+      "post": {
+        "tags": [
+          "Public People Finder"
+        ],
+        "summary": "Compile criteria without running the search",
+        "description": "Show what a search would do, without doing it. FREE.\n\nReturns the compiled query, the route the search would take, and the\nexclusions that would apply. Use it to check an unfamiliar combination of\ncriteria before spending a search, and to explain to a user why a result\nis bounded: a by-companies route resolves a limited company set first, and\nincomplete CRM exclusions block compilation with an actionable error.",
+        "operationId": "compile_search",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompileRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompileResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Request failed validation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied or feature not enabled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Resource conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream provider error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v2/people/find-at-companies": {
+      "post": {
+        "tags": [
+          "Public People Finder"
+        ],
+        "summary": "Find people at companies by filter (async discovery)",
+        "description": "Start an async \"find people at these companies\" search. FREE \u2014 credits are\nspent at enrichment / save time.\n\nReturns a ``task_id`` immediately; poll ``poll_url``\n(GET /people/find-at-companies/status/{task_id}) until ``status`` is terminal.\nOne job returns one result block; page by re-calling with the returned\n``cursor``.",
+        "operationId": "companies_find_start",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PeopleByCompaniesRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompaniesFindStartResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Request failed validation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied or feature not enabled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Resource conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream provider error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v2/people/find-at-companies/status/{task_id}": {
+      "get": {
+        "tags": [
+          "Public People Finder"
+        ],
+        "summary": "Poll a find-people-at-companies search",
+        "description": "Poll a search started by ``POST /people/find-at-companies``. Free and\nidempotent \u2014\ncall until ``status`` is terminal (``completed`` / ``failed``). Cross-tenant\ntask ids fail closed as 404.",
+        "operationId": "companies_find_status",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Task Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompaniesFindStatusResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Request failed validation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied or feature not enabled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Resource conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream provider error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/lead-lists/{list_id}/find-people": {
+      "post": {
+        "tags": [
+          "Public Lead Lists"
+        ],
+        "summary": "Find people at companies already in a list and import them (async)",
+        "description": "Start an async job that finds people at the given companies (which must\nalready belong to ``list_id``) and imports them into that list.\n\nReturns a ``workflow_id`` immediately; poll ``poll_url``\n(GET /lead-lists/{list_id}/find-people/status/{workflow_id}) until ``status``\nis terminal. Discovery is free; imports bill the standard per-new-lead cost.",
+        "operationId": "find_people",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "list_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "List Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FindPeopleRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindPeopleResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Request failed validation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied or feature not enabled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Resource conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream provider error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/lead-lists/{list_id}/find-people/status/{workflow_id}": {
+      "get": {
+        "tags": [
+          "Public Lead Lists"
+        ],
+        "summary": "Poll a find-people job",
+        "description": "Poll a find-people job started by\n``POST /lead-lists/{list_id}/find-people``. Free and idempotent \u2014 call until\n``status`` is terminal (``completed`` / ``failed`` / ``cancelled``).\nCross-tenant workflow ids fail closed as 404. ``list_id`` is for path nesting;\nthe lookup is by ``workflow_id`` + org.",
+        "operationId": "find_people_status",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "list_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "List Id"
+            }
+          },
+          {
+            "name": "workflow_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Workflow Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindPeopleStatusResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Request failed validation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied or feature not enabled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Resource conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream provider error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
                 }
               }
             }
@@ -763,11 +2734,91 @@
             }
           },
           "422": {
-            "description": "Validation Error",
+            "description": "Request failed validation.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied or feature not enabled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Resource conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream provider error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
                 }
               }
             }
@@ -810,11 +2861,91 @@
             }
           },
           "422": {
-            "description": "Validation Error",
+            "description": "Request failed validation.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied or feature not enabled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Resource conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream provider error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
                 }
               }
             }
@@ -857,11 +2988,91 @@
             }
           },
           "422": {
-            "description": "Validation Error",
+            "description": "Request failed validation.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied or feature not enabled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Resource conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream provider error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
                 }
               }
             }
@@ -904,11 +3115,91 @@
             }
           },
           "422": {
-            "description": "Validation Error",
+            "description": "Request failed validation.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied or feature not enabled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Resource conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream provider error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
                 }
               }
             }
@@ -957,11 +3248,91 @@
             }
           },
           "422": {
-            "description": "Validation Error",
+            "description": "Request failed validation.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied or feature not enabled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Resource conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream provider error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
                 }
               }
             }
@@ -975,7 +3346,7 @@
           "Public Smart Agents"
         ],
         "summary": "Run a smart agent",
-        "description": "Launch an AI smart agent over the leads in a list and return a run id.\n\nPick an `agent_type` \u2014 `custom_ai` (your own `prompt`), `cold_intro_email`\n(personalized opener), or a preset research agent \u2014 and the run executes\nasynchronously as a smart column, one AI call per lead. Runs are metered\nper lead by agent type (e.g. `custom_ai` \u2248 1 credit/lead,\n`cold_intro_email` \u2248 3 credits/lead) and require a single-use `quote_id`\nfrom POST /credits/estimate; credits are debited as rows complete. Scope\nwith `lead_scope=\"subset\"` + `max_rows` for speed and cost control \u2014 a\n`lead_scope=\"all\"` run above the approval threshold (default 500 leads)\nis blocked with a 400 `approval_required` until you narrow it or route a\nhuman approval. The response returns immediately with `status=\"pending\"`;\npoll GET /smart-agents/{smart_agent_task_id} for progress and per-lead\nresults.\n\n**\ud83d\udcd6 Docs:** https://docs.cleanlist.ai/guides/using-ai-agents",
+        "description": "Launch an AI smart agent over the leads in a list and return a run id.\n\nPick an `agent_type` \u2014 `custom_ai` (your own `prompt`), `cold_intro_email`\n(personalized opener), or a preset research agent \u2014 and the run executes\nasynchronously as a smart column, one AI call per lead. Runs are metered\nper lead by agent type (`custom_ai` is priced from its `prompt`, so read\nits price from the quote; `cold_intro_email` \u2248 3 credits/lead) and\nrequire a single-use `quote_id` from POST /credits/estimate; credits are\ndebited before dispatch. Cold intro email requires enriched profiles and\nan active organization email template. Scope with `lead_scope=\"subset\"` +\n`max_rows` for cost control.\nAny selection above the approval threshold (default 500 leads) is blocked\nwith `approval_required`; this public route requires a smaller selection.\nThe response returns immediately with `status=\"pending\"`;\npoll GET /smart-agents/{smart_agent_task_id} for progress and per-lead\nresults.\n\n**\ud83d\udcd6 Docs:** https://docs.cleanlist.ai/guides/using-ai-agents",
         "operationId": "run_smart_agent",
         "requestBody": {
           "content": {
@@ -999,11 +3370,91 @@
             }
           },
           "422": {
-            "description": "Validation Error",
+            "description": "Request failed validation.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied or feature not enabled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Resource conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream provider error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
                 }
               }
             }
@@ -1081,11 +3532,91 @@
             }
           },
           "422": {
-            "description": "Validation Error",
+            "description": "Request failed validation.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied or feature not enabled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Resource conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream provider error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
                 }
               }
             }
@@ -1134,11 +3665,91 @@
             }
           },
           "422": {
-            "description": "Validation Error",
+            "description": "Request failed validation.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied or feature not enabled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Resource conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream provider error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
                 }
               }
             }
@@ -1176,11 +3787,91 @@
             }
           },
           "422": {
-            "description": "Validation Error",
+            "description": "Request failed validation.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied or feature not enabled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Resource conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream provider error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
                 }
               }
             }
@@ -1276,11 +3967,91 @@
             }
           },
           "422": {
-            "description": "Validation Error",
+            "description": "Request failed validation.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required or invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied or feature not enabled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Resource conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream provider error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicApiError"
                 }
               }
             }
@@ -1632,6 +4403,185 @@
           ]
         }
       },
+      "CompaniesFindStartResponse": {
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "title": "Task Id"
+          },
+          "timestamp_ms": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Timestamp Ms"
+          },
+          "agent_instructions": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agent Instructions"
+          },
+          "usage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Usage"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "poll_url": {
+            "type": "string",
+            "title": "Poll Url"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "task_id",
+          "status",
+          "poll_url"
+        ],
+        "title": "CompaniesFindStartResponse"
+      },
+      "CompaniesFindStatusResponse": {
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "title": "Task Id"
+          },
+          "timestamp_ms": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Timestamp Ms"
+          },
+          "agent_instructions": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agent Instructions"
+          },
+          "usage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Usage"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          },
+          "entity_kind": {
+            "type": "string",
+            "const": "person",
+            "title": "Entity Kind",
+            "default": "person"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "results": {
+            "items": {},
+            "type": "array",
+            "title": "Results"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total",
+            "default": 0
+          },
+          "cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cursor"
+          },
+          "credits_charged": {
+            "type": "integer",
+            "title": "Credits Charged",
+            "default": 0
+          },
+          "resolved_company_count": {
+            "type": "integer",
+            "title": "Resolved Company Count",
+            "default": 0
+          },
+          "composite_warning": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Composite Warning"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "task_id",
+          "status"
+        ],
+        "title": "CompaniesFindStatusResponse"
+      },
       "CompanyRecord": {
         "properties": {
           "company_id": {
@@ -1870,6 +4820,578 @@
           "total_funding_usd": 48000000
         }
       },
+      "CompanySearchCriteria": {
+        "properties": {
+          "companyName": {
+            "type": "string",
+            "title": "Companyname",
+            "description": "Company name match.",
+            "default": ""
+          },
+          "companyNameMatchType": {
+            "type": "string",
+            "enum": [
+              "contains",
+              "exact",
+              "similar"
+            ],
+            "title": "Companynamematchtype",
+            "description": "How company_name matches: contains (substring), exact, or similar (word-order-free fuzzy).",
+            "default": "contains"
+          },
+          "domain": {
+            "type": "string",
+            "title": "Domain",
+            "description": "Company website domain; a pasted URL is reduced to its host.",
+            "default": ""
+          },
+          "industriesInclude": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Industriesinclude",
+            "description": "LinkedIn industries or industry group names to include."
+          },
+          "headcountRanges": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Headcountranges",
+            "description": "Headcount buckets to include (1-10 through 10001+), OR-ed."
+          },
+          "revenueMin": {
+            "type": "string",
+            "title": "Revenuemin",
+            "description": "Minimum estimated annual revenue in USD.",
+            "default": ""
+          },
+          "revenueMax": {
+            "type": "string",
+            "title": "Revenuemax",
+            "description": "Maximum estimated annual revenue in USD.",
+            "default": ""
+          },
+          "yearFoundedMin": {
+            "type": "string",
+            "title": "Yearfoundedmin",
+            "description": "Earliest founding year, inclusive.",
+            "default": ""
+          },
+          "yearFoundedMax": {
+            "type": "string",
+            "title": "Yearfoundedmax",
+            "description": "Latest founding year, inclusive.",
+            "default": ""
+          },
+          "companyType": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Companytype",
+            "description": "Canonical LinkedIn company types to include."
+          },
+          "fundingRoundTypes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Fundingroundtypes",
+            "description": "Last funding round labels to include, such as 'Series B'."
+          },
+          "fundingAmountMin": {
+            "type": "string",
+            "title": "Fundingamountmin",
+            "description": "Total disclosed investment must exceed this USD amount.",
+            "default": ""
+          },
+          "growthMin": {
+            "type": "string",
+            "title": "Growthmin",
+            "description": "Six-month employee growth percent must exceed this value.",
+            "default": ""
+          },
+          "growthMax": {
+            "type": "string",
+            "title": "Growthmax",
+            "description": "Six-month employee growth percent must be below this value.",
+            "default": ""
+          },
+          "industriesExclude": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Industriesexclude",
+            "description": "LinkedIn industries or industry group names to exclude."
+          },
+          "headcountRangesExclude": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Headcountrangesexclude",
+            "description": "Headcount buckets to exclude."
+          },
+          "companyTypeExclude": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Companytypeexclude",
+            "description": "Canonical LinkedIn company types to exclude."
+          },
+          "hqCountriesIso3": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Hqcountriesiso3",
+            "description": "HQ countries as ISO-3 codes, country names or group names."
+          },
+          "hqCountriesIso3Exclude": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Hqcountriesiso3Exclude",
+            "description": "HQ countries to exclude, same forms as hq_countries_iso3."
+          },
+          "largestHeadcountCountriesIso3": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Largestheadcountcountriesiso3",
+            "description": "Countries holding most employees, same forms as hq_countries_iso3."
+          },
+          "hqStates": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Hqstates",
+            "description": "HQ state substrings such as 'Texas, United States', OR-ed."
+          },
+          "hqStatesExclude": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Hqstatesexclude",
+            "description": "HQ state substrings to exclude."
+          },
+          "hqCities": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Hqcities",
+            "description": "HQ city substrings such as 'Austin, Texas, United States', OR-ed."
+          },
+          "hqCitiesExclude": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Hqcitiesexclude",
+            "description": "HQ city substrings to exclude."
+          },
+          "linkedinCategoriesInclude": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Linkedincategoriesinclude",
+            "description": "LinkedIn category tags to include."
+          },
+          "crunchbaseCategoriesInclude": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Crunchbasecategoriesinclude",
+            "description": "Crunchbase categories to include."
+          },
+          "crunchbaseCategoriesExclude": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Crunchbasecategoriesexclude",
+            "description": "Crunchbase categories to exclude."
+          },
+          "stockListings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Stocklistings",
+            "description": "Stock exchange listings; PRIVATE selects unlisted companies."
+          },
+          "headcountLatestMin": {
+            "type": "string",
+            "title": "Headcountlatestmin",
+            "description": "Minimum tracked employee count; overrides headcount buckets.",
+            "default": ""
+          },
+          "headcountLatestMax": {
+            "type": "string",
+            "title": "Headcountlatestmax",
+            "description": "Maximum tracked employee count; overrides headcount buckets.",
+            "default": ""
+          },
+          "growth1mMin": {
+            "type": "string",
+            "title": "Growth1Mmin",
+            "description": "Minimum one-month employee growth percent.",
+            "default": ""
+          },
+          "growth3mMin": {
+            "type": "string",
+            "title": "Growth3Mmin",
+            "description": "Minimum three-month employee growth percent.",
+            "default": ""
+          },
+          "growth12mMin": {
+            "type": "string",
+            "title": "Growth12Mmin",
+            "description": "Minimum twelve-month employee growth percent.",
+            "default": ""
+          },
+          "followersMin": {
+            "type": "string",
+            "title": "Followersmin",
+            "description": "Minimum LinkedIn follower count.",
+            "default": ""
+          },
+          "followersGrowth6mMin": {
+            "type": "string",
+            "title": "Followersgrowth6Mmin",
+            "description": "Minimum six-month follower growth percent.",
+            "default": ""
+          },
+          "followersGrowth12mMin": {
+            "type": "string",
+            "title": "Followersgrowth12Mmin",
+            "description": "Minimum twelve-month follower growth percent.",
+            "default": ""
+          },
+          "lastFundingDateAfter": {
+            "type": "string",
+            "title": "Lastfundingdateafter",
+            "description": "Last funding date floor as YYYY-MM-DD.",
+            "default": ""
+          },
+          "ipoDateAfter": {
+            "type": "string",
+            "title": "Ipodateafter",
+            "description": "IPO date floor as YYYY-MM-DD.",
+            "default": ""
+          },
+          "lastFundingRoundAmountMin": {
+            "type": "string",
+            "title": "Lastfundingroundamountmin",
+            "description": "Minimum size of the last funding round in USD.",
+            "default": ""
+          },
+          "lastFundingRoundAmountMax": {
+            "type": "string",
+            "title": "Lastfundingroundamountmax",
+            "description": "Maximum size of the last funding round in USD.",
+            "default": ""
+          },
+          "valuationMin": {
+            "type": "string",
+            "title": "Valuationmin",
+            "description": "Minimum Crunchbase valuation in USD.",
+            "default": ""
+          },
+          "valuationMax": {
+            "type": "string",
+            "title": "Valuationmax",
+            "description": "Maximum Crunchbase valuation in USD.",
+            "default": ""
+          },
+          "bootstrappedOnly": {
+            "type": "boolean",
+            "title": "Bootstrappedonly",
+            "description": "Only companies with no disclosed investment.",
+            "default": false
+          },
+          "acquiredOnly": {
+            "type": "boolean",
+            "title": "Acquiredonly",
+            "description": "Only acquired companies.",
+            "default": false
+          },
+          "fundingRoundTypesExclude": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Fundingroundtypesexclude",
+            "description": "Last funding round labels to exclude."
+          },
+          "investorsInclude": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Investorsinclude",
+            "description": "Crunchbase investors to include."
+          },
+          "investorsExclude": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Investorsexclude",
+            "description": "Crunchbase investors to exclude."
+          },
+          "stockSymbols": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Stocksymbols",
+            "description": "Stock ticker symbols to include."
+          },
+          "domainsList": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Domainslist",
+            "description": "Exact company domains to match; URLs are reduced to hosts."
+          },
+          "companyNamesList": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Companynameslist",
+            "description": "Exact, case-sensitive company names to match."
+          },
+          "twitterHandle": {
+            "type": "string",
+            "title": "Twitterhandle",
+            "description": "Exact Twitter handle; a leading @ is kept.",
+            "default": ""
+          },
+          "descriptionKeyword": {
+            "type": "string",
+            "title": "Descriptionkeyword",
+            "description": "Keyword matched against the LinkedIn company description.",
+            "default": ""
+          },
+          "updatedAfter": {
+            "type": "string",
+            "title": "Updatedafter",
+            "description": "Crustdata updated_at floor, sent verbatim.",
+            "default": ""
+          },
+          "compositeMode": {
+            "type": "boolean",
+            "title": "Compositemode",
+            "description": "UI-only flag from the composite section; never compiled.",
+            "default": false
+          },
+          "workforceRules": {
+            "items": {
+              "$ref": "#/components/schemas/WorkforceRule"
+            },
+            "type": "array",
+            "title": "Workforcerules",
+            "description": "AND-combined role rules: percent, growth_6m or growth_yoy, with >= or <= and a finite threshold. Growth thresholds may be negative."
+          },
+          "excludeCompanyDomains": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Excludecompanydomains",
+            "description": "Company domains to exclude; resolved by the exclusions step."
+          },
+          "excludeInCleanlist": {
+            "type": "string",
+            "enum": [
+              "off",
+              "any",
+              "list"
+            ],
+            "title": "Excludeincleanlist",
+            "description": "Skip companies already on the user's lists: off, any list they can open, or specific lists.",
+            "default": "off"
+          },
+          "excludeInCleanlistListIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Excludeincleanlistlistids",
+            "description": "Lead list ids the list scope resolves against."
+          },
+          "crmFilterSections": {
+            "$ref": "#/components/schemas/CrmFilterSections",
+            "description": "Per-CRM exclude clauses resolved by the exclusions step; conditions that exclude accounts only."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "CompanySearchCriteria",
+        "description": "The company-side filter blob, one field per ``CompanySearchFilters`` key."
+      },
+      "CompileRequest": {
+        "properties": {
+          "criteria": {
+            "$ref": "#/components/schemas/PeopleSearchCriteria"
+          },
+          "company_criteria": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CompanySearchCriteria"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "crm": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Crm"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "criteria"
+        ],
+        "title": "CompileRequest"
+      },
+      "CompileResponse": {
+        "properties": {
+          "task_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Task Id"
+          },
+          "timestamp_ms": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Timestamp Ms"
+          },
+          "agent_instructions": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agent Instructions"
+          },
+          "usage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Usage"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          },
+          "route": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Route"
+          },
+          "person_filter": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Person Filter"
+          },
+          "company_filter": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Filter"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Warnings"
+          },
+          "exclusions_applied": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "integer"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exclusions Applied"
+          },
+          "exclusions_complete": {
+            "type": "boolean",
+            "title": "Exclusions Complete",
+            "default": true
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "route",
+          "person_filter"
+        ],
+        "title": "CompileResponse"
+      },
       "CreateListRequest": {
         "properties": {
           "name": {
@@ -2014,6 +5536,63 @@
           "task_id": "task_9f2c1a",
           "timestamp_ms": 1751404800000
         }
+      },
+      "CrmFilterClause": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Id",
+            "description": "Required, nonblank stable client id for the clause."
+          },
+          "polarity": {
+            "type": "string",
+            "enum": [
+              "include",
+              "exclude"
+            ],
+            "title": "Polarity",
+            "description": "Whether the clause narrows (exclude) or requires (include).",
+            "default": "exclude"
+          },
+          "condition": {
+            "type": "string",
+            "title": "Condition",
+            "description": "The /crm/exclusion-set token, e.g. current_customers, owner:<id>, account_status:<value>."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "condition"
+        ],
+        "title": "CrmFilterClause",
+        "description": "``CrmFilterClause``: one include/exclude condition against a CRM."
+      },
+      "CrmFilterSections": {
+        "properties": {
+          "salesforce": {
+            "items": {
+              "$ref": "#/components/schemas/CrmFilterClause"
+            },
+            "type": "array",
+            "title": "Salesforce",
+            "description": "Clauses resolved against Salesforce."
+          },
+          "hubspot": {
+            "items": {
+              "$ref": "#/components/schemas/CrmFilterClause"
+            },
+            "type": "array",
+            "title": "Hubspot",
+            "description": "Clauses resolved against HubSpot."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "CrmFilterSections",
+        "description": "``CrmFilterSections``: clauses grouped by the CRM they resolve against."
       },
       "CsvImportRequest": {
         "properties": {
@@ -2332,6 +5911,137 @@
           "timestamp_ms": 1751404800000,
           "workflow_id": "bulk-enrich-a1b2c3d4"
         }
+      },
+      "CurrentRoleEvidence": {
+        "properties": {
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "company": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company"
+          },
+          "domain": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Domain"
+          },
+          "company_linkedin_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Linkedin Url"
+          },
+          "company_founded_year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Founded Year"
+          },
+          "company_industry": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Industry"
+          },
+          "company_industries": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Industries"
+          },
+          "company_industries_truncated": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Industries Truncated"
+          },
+          "company_headcount": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Headcount"
+          },
+          "company_headcount_range": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Headcount Range"
+          },
+          "seniority": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Seniority"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "CurrentRoleEvidence"
       },
       "DeleteListResponse": {
         "properties": {
@@ -2665,6 +6375,18 @@
               "person"
             ]
           },
+          "list_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "List Id",
+            "description": "Destination list containing saved person results."
+          },
           "workflow_id": {
             "anyOf": [
               {
@@ -2970,6 +6692,29 @@
             "description": "Required. Obtain via POST /credits/estimate first (bound to this list_id + scope + lead count). Bulk spend must be pre-approved; cost is capped at the quote's max_credits.",
             "examples": [
               "quote_bulk99"
+            ]
+          },
+          "lead_ids": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array",
+                "maxItems": 500,
+                "minItems": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lead Ids",
+            "description": "Optional subset (1\u2013500 lead UUIDs) to enrich instead of the whole list; every id must belong to `list_id`. Quote the subset via POST /credits/estimate WITHOUT `list_id`: `tool=enrich_list`, `row_count=<number of unique ids>`, `scope`, and `filters={\"list_id\": <list_id>, \"scope\": <scope>, \"lead_ids\": <sorted unique ids>}`.",
+            "examples": [
+              [
+                "lead_5f3b8c",
+                "lead_9d2e71"
+              ]
             ]
           }
         },
@@ -3430,330 +7175,6 @@
           "workflow_id": "wf_enrich_7c2a"
         }
       },
-      "EstimateCostRequest": {
-        "properties": {
-          "tool": {
-            "type": "string",
-            "title": "Tool",
-            "description": "Tool to price. Must be a key in the server's cost table (e.g. `enrich_list`, `enrich_person`, `run_smart_agent`, `sync_to_crm`, `add_person_enrichments`). Unknown tools return a 400.",
-            "examples": [
-              "enrich_list"
-            ]
-          },
-          "list_id": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "List Id",
-            "description": "Target lead list. When present, `row_count` is derived AUTHORITATIVELY from the list and any caller-supplied `row_count` is ignored \u2014 this prevents quoting a small count then enriching a large list.",
-            "examples": [
-              "list_7a1b2c3d"
-            ]
-          },
-          "filters": {
-            "anyOf": [
-              {
-                "additionalProperties": true,
-                "type": "object"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Filters",
-            "description": "Free-form filter object bound into the signed `filter_hash` for filter-backed tools. Ignored when `list_id` (or a cohort `task_id`) is supplied, since those define the canonical filter shape.",
-            "examples": [
-              {
-                "headcount": "51-200",
-                "title": "VP of Sales"
-              }
-            ]
-          },
-          "row_count": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Row Count",
-            "description": "Explicit row count for tools that aren't list- or cohort-backed. Trusted ONLY when neither `list_id` nor a cohort `task_id` is present; otherwise the count is derived server-side.",
-            "examples": [
-              250
-            ]
-          },
-          "scope": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Scope",
-            "description": "Enrichment scope for `enrich_list`: `partial` (email, 1cr), `full` (email + phone, 11cr), or `phone-only` (10cr). Binds into the quote's canonical extras.",
-            "examples": [
-              "full"
-            ]
-          },
-          "agent_type": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Agent Type",
-            "description": "Smart-agent type for `run_smart_agent` pricing (e.g. `custom_ai`, `cold_intro_email`, `company_intel`). Binds into the quote.",
-            "examples": [
-              "cold_intro_email"
-            ]
-          },
-          "include_phone": {
-            "type": "boolean",
-            "title": "Include Phone",
-            "description": "Legacy boolean that requests phone enrichment when `enrichment_type`/`scope` are not set. Kept for back-compat; prefer `scope`/`enrichment_type`.",
-            "default": false,
-            "examples": [
-              true
-            ]
-          },
-          "provider": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Provider",
-            "description": "Destination provider for sync tools (`sync_to_crm` / `sync_to_sequencer`), e.g. `hubspot`, `salesforce`, `smartlead`. Binds into the quote's canonical extras.",
-            "examples": [
-              "hubspot"
-            ]
-          },
-          "sub_action": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Sub Action",
-            "description": "Composite sub-action for `sync_to_crm` (e.g. `contacts+companies`). Required so the quote envelope binds `sub_action` correctly \u2014 without it a composite HubSpot sync HMAC-mismatches at execution.",
-            "examples": [
-              "contacts+companies"
-            ]
-          },
-          "enrichment_type": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Enrichment Type",
-            "description": "Explicit per-lead price tier for tools that quote against an `enrichment_type` enum rather than `enrich_list`'s `scope` (e.g. `bulk_import_csv`: `partial` / `full` / `phone_only`). Leave null for tools that don't use it.",
-            "examples": [
-              "full"
-            ]
-          },
-          "task_id": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Task Id",
-            "description": "Prior search cohort handle for cohort-enrichment tools (`add_person_enrichments` / `add_company_enrichments`). The priced row count is derived from this task server-side \u2014 never trusted from the caller \u2014 and the task_id binds into the quote's `filter_hash`.",
-            "examples": [
-              "task_c0h0rt42"
-            ]
-          },
-          "data_points": {
-            "anyOf": [
-              {
-                "items": {
-                  "type": "string"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Data Points",
-            "description": "Cohort enrichment data points that set the price tier (e.g. `Email`, `Phone`; `LinkedIn` is free). Sorted and bound into the quote so HMAC matches regardless of caller ordering.",
-            "examples": [
-              [
-                "Email",
-                "Phone"
-              ]
-            ]
-          },
-          "entity_ids": {
-            "anyOf": [
-              {
-                "items": {
-                  "type": "string"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Entity Ids",
-            "description": "Optional subset of the cohort's entities to price. Must be a strict subset of the task's cohort; when present, only these are priced, otherwise the full cohort is.",
-            "examples": [
-              [
-                "ent_a1",
-                "ent_b2",
-                "ent_c3"
-              ]
-            ]
-          },
-          "extra": {
-            "anyOf": [
-              {
-                "additionalProperties": true,
-                "type": "object"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Extra",
-            "description": "Escape hatch for additional canonical-extra keys the tool binds. Keys outside the tool's declared canonical set are rejected at quote-issue time (400) rather than silently dropped.",
-            "examples": [
-              {
-                "priority": "high"
-              }
-            ]
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "required": [
-          "tool"
-        ],
-        "title": "EstimateCostRequest",
-        "example": {
-          "include_phone": true,
-          "list_id": "list_7a1b2c3d",
-          "scope": "full",
-          "tool": "enrich_list"
-        }
-      },
-      "EstimateCostResponse": {
-        "properties": {
-          "quote_id": {
-            "type": "string",
-            "title": "Quote Id",
-            "description": "HMAC-signed quote handle (`qte_<kid>_<issued_at>_<sig>`) that the paired paid tool must present at execution time. Single-use and bound to the canonical request (tool, list/filters, scope, row_count, org).",
-            "examples": [
-              "qte_v1_1751404800_9a3f2c1b8e7d6a5f4c3b2a1908f7e6d5c4b3a2910f8e7d6c5b4a3928170"
-            ]
-          },
-          "expires_at": {
-            "type": "integer",
-            "title": "Expires At",
-            "description": "Unix epoch SECONDS at which the quote expires (issue time + `CLEANLIST_QUOTE_TTL_SECONDS`, 5 min default). Re-estimate after this to obtain a fresh quote.",
-            "examples": [
-              1751405100
-            ]
-          },
-          "estimated_cost": {
-            "type": "integer",
-            "title": "Estimated Cost",
-            "description": "Credits this operation will cost \u2014 the authoritative signed spend cap. Execution rejects (`spend_cap_exceeded`) if the recomputed cost would exceed it.",
-            "examples": [
-              275
-            ]
-          },
-          "tool": {
-            "type": "string",
-            "title": "Tool",
-            "description": "Echo of the priced tool.",
-            "examples": [
-              "enrich_list"
-            ]
-          },
-          "row_count": {
-            "type": "integer",
-            "title": "Row Count",
-            "description": "Number of rows/entities the estimate priced \u2014 derived from the list or cohort when applicable, not the caller's raw input.",
-            "examples": [
-              25
-            ]
-          },
-          "filter_hash": {
-            "type": "string",
-            "title": "Filter Hash",
-            "description": "Stable digest of the canonical filter/list/cohort shape bound into the quote signature; `none` when there is no filter object.",
-            "examples": [
-              "3f8a1c9d2e4b6a70"
-            ]
-          },
-          "available_credits": {
-            "type": "integer",
-            "title": "Available Credits",
-            "description": "The organization's current credit balance at estimate time.",
-            "examples": [
-              4820
-            ]
-          },
-          "sufficient": {
-            "type": "boolean",
-            "title": "Sufficient",
-            "description": "True when `available_credits >= estimated_cost`. False signals the org must top up at billing before the operation can run.",
-            "examples": [
-              true
-            ]
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "required": [
-          "quote_id",
-          "expires_at",
-          "estimated_cost",
-          "tool",
-          "row_count",
-          "filter_hash",
-          "available_credits",
-          "sufficient"
-        ],
-        "title": "EstimateCostResponse",
-        "example": {
-          "available_credits": 4820,
-          "estimated_cost": 275,
-          "expires_at": 1751405100,
-          "filter_hash": "3f8a1c9d2e4b6a70",
-          "quote_id": "qte_v1_1751404800_9a3f2c1b8e7d6a5f4c3b2a1908f7e6d5c4b3a2910f8e7d6c5b4a3928170",
-          "row_count": 25,
-          "sufficient": true,
-          "tool": "enrich_list"
-        }
-      },
       "ExportCsvRequest": {
         "properties": {
           "list_id": {
@@ -4015,6 +7436,358 @@
           "timestamp_ms": 1751404800000,
           "total": 1284
         }
+      },
+      "FilterOption": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "label"
+        ],
+        "title": "FilterOption"
+      },
+      "FindPeopleRequest": {
+        "properties": {
+          "company_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 100,
+            "minItems": 1,
+            "title": "Company Ids",
+            "description": "Companies to find people at. Must be companies already in lead_list_id (directly added or lead-derived); ids outside that set are dropped."
+          },
+          "job_titles": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Job Titles"
+          },
+          "seniority_levels": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Seniority Levels"
+          },
+          "limit_per_company": {
+            "type": "integer",
+            "maximum": 25.0,
+            "minimum": 1.0,
+            "title": "Limit Per Company",
+            "default": 5
+          },
+          "location_state": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location State"
+          },
+          "location_country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location Country"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "company_ids"
+        ],
+        "title": "FindPeopleRequest"
+      },
+      "FindPeopleResponse": {
+        "properties": {
+          "task_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Task Id"
+          },
+          "timestamp_ms": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Timestamp Ms"
+          },
+          "agent_instructions": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agent Instructions"
+          },
+          "usage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Usage"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          },
+          "workflow_id": {
+            "type": "string",
+            "title": "Workflow Id"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "total_companies": {
+            "type": "integer",
+            "title": "Total Companies"
+          },
+          "estimated_credits": {
+            "type": "number",
+            "title": "Estimated Credits"
+          },
+          "lead_list_id": {
+            "type": "string",
+            "title": "Lead List Id"
+          },
+          "poll_url": {
+            "type": "string",
+            "title": "Poll Url"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "workflow_id",
+          "status",
+          "total_companies",
+          "estimated_credits",
+          "lead_list_id",
+          "poll_url"
+        ],
+        "title": "FindPeopleResponse"
+      },
+      "FindPeopleStatusResponse": {
+        "properties": {
+          "task_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Task Id"
+          },
+          "timestamp_ms": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Timestamp Ms"
+          },
+          "agent_instructions": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agent Instructions"
+          },
+          "usage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Usage"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          },
+          "workflow_id": {
+            "type": "string",
+            "title": "Workflow Id"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "people_found": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "People Found"
+          },
+          "people_imported": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "People Imported"
+          },
+          "credits_used": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Credits Used"
+          },
+          "lead_ids": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lead Ids"
+          },
+          "errors": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Errors"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "workflow_id",
+          "status"
+        ],
+        "title": "FindPeopleStatusResponse"
+      },
+      "GeoRadius": {
+        "properties": {
+          "center": {
+            "type": "string",
+            "title": "Center",
+            "description": "Free-text location the radius is measured from.",
+            "default": ""
+          },
+          "radius": {
+            "title": "Radius",
+            "description": "Distance from the center; must be greater than 0 to apply.",
+            "default": 0,
+            "type": "number"
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "km",
+              "mi"
+            ],
+            "title": "Unit",
+            "description": "Distance unit: km or mi.",
+            "default": "km"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "GeoRadius",
+        "description": "``SearchFilters.geoRadius``: a free-text center plus a distance."
       },
       "HTTPValidationError": {
         "properties": {
@@ -4837,6 +8610,1202 @@
           "total": 2
         }
       },
+      "PeopleByCompaniesRequest": {
+        "properties": {
+          "company_filter": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Filter",
+            "description": "CompanyDB filter blob (same shape as /search/companies). Resolved server-side into a set of company LinkedIn URLs (cached per org+filter). Provide this and/or company_linkedin_urls."
+          },
+          "company_linkedin_urls": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Linkedin Urls",
+            "description": "Explicit company LinkedIn URLs. Skips the CompanyDB hop; intersected with company_filter when both are supplied."
+          },
+          "person_filter": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Person Filter",
+            "description": "Required PersonDB filter blob (same shape as /people/find). AND-ed with the resolved company set."
+          },
+          "limit": {
+            "type": "integer",
+            "maximum": 1000.0,
+            "minimum": 1.0,
+            "title": "Limit",
+            "default": 100
+          },
+          "cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cursor"
+          },
+          "sorts": {
+            "anyOf": [
+              {
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sorts"
+          },
+          "post_processing": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Post Processing"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "person_filter"
+        ],
+        "title": "PeopleByCompaniesRequest"
+      },
+      "PeopleFiltersResponse": {
+        "properties": {
+          "field": {
+            "type": "string",
+            "title": "Field"
+          },
+          "options": {
+            "items": {
+              "$ref": "#/components/schemas/FilterOption"
+            },
+            "type": "array",
+            "title": "Options"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "field",
+          "options"
+        ],
+        "title": "PeopleFiltersResponse"
+      },
+      "PeopleMatchEvidence": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "matched",
+              "unverified"
+            ],
+            "title": "Status"
+          },
+          "scope": {
+            "type": "string",
+            "const": "current_role_and_company",
+            "title": "Scope",
+            "default": "current_role_and_company"
+          },
+          "title_match_mode": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "contains",
+                  "exact",
+                  "similar"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title Match Mode"
+          },
+          "company_scope_match": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Scope Match"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Warnings"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "title": "PeopleMatchEvidence"
+      },
+      "PeopleSearchCriteria": {
+        "properties": {
+          "industriesInclude": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Industriesinclude",
+            "description": "Current employer industries to include: LinkedIn industry names or industry group tokens, which expand to their member industries."
+          },
+          "industriesExclude": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Industriesexclude",
+            "description": "Current employer industries to exclude: LinkedIn industry names or industry group tokens."
+          },
+          "companySizes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Companysizes",
+            "description": "Current employer headcount buckets, e.g. 51-200 or 501-1,000."
+          },
+          "seniority": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Seniority",
+            "description": "Current seniority levels, e.g. Director or Vice President."
+          },
+          "jobTitlesInclude": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Jobtitlesinclude",
+            "description": "Current job titles to match; abbreviations expand to synonyms unless the match type is exact."
+          },
+          "jobTitlesExclude": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Jobtitlesexclude",
+            "description": "Current job titles to exclude, matched exactly."
+          },
+          "jobTitleMatchType": {
+            "type": "string",
+            "enum": [
+              "contains",
+              "exact",
+              "similar"
+            ],
+            "title": "Jobtitlematchtype",
+            "description": "How job titles match: contains (substring), exact, or similar.",
+            "default": "contains"
+          },
+          "yearsOfExperience": {
+            "type": "string",
+            "title": "Yearsofexperience",
+            "description": "Total experience bucket: 0-1, 1-2, 3-5, 6-10 or 10+.",
+            "default": ""
+          },
+          "contactCountries": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Contactcountries",
+            "description": "Person countries to include: iso3 codes, country names or group tokens such as EMEA."
+          },
+          "contactCountriesExclude": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Contactcountriesexclude",
+            "description": "Person countries to exclude, in any spelling the include accepts."
+          },
+          "contactRegions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Contactregions",
+            "description": "Person states or regions to include, e.g. \"Texas, United States\"."
+          },
+          "contactRegionsExclude": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Contactregionsexclude",
+            "description": "Person states or regions to exclude."
+          },
+          "contactCities": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Contactcities",
+            "description": "Person cities to include, e.g. \"Austin, Texas, United States\"."
+          },
+          "contactCitiesExclude": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Contactcitiesexclude",
+            "description": "Person cities to exclude."
+          },
+          "companyCountries": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Companycountries",
+            "description": "Current employer HQ countries to include."
+          },
+          "companyCountriesExclude": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Companycountriesexclude",
+            "description": "Current employer HQ countries to exclude."
+          },
+          "companyRegions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Companyregions",
+            "description": "Current employer HQ states or regions to include."
+          },
+          "companyRegionsExclude": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Companyregionsexclude",
+            "description": "Current employer HQ states or regions to exclude."
+          },
+          "companyCities": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Companycities",
+            "description": "Current employer HQ cities to include."
+          },
+          "companyCitiesExclude": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Companycitiesexclude",
+            "description": "Current employer HQ cities to exclude."
+          },
+          "skills": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Skills",
+            "description": "Skills listed on the profile, substring matched."
+          },
+          "connectionsMin": {
+            "type": "string",
+            "title": "Connectionsmin",
+            "description": "Minimum number of LinkedIn connections.",
+            "default": ""
+          },
+          "connectionsMax": {
+            "type": "string",
+            "title": "Connectionsmax",
+            "description": "Maximum number of LinkedIn connections.",
+            "default": ""
+          },
+          "degreeTypes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Degreetypes",
+            "description": "Degree types, e.g. MBA or PhD."
+          },
+          "schoolNames": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Schoolnames",
+            "description": "Institution names, matched exactly."
+          },
+          "fieldsOfStudy": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Fieldsofstudy",
+            "description": "Fields of study, matched exactly."
+          },
+          "certificationKeywords": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Certificationkeywords",
+            "description": "Certification names, matched exactly."
+          },
+          "companyNameFilter": {
+            "type": "string",
+            "title": "Companynamefilter",
+            "description": "One current employer name, ANDed.",
+            "default": ""
+          },
+          "companyNameMatchType": {
+            "type": "string",
+            "enum": [
+              "contains",
+              "exact",
+              "similar"
+            ],
+            "title": "Companynamematchtype",
+            "description": "How employer NAMES match \u2014 governs both company_name_filter and current_company_names: contains (substring), exact, or similar. Domains and LinkedIn URLs are always exact.",
+            "default": "contains"
+          },
+          "firstName": {
+            "type": "string",
+            "title": "Firstname",
+            "description": "First name, exact.",
+            "default": ""
+          },
+          "lastName": {
+            "type": "string",
+            "title": "Lastname",
+            "description": "Last name, exact.",
+            "default": ""
+          },
+          "linkedinUrls": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Linkedinurls",
+            "description": "Person LinkedIn vanity URLs; any of them matches."
+          },
+          "pastCompanies": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Pastcompanies",
+            "description": "Past employer names, substring matched."
+          },
+          "pastTitles": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Pasttitles",
+            "description": "Past job titles, substring matched."
+          },
+          "yearsAtCompany": {
+            "type": "string",
+            "title": "Yearsatcompany",
+            "description": "Years in the current role bucket: 0-1, 1-2, 2-5, 5-10 or 10+.",
+            "default": ""
+          },
+          "recentlyChangedJobs": {
+            "type": "boolean",
+            "title": "Recentlychangedjobs",
+            "description": "Only people who changed jobs recently.",
+            "default": false
+          },
+          "currentCompanyLinkedInUrls": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Currentcompanylinkedinurls",
+            "description": "Current employer LinkedIn company URLs; ORed with domains and names."
+          },
+          "currentCompanyDomains": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Currentcompanydomains",
+            "description": "Current employer website domains; ORed with URLs and names."
+          },
+          "currentCompanyNames": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Currentcompanynames",
+            "description": "Current employer names; ORed with URLs and domains."
+          },
+          "pastCompanyLinkedInUrls": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Pastcompanylinkedinurls",
+            "description": "Past employer LinkedIn company URLs."
+          },
+          "functionCategoriesInclude": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Functioncategoriesinclude",
+            "description": "Current job functions, e.g. Engineering or Sales."
+          },
+          "pastFunctionCategoriesInclude": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Pastfunctioncategoriesinclude",
+            "description": "Past job functions."
+          },
+          "pastSeniority": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Pastseniority",
+            "description": "Past seniority levels."
+          },
+          "pastCompaniesRequireAll": {
+            "type": "boolean",
+            "title": "Pastcompaniesrequireall",
+            "description": "When true, every past company and past company URL must appear in the person's history instead of any one of them.",
+            "default": false
+          },
+          "neverWorkedAtCompanies": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Neverworkedatcompanies",
+            "description": "LinkedIn company URLs the person must never have worked at; unsupported values are rejected."
+          },
+          "neverHeldTitles": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Neverheldtitles",
+            "description": "Titles the person must never have held, matched exactly."
+          },
+          "followersMin": {
+            "type": "string",
+            "title": "Followersmin",
+            "description": "Minimum number of followers.",
+            "default": ""
+          },
+          "followersMax": {
+            "type": "string",
+            "title": "Followersmax",
+            "description": "Maximum number of followers.",
+            "default": ""
+          },
+          "languages": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Languages",
+            "description": "Languages listed on the profile, substring matched."
+          },
+          "openToCards": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Opentocards",
+            "description": "LinkedIn open-to cards: CAREER_INTEREST, HIRING_MANAGER, VOLUNTEERING."
+          },
+          "profileUpdatedAfter": {
+            "type": "string",
+            "title": "Profileupdatedafter",
+            "description": "Profile last updated on or after this YYYY-MM-DD date.",
+            "default": ""
+          },
+          "headlineContains": {
+            "type": "string",
+            "title": "Headlinecontains",
+            "description": "Substring the profile headline must contain.",
+            "default": ""
+          },
+          "summaryContains": {
+            "type": "string",
+            "title": "Summarycontains",
+            "description": "Substring the profile summary must contain.",
+            "default": ""
+          },
+          "twitterHandle": {
+            "type": "string",
+            "title": "Twitterhandle",
+            "description": "Twitter handle, exact; a leading @ is stripped.",
+            "default": ""
+          },
+          "titleBooleanQuery": {
+            "type": "string",
+            "title": "Titlebooleanquery",
+            "description": "Boolean expression over the current title using AND, OR, parentheses and quoted phrases.",
+            "default": ""
+          },
+          "keywordsBooleanQuery": {
+            "type": "string",
+            "title": "Keywordsbooleanquery",
+            "description": "Boolean expression matched against the headline or summary.",
+            "default": ""
+          },
+          "joinedCurrentAfter": {
+            "type": "string",
+            "title": "Joinedcurrentafter",
+            "description": "Started the current role on or after this YYYY-MM-DD date.",
+            "default": ""
+          },
+          "pastLeftCompanyAfter": {
+            "type": "string",
+            "title": "Pastleftcompanyafter",
+            "description": "Left a past company on or after this YYYY-MM-DD date.",
+            "default": ""
+          },
+          "excludeProfileUrls": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Excludeprofileurls",
+            "description": "Person LinkedIn URLs to exclude; resolved by the exclusions step."
+          },
+          "excludeCompanyDomains": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Excludecompanydomains",
+            "description": "Current employer domains to exclude; resolved by the exclusions step."
+          },
+          "excludeCrmCustomers": {
+            "type": "boolean",
+            "title": "Excludecrmcustomers",
+            "description": "Exclude current CRM customers (legacy flat CRM toggle).",
+            "default": false
+          },
+          "excludeCrmActiveOpportunities": {
+            "type": "boolean",
+            "title": "Excludecrmactiveopportunities",
+            "description": "Exclude CRM accounts with active opportunities (legacy toggle).",
+            "default": false
+          },
+          "excludeCrmOwnedByMe": {
+            "type": "boolean",
+            "title": "Excludecrmownedbyme",
+            "description": "Exclude CRM records owned by the caller (legacy toggle).",
+            "default": false
+          },
+          "excludeCrmOwnedByOthers": {
+            "type": "boolean",
+            "title": "Excludecrmownedbyothers",
+            "description": "Exclude CRM records owned by other users (legacy toggle).",
+            "default": false
+          },
+          "excludeCrmOwner": {
+            "type": "string",
+            "title": "Excludecrmowner",
+            "description": "CRM user id whose owned records are excluded (legacy field).",
+            "default": ""
+          },
+          "excludeCrmAccountStatus": {
+            "type": "string",
+            "title": "Excludecrmaccountstatus",
+            "description": "CRM account status value to exclude (legacy field).",
+            "default": ""
+          },
+          "crmFilterSections": {
+            "$ref": "#/components/schemas/CrmFilterSections",
+            "description": "Per-CRM include/exclude clauses resolved by the exclusions step."
+          },
+          "excludeInCleanlist": {
+            "type": "string",
+            "enum": [
+              "off",
+              "any",
+              "list"
+            ],
+            "title": "Excludeincleanlist",
+            "description": "Cleanlist dedupe scope: off, any list in the org, or specific lists.",
+            "default": "off"
+          },
+          "excludeInCleanlistListIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Excludeincleanlistlistids",
+            "description": "Lead list ids the list scope resolves against."
+          },
+          "companyFilterCompositeMode": {
+            "type": "boolean",
+            "title": "Companyfiltercompositemode",
+            "description": "Routing override that targets the company-first composite search.",
+            "default": false
+          },
+          "geoRadius": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GeoRadius"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Radius filter around a free-text location; null when unused."
+          },
+          "maxResults": {
+            "type": "integer",
+            "title": "Maxresults",
+            "description": "Portal result cap. In the public API, explicitly setting this applies a per-response ceiling of 1-500 rows, combined with limit using the smaller value. The default is non-binding; continuation pages are separate. Not a provider filter.",
+            "default": 100
+          },
+          "limitPerCompany": {
+            "type": "string",
+            "title": "Limitpercompany",
+            "description": "Portal client-side company cap. In the public API, 1-100 caps each returned page by its selected matching company; unknown-company rows are omitted with a warning. Continuation pages may return more from that company. Empty means unset.",
+            "default": ""
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "PeopleSearchCriteria",
+        "description": "``SearchFilters``: the People Finder's filter blob, one field per control."
+      },
+      "PeopleSearchRequest": {
+        "properties": {
+          "filters": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Filters"
+          },
+          "criteria": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PeopleSearchCriteria"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "company_criteria": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CompanySearchCriteria"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "crm": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Crm"
+          },
+          "limit": {
+            "type": "integer",
+            "maximum": 500.0,
+            "minimum": 1.0,
+            "title": "Limit",
+            "description": "Maximum rows for this response. When criteria.maxResults is explicitly provided, the smaller of the two limits applies. Continuation pages are separate.",
+            "default": 25
+          },
+          "cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cursor"
+          },
+          "sort": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sort"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "PeopleSearchRequest"
+      },
+      "PeopleSearchResponse": {
+        "properties": {
+          "task_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Task Id"
+          },
+          "timestamp_ms": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Timestamp Ms"
+          },
+          "agent_instructions": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agent Instructions"
+          },
+          "usage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Usage"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          },
+          "entity_kind": {
+            "type": "string",
+            "const": "person",
+            "title": "Entity Kind",
+            "default": "person"
+          },
+          "search_handoff": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SearchHandoff"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "route": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Route"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Warnings"
+          },
+          "exclusions_applied": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "integer"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exclusions Applied"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/PeopleSearchResultRow"
+            },
+            "type": "array",
+            "title": "Results"
+          },
+          "total": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total"
+          },
+          "cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cursor"
+          },
+          "credits_charged": {
+            "type": "integer",
+            "title": "Credits Charged"
+          },
+          "truncation_warning": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Truncation Warning"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "results",
+          "total",
+          "credits_charged"
+        ],
+        "title": "PeopleSearchResponse"
+      },
+      "PeopleSearchResultRow": {
+        "properties": {
+          "lead_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lead Id"
+          },
+          "first_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "First Name"
+          },
+          "last_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Name"
+          },
+          "full_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Full Name"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "company": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company"
+          },
+          "domain": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Domain"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location"
+          },
+          "linkedin_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Linkedin Url"
+          },
+          "seniority": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Seniority"
+          },
+          "profile_image_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Profile Image Url"
+          },
+          "confidence_score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confidence Score"
+          },
+          "company_linkedin_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Linkedin Url"
+          },
+          "company_founded_year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Founded Year"
+          },
+          "company_industry": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Industry"
+          },
+          "company_industries": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Industries"
+          },
+          "company_industries_truncated": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Industries Truncated"
+          },
+          "company_headcount": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Headcount"
+          },
+          "company_headcount_range": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Headcount Range"
+          },
+          "current_roles": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/CurrentRoleEvidence"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Roles"
+          },
+          "match_evidence": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PeopleMatchEvidence"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "PeopleSearchResultRow"
+      },
       "PublicLeadListUpdate": {
         "properties": {
           "name": {
@@ -5006,10 +9975,22 @@
             "maxLength": 100,
             "minLength": 1,
             "title": "Column Name",
-            "description": "Display name for the new column that stores each lead's agent output. Re-using an existing column name appends to it unless `overwrite=true` is set.",
+            "description": "Display name for the new column that stores each lead's agent output for custom/preset agents. Existing completed outputs are preserved unless `overwrite=true` is quoted. Cold intro email uses the platform's built-in email column.",
             "examples": [
               "Fit Research"
             ]
+          },
+          "template_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Template Id",
+            "description": "Cold intro email template UUID; defaults to the organization's active default"
           },
           "lead_scope": {
             "type": "string",
@@ -5018,7 +9999,7 @@
               "all"
             ],
             "title": "Lead Scope",
-            "description": "`subset` runs on up to `max_rows` leads (the fast, cheap path). `all` runs on the entire list, but any `all` run above the configured threshold (default 500 leads) is blocked with a 400 `approval_required` until you narrow scope or route a human approval.",
+            "description": "`subset` runs on up to `max_rows` leads (the fast, cheap path). `all` selects the entire list. Any selection above the configured threshold (default 500 leads) is blocked with a 400 `approval_required` until you narrow scope or route a human approval.",
             "default": "subset",
             "examples": [
               "subset"
@@ -5046,7 +10027,7 @@
           "overwrite": {
             "type": "boolean",
             "title": "Overwrite",
-            "description": "When true, existing values in a column of the same name are overwritten instead of preserved. Passed through to the workflow via column metadata.",
+            "description": "When true, existing values in a column of the same name are overwritten instead of preserved. Included in the signed quote and applied while resolving the exact eligible lead IDs.",
             "default": false,
             "examples": [
               false
@@ -5207,6 +10188,36 @@
           "task_id": "task_9f2c1a",
           "timestamp_ms": 1751404800000
         }
+      },
+      "SearchHandoff": {
+        "properties": {
+          "url": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 8192
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url"
+          },
+          "unavailable_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unavailable Reason"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "SearchHandoff"
       },
       "SingleEnrichmentResultRead": {
         "properties": {
@@ -5841,7 +10852,7 @@
               "calls": 176,
               "credits_spent": 0.0,
               "errors": 2,
-              "group": "/api/v1/public/search/people"
+              "group": "/api/v2/people/find"
             }
           ],
           "total_calls": 318,
@@ -6367,7 +11378,7 @@
           "credits_charged": {
             "anyOf": [
               {
-                "type": "integer"
+                "type": "number"
               },
               {
                 "type": "null"
@@ -6437,6 +11448,249 @@
           "total": 1,
           "workflow_id": "wf_enrich_7c2a"
         }
+      },
+      "WorkforceRule": {
+        "properties": {
+          "role": {
+            "type": "string",
+            "title": "Role",
+            "description": "Workforce role, one of WORKFORCE_ROLES."
+          },
+          "metric": {
+            "type": "string",
+            "enum": [
+              "percent",
+              "growth_6m",
+              "growth_yoy"
+            ],
+            "title": "Metric",
+            "description": "Role distribution percent, six-month growth (growth_6m), or year-over-year growth (growth_yoy)."
+          },
+          "op": {
+            "type": "string",
+            "enum": [
+              ">=",
+              "<="
+            ],
+            "title": "Op",
+            "description": "Comparison direction."
+          },
+          "threshold": {
+            "title": "Threshold",
+            "description": "Finite percentage threshold; growth thresholds may be negative.",
+            "type": "number"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "role",
+          "metric",
+          "op",
+          "threshold"
+        ],
+        "title": "WorkforceRule",
+        "description": "One CompanyDB role distribution or role growth rule."
+      },
+      "SuggestedAction": {
+        "additionalProperties": false,
+        "description": "A follow-up suggestion the agent can present or call directly.",
+        "properties": {
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "tool": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Tool"
+          },
+          "arguments": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Arguments"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          }
+        },
+        "required": [
+          "label"
+        ],
+        "title": "SuggestedAction",
+        "type": "object"
+      },
+      "PublicApiErrorPayload": {
+        "additionalProperties": false,
+        "description": "The `error` field of every public-API error response.",
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "problem": {
+            "title": "Problem",
+            "type": "string"
+          },
+          "cause": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Cause"
+          },
+          "fix": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Fix"
+          },
+          "retryable": {
+            "default": false,
+            "title": "Retryable",
+            "type": "boolean"
+          },
+          "retry_after_ms": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Retry After Ms"
+          },
+          "docs_url": {
+            "title": "Docs Url",
+            "type": "string"
+          },
+          "request_id": {
+            "title": "Request Id",
+            "type": "string"
+          },
+          "estimated_cost_credits": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Estimated Cost Credits"
+          },
+          "available_credits": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Available Credits"
+          },
+          "shortfall_credits": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Shortfall Credits"
+          },
+          "suggested_actions": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/SuggestedAction"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Suggested Actions"
+          },
+          "details": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Details"
+          }
+        },
+        "required": [
+          "code",
+          "problem",
+          "docs_url",
+          "request_id"
+        ],
+        "title": "ErrorPayload",
+        "type": "object"
+      },
+      "PublicApiError": {
+        "type": "object",
+        "title": "PublicApiError",
+        "description": "Canonical Cleanlist public API error envelope.",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/PublicApiErrorPayload"
+          }
+        },
+        "required": [
+          "error"
+        ]
       }
     },
     "securitySchemes": {
@@ -6460,12 +11714,16 @@
       "description": "Enrichment operations"
     },
     {
+      "name": "Public People Finder",
+      "description": "Find people by filters or find employees by company"
+    },
+    {
       "name": "Public Smart Agents",
       "description": "Smart agent runs"
     },
     {
       "name": "Public Export",
-      "description": "Data export"
+      "description": "Export"
     }
   ],
   "servers": [

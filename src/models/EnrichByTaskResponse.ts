@@ -68,6 +68,12 @@ export interface EnrichByTaskResponse {
      * @type {string}
      * @memberof EnrichByTaskResponse
      */
+    list_id?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof EnrichByTaskResponse
+     */
     workflow_id?: string | null;
     /**
      * 'pending' for person tasks (workflow running); 'completed' for company tasks (results already attached).
@@ -143,6 +149,7 @@ export function EnrichByTaskResponseFromJSONTyped(json: any, ignoreDiscriminator
         'usage': json['usage'] == null ? undefined : json['usage'],
         'message': json['message'] == null ? undefined : json['message'],
         'entity_kind': json['entity_kind'],
+        'list_id': json['list_id'] == null ? undefined : json['list_id'],
         'workflow_id': json['workflow_id'] == null ? undefined : json['workflow_id'],
         'status': json['status'],
         'total_entities': json['total_entities'],
@@ -168,6 +175,7 @@ export function EnrichByTaskResponseToJSONTyped(value?: EnrichByTaskResponse | n
         'usage': value['usage'],
         'message': value['message'],
         'entity_kind': value['entity_kind'],
+        'list_id': value['list_id'],
         'workflow_id': value['workflow_id'],
         'status': value['status'],
         'total_entities': value['total_entities'],

@@ -31,7 +31,7 @@ console.log(me.organization_name, list.list_id);
 - [Quickstart](#quickstart)
 - [Configuration](#configuration)
 - [Core concepts](#core-concepts)
-  - [Credits & the estimate → quote flow](#credits--the-estimate--quote-flow)
+  - [Credits & quotes](#credits--quotes)
   - [Enrichment is asynchronous — poll for results](#enrichment-is-asynchronous--poll-for-results)
 - [Endpoint reference](#endpoint-reference)
   - [Workspace](#workspace-clworkspace)
@@ -126,25 +126,19 @@ pass it to the generated API classes — see
 
 ## Core concepts
 
-### Credits & the estimate → quote flow
+### Credits & quotes
 
 Search and list management are free; **enrichment and smart-agent runs cost credits**.
 Bulk/paid operations (`enrichList`, `runSmartAgent`, and CSV import with enrichment)
-require a **signed quote** from `creditsEstimate` first. The quote pins the price and is
-single-use:
+require a **signed, single-use `quote_id`** that pins the price. The pricing endpoint
+(`POST /api/v2/credits/estimate`) is not part of the public API spec, so this SDK has
+no method to request a quote; pass one you already have:
 
 ```ts
-const quote = await cl.workspace.creditsEstimate({
-  estimateCostRequest: { tool: 'enrich_list', list_id: list.list_id, scope: 'full' },
+const run = await cl.enrichment.enrichList({
+  enrichListRequest: { list_id: list.list_id, scope: 'full', quote_id: quoteId },
 });
-console.log(`cost=${quote.estimated_cost} sufficient=${quote.sufficient}`);
-
-if (quote.sufficient) {
-  const run = await cl.enrichment.enrichList({
-    enrichListRequest: { list_id: list.list_id, scope: 'full', quote_id: quote.quote_id },
-  });
-  console.log('bulk workflow:', run.workflow_id);
-}
+console.log('bulk workflow:', run.workflow_id);
 ```
 
 Enrichment **scopes**: `partial` (email + LinkedIn + title + company, 1 credit) ·
@@ -182,16 +176,12 @@ facade as `cl.workspace`, `cl.leadLists`, `cl.enrichment`, `cl.smartAgents`, and
 | ------ | ---- | ----------- |
 | `whoami()` | `GET /api/v2/whoami` | Identity, org, tier, scopes & features. |
 | `creditsBalance()` | `GET /api/v2/credits/balance` | Spendable credit balance. |
-| `creditsEstimate({ estimateCostRequest })` | `POST /api/v2/credits/estimate` | Price an op, get a signed quote. |
 | `listApiKeys()` | `GET /api/v2/api-keys` | List the org's API keys. |
 | `usageReport({ days?, groupBy? })` | `GET /api/v2/usage` | Credit-usage report. |
 
 ```ts
 const me = await cl.workspace.whoami();
 const usage = await cl.workspace.usageReport({ days: 30, groupBy: 'tool' });
-const quote = await cl.workspace.creditsEstimate({
-  estimateCostRequest: { tool: 'enrich_person', scope: 'full', row_count: 1 },
-});
 ```
 
 ### Lead Lists (`cl.leadLists`)
@@ -248,9 +238,6 @@ const company = await cl.enrichment.enrichCompany({ enrichCompanyRequest: { doma
 | `getSmartAgentResults({ smartAgentTaskId })` | `GET /api/v2/smart-agents/{smart_agent_task_id}` | Per-lead output. |
 
 ```ts
-const quote = await cl.workspace.creditsEstimate({
-  estimateCostRequest: { tool: 'run_smart_agent', list_id: list.list_id, agent_type: 'custom_ai', row_count: 50 },
-});
 const run = await cl.smartAgents.runSmartAgent({
   runSmartAgentRequest: {
     list_id: list.list_id,
@@ -258,7 +245,7 @@ const run = await cl.smartAgents.runSmartAgent({
     column_name: 'Personalized angle',
     prompt: 'In one sentence, suggest a cold-outreach angle for this lead.',
     max_rows: 50,
-    quote_id: quote.quote_id,
+    quote_id: quoteId, // signed quote for this exact request shape
   },
 });
 const results = await cl.smartAgents.getSmartAgentResults({ smartAgentTaskId: run.smart_agent_task_id });

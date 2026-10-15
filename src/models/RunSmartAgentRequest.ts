@@ -38,13 +38,19 @@ export interface RunSmartAgentRequest {
      */
     prompt?: string | null;
     /**
-     * Display name for the new column that stores each lead's agent output. Re-using an existing column name appends to it unless `overwrite=true` is set.
+     * Display name for the new column that stores each lead's agent output for custom/preset agents. Existing completed outputs are preserved unless `overwrite=true` is quoted. Cold intro email uses the platform's built-in email column.
      * @type {string}
      * @memberof RunSmartAgentRequest
      */
     column_name: string;
     /**
-     * `subset` runs on up to `max_rows` leads (the fast, cheap path). `all` runs on the entire list, but any `all` run above the configured threshold (default 500 leads) is blocked with a 400 `approval_required` until you narrow scope or route a human approval.
+     * 
+     * @type {string}
+     * @memberof RunSmartAgentRequest
+     */
+    template_id?: string | null;
+    /**
+     * `subset` runs on up to `max_rows` leads (the fast, cheap path). `all` selects the entire list. Any selection above the configured threshold (default 500 leads) is blocked with a 400 `approval_required` until you narrow scope or route a human approval.
      * @type {string}
      * @memberof RunSmartAgentRequest
      */
@@ -62,7 +68,7 @@ export interface RunSmartAgentRequest {
      */
     quote_id: string;
     /**
-     * When true, existing values in a column of the same name are overwritten instead of preserved. Passed through to the workflow via column metadata.
+     * When true, existing values in a column of the same name are overwritten instead of preserved. Included in the signed quote and applied while resolving the exact eligible lead IDs.
      * @type {boolean}
      * @memberof RunSmartAgentRequest
      */
@@ -116,6 +122,7 @@ export function RunSmartAgentRequestFromJSONTyped(json: any, ignoreDiscriminator
         'agent_type': json['agent_type'] == null ? undefined : json['agent_type'],
         'prompt': json['prompt'] == null ? undefined : json['prompt'],
         'column_name': json['column_name'],
+        'template_id': json['template_id'] == null ? undefined : json['template_id'],
         'lead_scope': json['lead_scope'] == null ? undefined : json['lead_scope'],
         'max_rows': json['max_rows'] == null ? undefined : json['max_rows'],
         'quote_id': json['quote_id'],
@@ -138,6 +145,7 @@ export function RunSmartAgentRequestToJSONTyped(value?: RunSmartAgentRequest | n
         'agent_type': value['agent_type'],
         'prompt': value['prompt'],
         'column_name': value['column_name'],
+        'template_id': value['template_id'],
         'lead_scope': value['lead_scope'],
         'max_rows': value['max_rows'],
         'quote_id': value['quote_id'],

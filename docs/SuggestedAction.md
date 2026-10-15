@@ -1,36 +1,29 @@
 
-# EstimateCostResponse
+# SuggestedAction
 
+A follow-up suggestion the agent can present or call directly.
 
 ## Properties
 
 Name | Type
 ------------ | -------------
-`quote_id` | string
-`expires_at` | number
-`estimated_cost` | number
+`label` | string
 `tool` | string
-`row_count` | number
-`filter_hash` | string
-`available_credits` | number
-`sufficient` | boolean
+`arguments` | object
+`url` | string
 
 ## Example
 
 ```typescript
-import type { EstimateCostResponse } from '@cleanlist-ai/sdk'
+import type { SuggestedAction } from '@cleanlist-ai/sdk'
 
 // TODO: Update the object below with actual values
 const example = {
-  "quote_id": null,
-  "expires_at": null,
-  "estimated_cost": null,
+  "label": null,
   "tool": null,
-  "row_count": null,
-  "filter_hash": null,
-  "available_credits": null,
-  "sufficient": null,
-} satisfies EstimateCostResponse
+  "arguments": null,
+  "url": null,
+} satisfies SuggestedAction
 
 console.log(example)
 
@@ -39,7 +32,7 @@ const exampleJSON: string = JSON.stringify(example)
 console.log(exampleJSON)
 
 // Parse the JSON string back to an object
-const exampleParsed = JSON.parse(exampleJSON) as EstimateCostResponse
+const exampleParsed = JSON.parse(exampleJSON) as SuggestedAction
 console.log(exampleParsed)
 ```
 

@@ -37,6 +37,12 @@ export interface EnrichListRequest {
      * @memberof EnrichListRequest
      */
     quote_id: string;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof EnrichListRequest
+     */
+    lead_ids?: Array<string> | null;
 }
 
 
@@ -73,6 +79,7 @@ export function EnrichListRequestFromJSONTyped(json: any, ignoreDiscriminator: b
         'list_id': json['list_id'],
         'scope': json['scope'] == null ? undefined : json['scope'],
         'quote_id': json['quote_id'],
+        'lead_ids': json['lead_ids'] == null ? undefined : json['lead_ids'],
     };
 }
 
@@ -90,6 +97,7 @@ export function EnrichListRequestToJSONTyped(value?: EnrichListRequest | null, i
         'list_id': value['list_id'],
         'scope': value['scope'],
         'quote_id': value['quote_id'],
+        'lead_ids': value['lead_ids'],
     };
 }
 

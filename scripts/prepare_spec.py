@@ -59,6 +59,36 @@ def collapse_freeform_anyof(node) -> int:
     return count
 
 
+def collapse_numeric_anyof(node) -> int:
+    """Collapse ``anyOf`` branches ``{"type": "integer"}`` + ``{"type": "number"}``.
+
+    Pydantic emits ``int | float`` fields as ``anyOf: [integer, number]``. Every
+    integer is already a number, so the integer branch is redundant. Generators
+    turn that ``anyOf`` into an opaque wrapper type (an empty interface in
+    typescript-fetch, an uncompilable default in java okhttp-gson), so drop the
+    integer branch and unwrap a lone remaining branch into a plain ``number``.
+
+    Recurses through the whole document; returns the number of collapses.
+    """
+    count = 0
+    if isinstance(node, dict):
+        any_of = node.get("anyOf")
+        if isinstance(any_of, list) and {"type": "integer"} in any_of and {"type": "number"} in any_of:
+            rest = [b for b in any_of if b != {"type": "integer"}]
+            if len(rest) == 1:
+                node.pop("anyOf")
+                node.update(rest[0])
+            else:
+                node["anyOf"] = rest
+            count += 1
+        for value in node.values():
+            count += collapse_numeric_anyof(value)
+    elif isinstance(node, list):
+        for value in node:
+            count += collapse_numeric_anyof(value)
+    return count
+
+
 def main() -> int:
     if len(sys.argv) != 3:
         print(__doc__)
@@ -85,12 +115,13 @@ def main() -> int:
             operation["operationId"] = cleaned
 
     collapsed = collapse_freeform_anyof(spec)
+    collapsed += collapse_numeric_anyof(spec)
 
     dst.parent.mkdir(parents=True, exist_ok=True)
     dst.write_text(json.dumps(spec, indent=2))
     print(
         f"Prepared spec: {len(seen)} cleaned operationIds, "
-        f"{collapsed} free-form anyOf collapsed -> {dst}"
+        f"{collapsed} free-form/numeric anyOf collapsed -> {dst}"
     )
     return 0
 

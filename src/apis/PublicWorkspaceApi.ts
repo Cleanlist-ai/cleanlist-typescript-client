@@ -17,9 +17,7 @@ import * as runtime from '../runtime';
 import type {
   ApiKeysResponse,
   CreditsBalanceResponse,
-  EstimateCostRequest,
-  EstimateCostResponse,
-  HTTPValidationError,
+  PublicApiError,
   UsageReportResponse,
   WhoamiResponse,
 } from '../models/index';
@@ -28,21 +26,13 @@ import {
     ApiKeysResponseToJSON,
     CreditsBalanceResponseFromJSON,
     CreditsBalanceResponseToJSON,
-    EstimateCostRequestFromJSON,
-    EstimateCostRequestToJSON,
-    EstimateCostResponseFromJSON,
-    EstimateCostResponseToJSON,
-    HTTPValidationErrorFromJSON,
-    HTTPValidationErrorToJSON,
+    PublicApiErrorFromJSON,
+    PublicApiErrorToJSON,
     UsageReportResponseFromJSON,
     UsageReportResponseToJSON,
     WhoamiResponseFromJSON,
     WhoamiResponseToJSON,
 } from '../models/index';
-
-export interface CreditsEstimateRequest {
-    estimateCostRequest: EstimateCostRequest;
-}
 
 export interface UsageReportRequest {
     days?: number;
@@ -90,55 +80,6 @@ export class PublicWorkspaceApi extends runtime.BaseAPI {
      */
     async creditsBalance(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreditsBalanceResponse> {
         const response = await this.creditsBalanceRaw(initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Pre-flight a paid operation and mint a signed, single-use `quote_id`. The quote binds the canonical request (tool, list_id|filters|cohort, scope, row_count, org) via HMAC and must be presented at execution time by every paid bulk tool (`enrich_list`, `run_smart_agent`, `sync_to_crm`, `sync_to_sequencer`, cohort enrichments). Row count is derived authoritatively from the list or cohort — never trusted from the caller — so a small quote can\'t be replayed against a large job. Requires the `credits:read` scope; estimating itself is free, and the response reports whether the org has `sufficient` credits to proceed.  **📖 Docs:** https://docs.cleanlist.ai/api-reference/credits
-     * Estimate cost & get a signed quote
-     */
-    async creditsEstimateRaw(requestParameters: CreditsEstimateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<EstimateCostResponse>> {
-        if (requestParameters['estimateCostRequest'] == null) {
-            throw new runtime.RequiredError(
-                'estimateCostRequest',
-                'Required parameter "estimateCostRequest" was null or undefined when calling creditsEstimate().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        if (this.configuration && this.configuration.accessToken) {
-            const token = this.configuration.accessToken;
-            const tokenString = await token("HTTPBearer", []);
-
-            if (tokenString) {
-                headerParameters["Authorization"] = `Bearer ${tokenString}`;
-            }
-        }
-
-        let urlPath = `/api/v2/credits/estimate`;
-
-        const response = await this.request({
-            path: urlPath,
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: EstimateCostRequestToJSON(requestParameters['estimateCostRequest']),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => EstimateCostResponseFromJSON(jsonValue));
-    }
-
-    /**
-     * Pre-flight a paid operation and mint a signed, single-use `quote_id`. The quote binds the canonical request (tool, list_id|filters|cohort, scope, row_count, org) via HMAC and must be presented at execution time by every paid bulk tool (`enrich_list`, `run_smart_agent`, `sync_to_crm`, `sync_to_sequencer`, cohort enrichments). Row count is derived authoritatively from the list or cohort — never trusted from the caller — so a small quote can\'t be replayed against a large job. Requires the `credits:read` scope; estimating itself is free, and the response reports whether the org has `sufficient` credits to proceed.  **📖 Docs:** https://docs.cleanlist.ai/api-reference/credits
-     * Estimate cost & get a signed quote
-     */
-    async creditsEstimate(requestParameters: CreditsEstimateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<EstimateCostResponse> {
-        const response = await this.creditsEstimateRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

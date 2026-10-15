@@ -77,7 +77,15 @@ example().catch(console.error);
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **200** | Successful Response |  -  |
-| **422** | Validation Error |  -  |
+| **422** | Request failed validation. |  -  |
+| **400** | Bad request. |  -  |
+| **401** | Authentication required or invalid. |  -  |
+| **403** | Permission denied or feature not enabled. |  -  |
+| **404** | Resource not found. |  -  |
+| **409** | Resource conflict. |  -  |
+| **429** | Rate limited. |  -  |
+| **500** | Internal error. |  -  |
+| **502** | Upstream provider error. |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 
@@ -152,7 +160,15 @@ example().catch(console.error);
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **200** | Successful Response |  -  |
-| **422** | Validation Error |  -  |
+| **422** | Request failed validation. |  -  |
+| **400** | Bad request. |  -  |
+| **401** | Authentication required or invalid. |  -  |
+| **403** | Permission denied or feature not enabled. |  -  |
+| **404** | Resource not found. |  -  |
+| **409** | Resource conflict. |  -  |
+| **429** | Rate limited. |  -  |
+| **500** | Internal error. |  -  |
+| **502** | Upstream provider error. |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 
@@ -163,7 +179,7 @@ example().catch(console.error);
 
 Run a smart agent
 
-Launch an AI smart agent over the leads in a list and return a run id.  Pick an &#x60;agent_type&#x60; — &#x60;custom_ai&#x60; (your own &#x60;prompt&#x60;), &#x60;cold_intro_email&#x60; (personalized opener), or a preset research agent — and the run executes asynchronously as a smart column, one AI call per lead. Runs are metered per lead by agent type (e.g. &#x60;custom_ai&#x60; ≈ 1 credit/lead, &#x60;cold_intro_email&#x60; ≈ 3 credits/lead) and require a single-use &#x60;quote_id&#x60; from POST /credits/estimate; credits are debited as rows complete. Scope with &#x60;lead_scope&#x3D;\&quot;subset\&quot;&#x60; + &#x60;max_rows&#x60; for speed and cost control — a &#x60;lead_scope&#x3D;\&quot;all\&quot;&#x60; run above the approval threshold (default 500 leads) is blocked with a 400 &#x60;approval_required&#x60; until you narrow it or route a human approval. The response returns immediately with &#x60;status&#x3D;\&quot;pending\&quot;&#x60;; poll GET /smart-agents/{smart_agent_task_id} for progress and per-lead results.  **📖 Docs:** https://docs.cleanlist.ai/guides/using-ai-agents
+Launch an AI smart agent over the leads in a list and return a run id.  Pick an &#x60;agent_type&#x60; — &#x60;custom_ai&#x60; (your own &#x60;prompt&#x60;), &#x60;cold_intro_email&#x60; (personalized opener), or a preset research agent — and the run executes asynchronously as a smart column, one AI call per lead. Runs are metered per lead by agent type (&#x60;custom_ai&#x60; is priced from its &#x60;prompt&#x60;, so read its price from the quote; &#x60;cold_intro_email&#x60; ≈ 3 credits/lead) and require a single-use &#x60;quote_id&#x60; from POST /credits/estimate; credits are debited before dispatch. Cold intro email requires enriched profiles and an active organization email template. Scope with &#x60;lead_scope&#x3D;\&quot;subset\&quot;&#x60; + &#x60;max_rows&#x60; for cost control. Any selection above the approval threshold (default 500 leads) is blocked with &#x60;approval_required&#x60;; this public route requires a smaller selection. The response returns immediately with &#x60;status&#x3D;\&quot;pending\&quot;&#x60;; poll GET /smart-agents/{smart_agent_task_id} for progress and per-lead results.  **📖 Docs:** https://docs.cleanlist.ai/guides/using-ai-agents
 
 ### Example
 
@@ -224,7 +240,15 @@ example().catch(console.error);
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **200** | Successful Response |  -  |
-| **422** | Validation Error |  -  |
+| **422** | Request failed validation. |  -  |
+| **400** | Bad request. |  -  |
+| **401** | Authentication required or invalid. |  -  |
+| **403** | Permission denied or feature not enabled. |  -  |
+| **404** | Resource not found. |  -  |
+| **409** | Resource conflict. |  -  |
+| **429** | Rate limited. |  -  |
+| **500** | Internal error. |  -  |
+| **502** | Upstream provider error. |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 
