@@ -23,6 +23,7 @@ import {
     PublicEnrichmentApi,
     PublicExportApi,
     PublicLeadListsApi,
+    PublicPeopleFinderApi,
     PublicSmartAgentsApi,
     PublicWorkspaceApi,
 } from './apis/index';
@@ -45,12 +46,13 @@ function envKey(): string | undefined {
 
 /**
  * Authenticated entry point exposing every Cleanlist API resource group:
- * `workspace`, `leadLists`, `enrichment`, `smartAgents`, and `export`.
+ * `workspace`, `leadLists`, `peopleFinder`, `enrichment`, `smartAgents`, and `export`.
  */
 export class Cleanlist {
     readonly configuration: Configuration;
     readonly workspace: PublicWorkspaceApi;
     readonly leadLists: PublicLeadListsApi;
+    readonly peopleFinder: PublicPeopleFinderApi;
     readonly enrichment: PublicEnrichmentApi;
     readonly smartAgents: PublicSmartAgentsApi;
     readonly export: PublicExportApi;
@@ -72,6 +74,7 @@ export class Cleanlist {
 
         this.workspace = new PublicWorkspaceApi(this.configuration);
         this.leadLists = new PublicLeadListsApi(this.configuration);
+        this.peopleFinder = new PublicPeopleFinderApi(this.configuration);
         this.enrichment = new PublicEnrichmentApi(this.configuration);
         this.smartAgents = new PublicSmartAgentsApi(this.configuration);
         this.export = new PublicExportApi(this.configuration);

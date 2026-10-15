@@ -29,6 +29,8 @@ export * from './EnrichListRequest';
 export * from './EnrichListResponse';
 export * from './EnrichPersonRequest';
 export * from './EnrichPersonResponse';
+export * from './EstimateCostRequest';
+export * from './EstimateCostResponse';
 export * from './ExportCsvRequest';
 export * from './ExportCsvResponse';
 export * from './ExportJsonResponse';

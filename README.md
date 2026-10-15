@@ -31,14 +31,16 @@ console.log(me.organization_name, list.list_id);
 - [Quickstart](#quickstart)
 - [Configuration](#configuration)
 - [Core concepts](#core-concepts)
-  - [Credits & quotes](#credits--quotes)
+  - [Credits & the estimate → quote flow](#credits--the-estimate--quote-flow)
   - [Enrichment is asynchronous — poll for results](#enrichment-is-asynchronous--poll-for-results)
 - [Endpoint reference](#endpoint-reference)
   - [Workspace](#workspace-clworkspace)
   - [Lead Lists](#lead-lists-clleadlists)
+  - [People Finder](#people-finder-clpeoplefinder)
   - [Enrichment](#enrichment-clenrichment)
   - [Smart Agents](#smart-agents-clsmartagents)
   - [Export](#export-clexport)
+- [Examples](#examples)
 - [Error handling](#error-handling)
 - [Pagination](#pagination)
 - [Using the generated API classes directly](#using-the-generated-api-classes-directly)
@@ -126,19 +128,25 @@ pass it to the generated API classes — see
 
 ## Core concepts
 
-### Credits & quotes
+### Credits & the estimate → quote flow
 
 Search and list management are free; **enrichment and smart-agent runs cost credits**.
 Bulk/paid operations (`enrichList`, `runSmartAgent`, and CSV import with enrichment)
-require a **signed, single-use `quote_id`** that pins the price. The pricing endpoint
-(`POST /api/v2/credits/estimate`) is not part of the public API spec, so this SDK has
-no method to request a quote; pass one you already have:
+require a **signed quote** from `creditsEstimate` first. The quote pins the price and is
+single-use:
 
 ```ts
-const run = await cl.enrichment.enrichList({
-  enrichListRequest: { list_id: list.list_id, scope: 'full', quote_id: quoteId },
+const quote = await cl.workspace.creditsEstimate({
+  estimateCostRequest: { tool: 'enrich_list', list_id: list.list_id, scope: 'full' },
 });
-console.log('bulk workflow:', run.workflow_id);
+console.log(`cost=${quote.estimated_cost} sufficient=${quote.sufficient}`);
+
+if (quote.sufficient) {
+  const run = await cl.enrichment.enrichList({
+    enrichListRequest: { list_id: list.list_id, scope: 'full', quote_id: quote.quote_id },
+  });
+  console.log('bulk workflow:', run.workflow_id);
+}
 ```
 
 Enrichment **scopes**: `partial` (email + LinkedIn + title + company, 1 credit) ·
@@ -166,9 +174,9 @@ console.log('charged:', status.credits_charged, 'refunded:', status.credits_refu
 
 ## Endpoint reference
 
-The v2 surface is 24 operations across five resource groups, exposed on the `Cleanlist`
-facade as `cl.workspace`, `cl.leadLists`, `cl.enrichment`, `cl.smartAgents`, and
-`cl.export`. Field-by-field model docs live in [`docs/`](docs/).
+The v2 surface is 26 operations across six resource groups, exposed on the `Cleanlist`
+facade as `cl.workspace`, `cl.leadLists`, `cl.peopleFinder`, `cl.enrichment`,
+`cl.smartAgents`, and `cl.export`. Field-by-field model docs live in [`docs/`](docs/).
 
 ### Workspace (`cl.workspace`)
 
@@ -176,12 +184,16 @@ facade as `cl.workspace`, `cl.leadLists`, `cl.enrichment`, `cl.smartAgents`, and
 | ------ | ---- | ----------- |
 | `whoami()` | `GET /api/v2/whoami` | Identity, org, tier, scopes & features. |
 | `creditsBalance()` | `GET /api/v2/credits/balance` | Spendable credit balance. |
+| `creditsEstimate({ estimateCostRequest })` | `POST /api/v2/credits/estimate` | Price an op, get a signed quote. |
 | `listApiKeys()` | `GET /api/v2/api-keys` | List the org's API keys. |
 | `usageReport({ days?, groupBy? })` | `GET /api/v2/usage` | Credit-usage report. |
 
 ```ts
 const me = await cl.workspace.whoami();
 const usage = await cl.workspace.usageReport({ days: 30, groupBy: 'tool' });
+const quote = await cl.workspace.creditsEstimate({
+  estimateCostRequest: { tool: 'enrich_person', scope: 'full', row_count: 1 },
+});
 ```
 
 ### Lead Lists (`cl.leadLists`)
@@ -197,6 +209,8 @@ const usage = await cl.workspace.usageReport({ days: 30, groupBy: 'tool' });
 | `addLeadsToList({ listId, body })` | `POST …/{list_id}/leads` | Add leads by id or cohort. |
 | `removeLeadsFromList({ listId, removeLeadsRequest })` | `DELETE …/{list_id}/leads` | Remove up to 100. |
 | `csvImport({ listId, csvImportRequest })` | `POST …/{list_id}/csv-import` | Import from base64 CSV. |
+| `findPeople({ listId, findPeopleRequest })` | `POST …/{list_id}/find-people` | Find + import people at the list's companies (async). |
+| `findPeopleStatus({ listId, workflowId })` | `GET …/{list_id}/find-people/status/{workflow_id}` | Poll a find-people job. |
 
 ```ts
 const list = await cl.leadLists.createList({ createListRequest: { name: 'Prospects — West' } });
@@ -210,6 +224,34 @@ await cl.leadLists.removeLeadsFromList({
   listId: list.list_id,
   removeLeadsRequest: { lead_ids: ['lead_a'] },
 });
+```
+
+### People Finder (`cl.peopleFinder`)
+
+Search people by filters. Searching is free; credits are spent only when you enrich or save.
+
+| Method | HTTP | Description |
+| ------ | ---- | ----------- |
+| `searchPeople({ peopleSearchRequest })` | `POST /api/v2/people/find` | Search people by structured criteria (paginated). |
+| `searchFiltersPeople({ field, query? })` | `GET /api/v2/people/find/filters` | Valid values / autocomplete for a filter field. |
+| `compileSearch({ compileRequest })` | `POST /api/v2/people/find/compile` | Dry run: show the compiled filter without searching. |
+| `companiesFindStart({ peopleByCompaniesRequest })` | `POST /api/v2/people/find-at-companies` | Start an async "find people at these companies" search. |
+| `companiesFindStatus({ taskId })` | `GET /api/v2/people/find-at-companies/status/{task_id}` | Poll that search. |
+
+```ts
+import type { PeopleSearchCriteria } from '@cleanlist-ai/sdk';
+
+const seniority = await cl.peopleFinder.searchFiltersPeople({ field: 'seniority' });
+const titles = await cl.peopleFinder.searchFiltersPeople({ field: 'titles', query: 'vp sales' });
+
+const criteria: PeopleSearchCriteria = {
+  jobTitlesInclude: ['VP of Sales'],
+  seniority: ['Vice President'],
+  contactCountries: ['USA'],
+};
+const preview = await cl.peopleFinder.compileSearch({ compileRequest: { criteria } });
+const page = await cl.peopleFinder.searchPeople({ peopleSearchRequest: { criteria, limit: 25 } });
+for (const row of page.results) console.log(row.full_name, row.title, row.company);
 ```
 
 ### Enrichment (`cl.enrichment`)
@@ -238,6 +280,9 @@ const company = await cl.enrichment.enrichCompany({ enrichCompanyRequest: { doma
 | `getSmartAgentResults({ smartAgentTaskId })` | `GET /api/v2/smart-agents/{smart_agent_task_id}` | Per-lead output. |
 
 ```ts
+const quote = await cl.workspace.creditsEstimate({
+  estimateCostRequest: { tool: 'run_smart_agent', list_id: list.list_id, agent_type: 'custom_ai', row_count: 50 },
+});
 const run = await cl.smartAgents.runSmartAgent({
   runSmartAgentRequest: {
     list_id: list.list_id,
@@ -245,7 +290,7 @@ const run = await cl.smartAgents.runSmartAgent({
     column_name: 'Personalized angle',
     prompt: 'In one sentence, suggest a cold-outreach angle for this lead.',
     max_rows: 50,
-    quote_id: quoteId, // signed quote for this exact request shape
+    quote_id: quote.quote_id,
   },
 });
 const results = await cl.smartAgents.getSmartAgentResults({ smartAgentTaskId: run.smart_agent_task_id });
@@ -265,6 +310,24 @@ console.log('download:', signed.download_url); // valid until signed.expires_at
 const data = await cl.export.exportJson({ listId: list.list_id, limit: 500 });
 for (const row of data.leads) console.log(row);
 ```
+
+## Examples
+
+Runnable scripts live in [`examples/`](examples/) (setup notes in
+[`examples/README.md`](examples/README.md)). Run one with `npx tsx examples/<file>.ts`; each
+reads `CLEANLIST_API_KEY` and an optional `CLEANLIST_HOST`. Type-check them all with
+`npx tsc -p examples`.
+
+| Example | What it shows | Credits |
+| ------- | ------------- | ------- |
+| [`01_quickstart.ts`](examples/01_quickstart.ts) | whoami, credit balance, create and list lead lists. | Free |
+| [`02_enrich_person.ts`](examples/02_enrich_person.ts) | Enrich one contact and poll to completion. | Spends |
+| [`03_bulk_enrich_with_quote.ts`](examples/03_bulk_enrich_with_quote.ts) | The estimate → quote → bulk-enrich credit flow. | Spends |
+| [`04_lead_lists.ts`](examples/04_lead_lists.ts) | Lead-list lifecycle: create, read, update, paginate, delete. | Free |
+| [`05_export.ts`](examples/05_export.ts) | CSV (signed URL) + JSON export. | Free |
+| [`06_error_handling.ts`](examples/06_error_handling.ts) | Catching `ResponseError`. | Free |
+| [`07_find_people.ts`](examples/07_find_people.ts) | People Finder: filter values, compile preview, search + next page. | Free |
+| [`08_smart_agent.ts`](examples/08_smart_agent.ts) | Run a custom AI smart-agent column and read the results. | Spends |
 
 ## Error handling
 
