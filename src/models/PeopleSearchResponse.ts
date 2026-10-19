@@ -13,6 +13,20 @@
  */
 
 import { mapValues } from '../runtime';
+import type { CohortSummary } from './CohortSummary';
+import {
+    CohortSummaryFromJSON,
+    CohortSummaryFromJSONTyped,
+    CohortSummaryToJSON,
+    CohortSummaryToJSONTyped,
+} from './CohortSummary';
+import type { SearchPresentation } from './SearchPresentation';
+import {
+    SearchPresentationFromJSON,
+    SearchPresentationFromJSONTyped,
+    SearchPresentationToJSON,
+    SearchPresentationToJSONTyped,
+} from './SearchPresentation';
 import type { SearchHandoff } from './SearchHandoff';
 import {
     SearchHandoffFromJSON,
@@ -76,6 +90,30 @@ export interface PeopleSearchResponse {
      * @memberof PeopleSearchResponse
      */
     search_handoff?: SearchHandoff | null;
+    /**
+     * 
+     * @type {CohortSummary}
+     * @memberof PeopleSearchResponse
+     */
+    cohort?: CohortSummary | null;
+    /**
+     * 
+     * @type {SearchPresentation}
+     * @memberof PeopleSearchResponse
+     */
+    presentation?: SearchPresentation | null;
+    /**
+     * 
+     * @type {object}
+     * @memberof PeopleSearchResponse
+     */
+    criteria_applied?: object | null;
+    /**
+     * 
+     * @type {object}
+     * @memberof PeopleSearchResponse
+     */
+    company_criteria_applied?: object | null;
     /**
      * 
      * @type {object}
@@ -163,6 +201,10 @@ export function PeopleSearchResponseFromJSONTyped(json: any, ignoreDiscriminator
         'message': json['message'] == null ? undefined : json['message'],
         'entity_kind': json['entity_kind'] == null ? undefined : json['entity_kind'],
         'search_handoff': json['search_handoff'] == null ? undefined : SearchHandoffFromJSON(json['search_handoff']),
+        'cohort': json['cohort'] == null ? undefined : CohortSummaryFromJSON(json['cohort']),
+        'presentation': json['presentation'] == null ? undefined : SearchPresentationFromJSON(json['presentation']),
+        'criteria_applied': json['criteria_applied'] == null ? undefined : json['criteria_applied'],
+        'company_criteria_applied': json['company_criteria_applied'] == null ? undefined : json['company_criteria_applied'],
         'route': json['route'] == null ? undefined : json['route'],
         'warnings': json['warnings'] == null ? undefined : json['warnings'],
         'exclusions_applied': json['exclusions_applied'] == null ? undefined : json['exclusions_applied'],
@@ -192,6 +234,10 @@ export function PeopleSearchResponseToJSONTyped(value?: PeopleSearchResponse | n
         'message': value['message'],
         'entity_kind': value['entity_kind'],
         'search_handoff': SearchHandoffToJSON(value['search_handoff']),
+        'cohort': CohortSummaryToJSON(value['cohort']),
+        'presentation': SearchPresentationToJSON(value['presentation']),
+        'criteria_applied': value['criteria_applied'],
+        'company_criteria_applied': value['company_criteria_applied'],
         'route': value['route'],
         'warnings': value['warnings'],
         'exclusions_applied': value['exclusions_applied'],

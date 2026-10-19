@@ -6,6 +6,7 @@
 
 Name | Type
 ------------ | -------------
+`crm_note` | string
 `quote_id` | string
 `expires_at` | number
 `estimated_cost` | number
@@ -22,6 +23,7 @@ import type { EstimateCostResponse } from '@cleanlist-ai/sdk'
 
 // TODO: Update the object below with actual values
 const example = {
+  "crm_note": null,
   "quote_id": null,
   "expires_at": null,
   "estimated_cost": null,

@@ -11,6 +11,10 @@ Name | Type
 `agent_instructions` | string
 `usage` | string
 `message` | string
+`presentation` | [SearchPresentation](SearchPresentation.md)
+`pending_imports` | [Array&lt;PendingImportRow&gt;](PendingImportRow.md)
+`pending_import_total` | number
+`pending_import_cursor` | string
 `list_id` | string
 `leads` | [Array&lt;LeadRow&gt;](LeadRow.md)
 `total` | number
@@ -28,6 +32,10 @@ const example = {
   "agent_instructions": null,
   "usage": null,
   "message": null,
+  "presentation": null,
+  "pending_imports": null,
+  "pending_import_total": null,
+  "pending_import_cursor": null,
   "list_id": null,
   "leads": null,
   "total": null,

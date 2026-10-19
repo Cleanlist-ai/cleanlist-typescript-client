@@ -13,6 +13,10 @@ Name | Type
 `message` | string
 `entity_kind` | string
 `search_handoff` | [SearchHandoff](SearchHandoff.md)
+`cohort` | [CohortSummary](CohortSummary.md)
+`presentation` | [SearchPresentation](SearchPresentation.md)
+`criteria_applied` | object
+`company_criteria_applied` | object
 `route` | object
 `warnings` | Array&lt;string&gt;
 `exclusions_applied` | { [key: string]: number; }
@@ -36,6 +40,10 @@ const example = {
   "message": null,
   "entity_kind": null,
   "search_handoff": null,
+  "cohort": null,
+  "presentation": null,
+  "criteria_applied": null,
+  "company_criteria_applied": null,
   "route": null,
   "warnings": null,
   "exclusions_applied": null,

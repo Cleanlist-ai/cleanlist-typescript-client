@@ -32,6 +32,12 @@ export interface EnrichByTaskResponse {
      * @type {string}
      * @memberof EnrichByTaskResponse
      */
+    crm_note?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof EnrichByTaskResponse
+     */
     task_id?: string | null;
     /**
      * 
@@ -143,6 +149,7 @@ export function EnrichByTaskResponseFromJSONTyped(json: any, ignoreDiscriminator
     }
     return {
         
+        'crm_note': json['crm_note'] == null ? undefined : json['crm_note'],
         'task_id': json['task_id'] == null ? undefined : json['task_id'],
         'timestamp_ms': json['timestamp_ms'] == null ? undefined : json['timestamp_ms'],
         'agent_instructions': json['agent_instructions'] == null ? undefined : json['agent_instructions'],
@@ -169,6 +176,7 @@ export function EnrichByTaskResponseToJSONTyped(value?: EnrichByTaskResponse | n
 
     return {
         
+        'crm_note': value['crm_note'],
         'task_id': value['task_id'],
         'timestamp_ms': value['timestamp_ms'],
         'agent_instructions': value['agent_instructions'],

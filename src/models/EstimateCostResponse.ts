@@ -20,6 +20,12 @@ import { mapValues } from '../runtime';
  */
 export interface EstimateCostResponse {
     /**
+     * 
+     * @type {string}
+     * @memberof EstimateCostResponse
+     */
+    crm_note?: string | null;
+    /**
      * HMAC-signed quote handle (`qte_<kid>_<issued_at>_<sig>`) that the paired paid tool must present at execution time. Single-use and bound to the canonical request (tool, list/filters, scope, row_count, org).
      * @type {string}
      * @memberof EstimateCostResponse
@@ -94,6 +100,7 @@ export function EstimateCostResponseFromJSONTyped(json: any, ignoreDiscriminator
     }
     return {
         
+        'crm_note': json['crm_note'] == null ? undefined : json['crm_note'],
         'quote_id': json['quote_id'],
         'expires_at': json['expires_at'],
         'estimated_cost': json['estimated_cost'],
@@ -116,6 +123,7 @@ export function EstimateCostResponseToJSONTyped(value?: EstimateCostResponse | n
 
     return {
         
+        'crm_note': value['crm_note'],
         'quote_id': value['quote_id'],
         'expires_at': value['expires_at'],
         'estimated_cost': value['estimated_cost'],
