@@ -6,6 +6,7 @@
 
 Name | Type
 ------------ | -------------
+`crm_note` | string
 `task_id` | string
 `timestamp_ms` | number
 `agent_instructions` | string
@@ -25,6 +26,7 @@ import type { EnrichListResponse } from '@cleanlist-ai/sdk'
 
 // TODO: Update the object below with actual values
 const example = {
+  "crm_note": null,
   "task_id": null,
   "timestamp_ms": null,
   "agent_instructions": null,

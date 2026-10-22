@@ -14,6 +14,8 @@ Name | Type
 `phone` | string
 `title` | string
 `company` | string
+`company_id` | string
+`domain` | string
 `location` | string
 `linkedin_url` | string
 `provider` | string
@@ -33,6 +35,8 @@ const example = {
   "phone": null,
   "title": null,
   "company": null,
+  "company_id": null,
+  "domain": null,
   "location": null,
   "linkedin_url": null,
   "provider": null,

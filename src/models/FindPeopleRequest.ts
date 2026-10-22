@@ -20,7 +20,7 @@ import { mapValues } from '../runtime';
  */
 export interface FindPeopleRequest {
     /**
-     * Companies to find people at. Must be companies already in lead_list_id (directly added or lead-derived); ids outside that set are dropped.
+     * Cleanlist company ids to find people at. Must be companies already in the list: read them from the `company_id` of the list's lead rows (GET /lead-lists/{list_id}/leads). Ids outside the list are dropped.
      * @type {Array<string>}
      * @memberof FindPeopleRequest
      */

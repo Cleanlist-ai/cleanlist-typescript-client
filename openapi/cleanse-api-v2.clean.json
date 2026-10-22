@@ -1761,7 +1761,7 @@
           "Public Lead Lists"
         ],
         "summary": "Import leads from CSV",
-        "description": "Import a CSV into a lead list and optionally dispatch bulk enrichment.\n\nPipeline:\n    1. Authz: `lists:write` always; `enrich:write` additionally when\n       `dispatch_enrichment=True` (the workflow spends credits).\n    2. Feature flag gate \u2014 disabled-by-default kill switch returns 503.\n    3. Idempotency cache lookup (org-wide, 24h TTL).\n    4. Base64 decode + parse via `parse_csv_to_rawpeople`.\n    5. If dispatching: verify quote (if provided), open reservation,\n       redeem quote.\n    6. Bulk-insert RawPeople into the list. UUIDs are stamped\n       Python-side so we can hand them to the workflow.\n    7. If dispatching: kick off `start_bulk_enrichment` with the\n       parsed prospects + raw_person_ids. The workflow's per-Lead\n       `insert_lead_to_list` activity handles prospect_count\n       updates per the existing pattern; import-only path bumps\n       prospect_count here directly.\n    8. Cache the response under `idempotency_key` (if provided).\n\nCross-list dedup: this endpoint dedupes ONLY within the upload. A\nrow whose identity already exists as a Lead elsewhere in the\nworkspace still imports as a RawPerson here; the workflow's\n`persist_enrichment_result` then deduplicates against existing\nLeads by public_identifier / prospect_id (existing behavior).\nNet effect: no duplicate Lead, but the RawPerson stub persists\nuntil the workflow processes it.\n\nSend the file as base64 in `csv_content_base64` (\u2264150 KB / ~600 rows)\nwith a `column_mapping` from canonical field to CSV header. Requires the\n`lists:write` scope, plus `enrich:write` when `dispatch_enrichment=true`\n(the enrichment spend). Importing rows is free; when dispatching,\nenrichment is billed on top (partial 1cr, phone_only 10cr, full 11cr per\nlead). Pass an `idempotency_key` to make retries safe.\n\n**\ud83d\udcd6 Docs:** https://docs.cleanlist.ai/guides/bulk-enrichment",
+        "description": "Import a CSV into a lead list and optionally dispatch bulk enrichment.\n\nPipeline:\n    1. Authz: `lists:write` always; `enrich:write` additionally when\n       `dispatch_enrichment=True` (the workflow spends credits).\n    2. Idempotency cache lookup (org-wide, 24h TTL).\n    3. Base64 decode + parse via `parse_csv_to_rawpeople`.\n    4. If dispatching: verify quote (if provided), open reservation,\n       redeem quote.\n    5. Bulk-insert RawPeople into the list. UUIDs are stamped\n       Python-side so we can hand them to the workflow.\n    6. If dispatching: kick off `start_bulk_enrichment` with the\n       parsed prospects + raw_person_ids. The workflow's per-Lead\n       `insert_lead_to_list` activity handles prospect_count\n       updates per the existing pattern; import-only path bumps\n       prospect_count here directly.\n    7. Cache the response under `idempotency_key` (if provided).\n\nCross-list dedup: this endpoint dedupes ONLY within the upload. A\nrow whose identity already exists as a Lead elsewhere in the\nworkspace still imports as a RawPerson here; the workflow's\n`persist_enrichment_result` then deduplicates against existing\nLeads by public_identifier / prospect_id (existing behavior).\nNet effect: no duplicate Lead, but the RawPerson stub persists\nuntil the workflow processes it.\n\nSend the file as base64 in `csv_content_base64` (\u2264150 KB / ~600 rows)\nwith a `column_mapping` from canonical field to CSV header. Requires the\n`lists:write` scope, plus `enrich:write` when `dispatch_enrichment=true`\n(the enrichment spend). Importing rows is free; when dispatching,\nenrichment is billed on top (partial 1cr, phone_only 10cr, full 11cr per\nlead). Pass an `idempotency_key` to make retries safe.\n\n**\ud83d\udcd6 Docs:** https://docs.cleanlist.ai/guides/bulk-enrichment",
         "operationId": "csv_import",
         "security": [
           {
@@ -2562,7 +2562,7 @@
           "Public Lead Lists"
         ],
         "summary": "Find people at companies already in a list and import them (async)",
-        "description": "Start an async job that finds people at the given companies (which must\nalready belong to ``list_id``) and imports them into that list.\n\nReturns a ``workflow_id`` immediately; poll ``poll_url``\n(GET /lead-lists/{list_id}/find-people/status/{workflow_id}) until ``status``\nis terminal. Discovery is free; imports bill the standard per-new-lead cost.",
+        "description": "Start an async job that finds people at the given companies (which must\nalready belong to ``list_id``) and imports them into that list. Take the\n``company_ids`` from the ``company_id`` field of the list's lead rows\n(GET /lead-lists/{list_id}/leads).\n\nReturns a ``workflow_id`` immediately; poll ``poll_url``\n(GET /lead-lists/{list_id}/find-people/status/{workflow_id}) until ``status``\nis terminal. Discovery is free; imports bill the standard per-new-lead cost.",
         "operationId": "find_people",
         "security": [
           {
@@ -4530,6 +4530,118 @@
           ]
         }
       },
+      "CohortSummary": {
+        "properties": {
+          "identity_namespace": {
+            "type": "string",
+            "enum": [
+              "provider_person",
+              "provider_company",
+              "saved_lead",
+              "saved_company",
+              "unknown"
+            ],
+            "title": "Identity Namespace",
+            "default": "unknown"
+          },
+          "population_scope": {
+            "type": "string",
+            "enum": [
+              "provider_page",
+              "saved_page",
+              "unknown"
+            ],
+            "title": "Population Scope",
+            "default": "unknown"
+          },
+          "provider_total": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provider Total",
+            "description": "Upstream total before local filtering, when reported; never the retained count."
+          },
+          "returned_count": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Returned Count",
+            "description": "Rows returned in the producing response before retention caps."
+          },
+          "retained_count": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Retained Count",
+            "description": "Unique IDs accessible through this task snapshot."
+          },
+          "evidence_checked_count": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence Checked Count",
+            "description": "Candidates locally evaluated for role/employer evidence on this page, before local caps; not search-wide verification."
+          },
+          "provider_has_more": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provider Has More",
+            "description": "Whether the producing provider page returned a continuation cursor."
+          },
+          "retention_truncated": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retention Truncated"
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At",
+            "description": "Actual persisted snapshot expiry; null when no snapshot was retained."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "retained_count"
+        ],
+        "title": "CohortSummary"
+      },
       "CompaniesFindStartResponse": {
         "properties": {
           "task_id": {
@@ -6431,6 +6543,18 @@
       },
       "EnrichByTaskResponse": {
         "properties": {
+          "crm_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Crm Note",
+            "description": "What the workspace's automatic CRM push will do with these people once enriched, when one is switched on. Absent otherwise."
+          },
           "task_id": {
             "anyOf": [
               {
@@ -6860,6 +6984,18 @@
       },
       "EnrichListResponse": {
         "properties": {
+          "crm_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Crm Note",
+            "description": "What the workspace's automatic CRM push will do with these people once enriched, when one is switched on. Absent otherwise."
+          },
           "task_id": {
             "anyOf": [
               {
@@ -7623,6 +7759,18 @@
       },
       "EstimateCostResponse": {
         "properties": {
+          "crm_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Crm Note",
+            "description": "What the workspace's automatic CRM push will do with these people once enriched, when one is switched on. Absent otherwise."
+          },
           "quote_id": {
             "type": "string",
             "title": "Quote Id",
@@ -8014,7 +8162,7 @@
             "maxItems": 100,
             "minItems": 1,
             "title": "Company Ids",
-            "description": "Companies to find people at. Must be companies already in lead_list_id (directly added or lead-derived); ids outside that set are dropped."
+            "description": "Cleanlist company ids to find people at. Must be companies already in the list: read them from the `company_id` of the list's lead rows (GET /lead-lists/{list_id}/leads). Ids outside the list are dropped."
           },
           "job_titles": {
             "items": {
@@ -8454,6 +8602,33 @@
               "Acme"
             ]
           },
+          "company_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Id",
+            "description": "Cleanlist id of the lead's current company, or null when unmatched. Pass it in `company_ids` to POST /lead-lists/{list_id}/find-people.",
+            "examples": [
+              "3f2b6c1d-8a4e-4b7f-9c2d-1e5a6b7c8d9e"
+            ]
+          },
+          "domain": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Domain",
+            "description": "Observed company website domain from the saved row; available on enabled MCP readback."
+          },
           "location": {
             "anyOf": [
               {
@@ -8574,6 +8749,55 @@
               }
             ],
             "title": "Message"
+          },
+          "presentation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SearchPresentation"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Display block for this page: named columns, safe links, plain cells."
+          },
+          "pending_imports": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/PendingImportRow"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pending Imports",
+            "description": "Separate page of unpromoted import rows, including their actual pending/processing/failed status. These IDs are not saved lead_ids. Whole-list enrichment includes pending rows; saved-lead subsets do not."
+          },
+          "pending_import_total": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pending Import Total"
+          },
+          "pending_import_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pending Import Cursor",
+            "description": "Next imported-row page; pass as cursor with the same limit. Independent of saved-lead cursor."
           },
           "list_id": {
             "type": "string",
@@ -9146,6 +9370,136 @@
           "timestamp_ms": 1751404800000,
           "total": 2
         }
+      },
+      "PendingImportRow": {
+        "properties": {
+          "raw_person_id": {
+            "type": "string",
+            "title": "Raw Person Id",
+            "description": "Imported RawPerson UUID, never a saved lead_id."
+          },
+          "status": {
+            "$ref": "#/components/schemas/RawPersonStatus"
+          },
+          "source_row_index": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Row Index",
+            "description": "Original parser row index, when recorded."
+          },
+          "first_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "First Name"
+          },
+          "last_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Name"
+          },
+          "full_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Full Name"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "company": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company"
+          },
+          "company_domain": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Domain"
+          },
+          "linkedin_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Linkedin Url"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "raw_person_id",
+          "status"
+        ],
+        "title": "PendingImportRow"
       },
       "PeopleByCompaniesRequest": {
         "properties": {
@@ -10013,6 +10367,50 @@
               }
             ]
           },
+          "cohort": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CohortSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "presentation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SearchPresentation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "criteria_applied": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Criteria Applied"
+          },
+          "company_criteria_applied": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Criteria Applied"
+          },
           "route": {
             "anyOf": [
               {
@@ -10343,6 +10741,148 @@
         "type": "object",
         "title": "PeopleSearchResultRow"
       },
+      "PersonPresentationRow": {
+        "properties": {
+          "position": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Position",
+            "description": "1-based position in the returned rows."
+          },
+          "entity_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entity Id",
+            "description": "Opaque row identity, preserved exactly for selection."
+          },
+          "name": {
+            "$ref": "#/components/schemas/PresentationLink"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "company": {
+            "$ref": "#/components/schemas/PresentationLink"
+          },
+          "location": {
+            "type": "string",
+            "title": "Location"
+          },
+          "headcount": {
+            "type": "string",
+            "title": "Headcount"
+          },
+          "headcount_discrepancy": {
+            "type": "boolean",
+            "title": "Headcount Discrepancy",
+            "description": "The latest count falls outside the returned size band; both are observations.",
+            "default": false
+          },
+          "industry": {
+            "type": "string",
+            "title": "Industry"
+          },
+          "industry_truncated": {
+            "type": "boolean",
+            "title": "Industry Truncated",
+            "description": "Provider industry labels were shortened or omitted upstream.",
+            "default": false
+          },
+          "evidence_status": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "matched",
+                  "unverified"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence Status",
+            "description": "Current role/company attribution status when the search was compiled from criteria."
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email",
+            "description": "Saved primary email, for saved-list rows only."
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone",
+            "description": "Saved primary phone, for saved-list rows only."
+          },
+          "extra": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Extra",
+            "description": "Cells for the requested extra columns, keyed by column name."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "position",
+          "name",
+          "title",
+          "company",
+          "location",
+          "headcount",
+          "industry"
+        ],
+        "title": "PersonPresentationRow"
+      },
+      "PresentationLink": {
+        "properties": {
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url",
+            "description": "Validated destination, or null when the source supplied none or an unsafe one."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "title": "PresentationLink"
+      },
       "PublicLeadListUpdate": {
         "properties": {
           "name": {
@@ -10402,6 +10942,17 @@
           "folder_id": "folder_3d9b12",
           "name": "Q3 Enterprise SaaS Leads (EMEA)"
         }
+      },
+      "RawPersonStatus": {
+        "type": "string",
+        "enum": [
+          "pending",
+          "processing",
+          "failed",
+          "lookup_failed"
+        ],
+        "title": "RawPersonStatus",
+        "description": "Status of a raw person in the enrichment pipeline."
       },
       "RemoveLeadsRequest": {
         "properties": {
@@ -10755,6 +11306,91 @@
         "additionalProperties": false,
         "type": "object",
         "title": "SearchHandoff"
+      },
+      "SearchPresentation": {
+        "properties": {
+          "entity_kind": {
+            "type": "string",
+            "const": "person",
+            "title": "Entity Kind",
+            "default": "person"
+          },
+          "columns": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Columns",
+            "description": "Columns to lay out, in order. Name, Title, Company, Location, Headcount, Industry, Email and Phone read the row's own cells; any other column reads the row's extra cells. Renderers show exactly these."
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/PersonPresentationRow"
+            },
+            "type": "array",
+            "maxItems": 100,
+            "title": "Rows"
+          },
+          "shown": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Shown",
+            "description": "Rows in this block."
+          },
+          "returned": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Returned",
+            "description": "Rows in the producing response."
+          },
+          "provider_total": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provider Total",
+            "description": "Upstream count before local checks; never rows returned or verified."
+          },
+          "evidence_checked": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence Checked",
+            "description": "Rows evaluated for current role/employer evidence on this page."
+          },
+          "headcount_discrepancy_rows": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Headcount Discrepancy Rows"
+          },
+          "industry_truncated_rows": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Industry Truncated Rows"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "shown",
+          "returned"
+        ],
+        "title": "SearchPresentation"
       },
       "SingleEnrichmentResultRead": {
         "properties": {
@@ -11184,7 +11820,7 @@
           "agent_type": {
             "type": "string",
             "title": "Agent Type",
-            "description": "Agent / smart-column type the run executed as (e.g. `custom_ai`, `cold_intro_email`).",
+            "description": "The `agent_type` the run was started with (e.g. `custom_ai`, `cold_intro_email`, `title_normalizer`), or the smart-column type for runs started outside POST /smart-agents/run.",
             "examples": [
               "custom_ai"
             ]

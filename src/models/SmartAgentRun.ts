@@ -38,7 +38,7 @@ export interface SmartAgentRun {
      */
     column_name: string;
     /**
-     * Agent / smart-column type the run executed as (e.g. `custom_ai`, `cold_intro_email`).
+     * The `agent_type` the run was started with (e.g. `custom_ai`, `cold_intro_email`, `title_normalizer`), or the smart-column type for runs started outside POST /smart-agents/run.
      * @type {string}
      * @memberof SmartAgentRun
      */

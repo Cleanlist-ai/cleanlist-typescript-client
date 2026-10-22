@@ -72,6 +72,18 @@ export interface LeadRow {
      * @type {string}
      * @memberof LeadRow
      */
+    company_id?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof LeadRow
+     */
+    domain?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof LeadRow
+     */
     location?: string | null;
     /**
      * 
@@ -113,6 +125,8 @@ export function LeadRowFromJSONTyped(json: any, ignoreDiscriminator: boolean): L
         'phone': json['phone'] == null ? undefined : json['phone'],
         'title': json['title'] == null ? undefined : json['title'],
         'company': json['company'] == null ? undefined : json['company'],
+        'company_id': json['company_id'] == null ? undefined : json['company_id'],
+        'domain': json['domain'] == null ? undefined : json['domain'],
         'location': json['location'] == null ? undefined : json['location'],
         'linkedin_url': json['linkedin_url'] == null ? undefined : json['linkedin_url'],
         'provider': json['provider'] == null ? undefined : json['provider'],
@@ -138,6 +152,8 @@ export function LeadRowToJSONTyped(value?: LeadRow | null, ignoreDiscriminator: 
         'phone': value['phone'],
         'title': value['title'],
         'company': value['company'],
+        'company_id': value['company_id'],
+        'domain': value['domain'],
         'location': value['location'],
         'linkedin_url': value['linkedin_url'],
         'provider': value['provider'],

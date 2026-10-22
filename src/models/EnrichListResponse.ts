@@ -24,6 +24,12 @@ export interface EnrichListResponse {
      * @type {string}
      * @memberof EnrichListResponse
      */
+    crm_note?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof EnrichListResponse
+     */
     task_id?: string | null;
     /**
      * 
@@ -120,6 +126,7 @@ export function EnrichListResponseFromJSONTyped(json: any, ignoreDiscriminator: 
     }
     return {
         
+        'crm_note': json['crm_note'] == null ? undefined : json['crm_note'],
         'task_id': json['task_id'] == null ? undefined : json['task_id'],
         'timestamp_ms': json['timestamp_ms'] == null ? undefined : json['timestamp_ms'],
         'agent_instructions': json['agent_instructions'] == null ? undefined : json['agent_instructions'],
@@ -145,6 +152,7 @@ export function EnrichListResponseToJSONTyped(value?: EnrichListResponse | null,
 
     return {
         
+        'crm_note': value['crm_note'],
         'task_id': value['task_id'],
         'timestamp_ms': value['timestamp_ms'],
         'agent_instructions': value['agent_instructions'],
