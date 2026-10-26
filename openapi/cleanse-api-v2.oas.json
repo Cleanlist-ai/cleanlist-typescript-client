@@ -2964,7 +2964,7 @@
           "Public Enrichment"
         ],
         "summary": "Enrich a company",
-        "description": "Look up firmographics for a single company and return the full record\nsynchronously.\n\nUnlike person enrichment, this path is synchronous — it performs a\nCompanyDB single-record lookup inline (no Temporal workflow, no\n`workflow_id`) and returns the enriched `CompanyRecord` in the response,\nbilling a flat 1 credit that settles before the response returns. Pass\nany of `domain` (most reliable), `company_id`, `company_name`, or\n`company_ticker`; a ticker is resolved to a domain via Finnhub (24h Redis\ncache) and falls back to a `company_name` fuzzy match when the symbol is\nunknown. `quote_id` is optional and, when present, verified and redeemed.\n\n**📖 Docs:** https://docs.cleanlist.ai/api-reference/enrichment\n**📖 Docs:** https://docs.cleanlist.ai/api-reference/enrichment-types\n**📖 Docs:** https://docs.cleanlist.ai/guides/bulk-enrichment",
+        "description": "Look up firmographics for a single company and return the full record\nsynchronously.\n\nUnlike person enrichment, this path is synchronous — it performs a\nCompanyDB single-record lookup inline (no Temporal workflow, no\n`workflow_id`) and returns the enriched `CompanyRecord` in the response,\nbilling a flat 1 credit that settles before the response returns. Pass\nany of `domain` (most reliable), `company_id`, `company_name`, or\n`company_ticker`; a ticker is resolved to a domain via Finnhub (24h Redis\ncache) and falls back to an exact `company_name` match when the symbol is\nunknown. `quote_id` is optional and, when present, verified and redeemed.\n\n**📖 Docs:** https://docs.cleanlist.ai/api-reference/enrichment\n**📖 Docs:** https://docs.cleanlist.ai/api-reference/enrichment-types\n**📖 Docs:** https://docs.cleanlist.ai/guides/bulk-enrichment",
         "operationId": "enrich_company_api_v2_enrichment_company_post",
         "requestBody": {
           "content": {
@@ -3345,7 +3345,7 @@
           "Public Enrichment"
         ],
         "summary": "Poll an enrichment workflow",
-        "description": "Poll the status, progress, and settled billing of an enrichment\nworkflow started by `enrich_person`, `enrich_list`, or `enrich_by_task`.\n\nThis read is free and idempotent — call it repeatedly until `status`\nreaches a terminal state (`completed` / `failed` / `cancelled`). It\naccepts EITHER a `workflow_id` (e.g. `enrich-...` / `bulk-enrich-...`) OR\nan MCPTask cohort `task_id` (`cl-task_...`), resolving the latter to the\nworkflow bound at dispatch so the agent can keep using the one handle it\nalready has. Terminal single-lead runs include the inline enriched `result`;\nbulk runs report aggregate counters instead. When a prepaid-via-MCP run\nends in failure, `refund_status` surfaces `pending_review` (credits are\nnot auto-refunded).\n\n**📖 Docs:** https://docs.cleanlist.ai/api-reference/enrichment",
+        "description": "Poll the status, progress, and settled billing of an enrichment\nworkflow started by `enrich_person`, `enrich_list`, or `enrich_by_task`.\n\nThis read is free and idempotent — call it repeatedly until `status`\nreaches a terminal state (`completed` / `failed` / `cancelled`). It\naccepts EITHER a `workflow_id` (e.g. `enrich-...` / `bulk-enrich-...`) OR\nan MCPTask cohort `task_id` (`cl-task_...`), resolving the latter to the\nworkflow bound at dispatch so the agent can keep using the one handle it\nalready has. Terminal single-lead runs include the inline enriched `result`;\nbulk runs report aggregate counters, plus per-contact `results` (status,\nfailure reason and the saved lead with email, LinkedIn URL and provider)\nwhen polled with `include_results=true`, paged by `results_offset` /\n`results_limit`. Per-contact records are kept for 24 hours; after that\nread the destination list via `GET /lead-lists/{id}/leads`. When a\nprepaid-via-MCP run ends in failure, `refund_status` surfaces `pending_review` (credits are\nnot auto-refunded).\n\n**📖 Docs:** https://docs.cleanlist.ai/api-reference/enrichment",
         "operationId": "enrichment_status_api_v2_enrichment_status__workflow_id__get",
         "security": [
           {
@@ -3361,6 +3361,45 @@
               "type": "string",
               "title": "Workflow Id"
             }
+          },
+          {
+            "name": "include_results",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "description": "Bulk runs: also return per-contact `results` (one page).",
+              "default": false,
+              "title": "Include Results"
+            },
+            "description": "Bulk runs: also return per-contact `results` (one page)."
+          },
+          {
+            "name": "results_offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "First contact index.",
+              "default": 0,
+              "title": "Results Offset"
+            },
+            "description": "First contact index."
+          },
+          {
+            "name": "results_limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 500,
+              "minimum": 1,
+              "description": "Page size.",
+              "default": 100,
+              "title": "Results Limit"
+            },
+            "description": "Page size."
           }
         ],
         "responses": {
@@ -4438,9 +4477,9 @@
               }
             ],
             "title": "Created At",
-            "description": "Timestamp the key was created (stringified), or null if unknown.",
+            "description": "Timestamp the key was created (stringified, UTC), or null if unknown.",
             "examples": [
-              "2026-05-12 09:31:44"
+              "2026-05-12 09:31:44+00:00"
             ]
           },
           "last_used_at": {
@@ -4453,9 +4492,24 @@
               }
             ],
             "title": "Last Used At",
-            "description": "Timestamp the key was last used to authenticate (stringified), or null if it has never been used.",
+            "description": "Timestamp the key was last used to authenticate (stringified, UTC), or null if it has never been used.",
             "examples": [
-              "2026-06-30 18:02:10"
+              "2026-06-30 18:02:10+00:00"
+            ]
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At",
+            "description": "Timestamp the key stops authenticating (stringified, UTC), or null if it never expires.",
+            "examples": [
+              "2026-12-31 23:59:00+00:00"
             ]
           },
           "is_active": {
@@ -4478,12 +4532,12 @@
         ],
         "title": "ApiKeyInfo",
         "example": {
-          "created_at": "2026-05-12 09:31:44",
+          "created_at": "2026-05-12 09:31:44+00:00",
           "is_active": true,
           "key_id": "ak_5f8c2b91",
           "key_last4": "a4f9",
           "key_prefix": "clapi_",
-          "last_used_at": "2026-06-30 18:02:10",
+          "last_used_at": "2026-06-30 18:02:10+00:00",
           "name": "Production server key",
           "scopes": [
             "credits:read",
@@ -4513,12 +4567,12 @@
         "example": {
           "keys": [
             {
-              "created_at": "2026-05-12 09:31:44",
+              "created_at": "2026-05-12 09:31:44+00:00",
               "is_active": true,
               "key_id": "ak_5f8c2b91",
               "key_last4": "a4f9",
               "key_prefix": "clapi_",
-              "last_used_at": "2026-06-30 18:02:10",
+              "last_used_at": "2026-06-30 18:02:10+00:00",
               "name": "Production server key",
               "scopes": [
                 "credits:read",
@@ -4529,6 +4583,57 @@
             }
           ]
         }
+      },
+      "BulkContactResult": {
+        "properties": {
+          "index": {
+            "type": "integer",
+            "title": "Index",
+            "description": "Position of this contact in the run."
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "pending / processing / completed / failed while known; 'unavailable' once the per-contact record has expired (24h).",
+            "examples": [
+              "completed"
+            ]
+          },
+          "failure_class": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Failure Class",
+            "description": "Why the contact failed (e.g. not_found), when it did.",
+            "examples": [
+              null
+            ]
+          },
+          "lead": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LeadRow"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The enriched lead in the destination list, or null when no lead was saved for this contact."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "index",
+          "status"
+        ],
+        "title": "BulkContactResult",
+        "description": "One contact of a bulk run, returned when polling with\n`include_results=true`. `lead` is the same row `GET\n/lead-lists/{id}/leads` returns, so contact fields follow the same\nreveal rules."
       },
       "CohortSummary": {
         "properties": {
@@ -5051,11 +5156,6 @@
           "linkedin_url": "https://www.linkedin.com/company/acme",
           "name": "Acme",
           "revenue_range": "$25M-$50M",
-          "tech_stack": [
-            "React",
-            "Python",
-            "AWS"
-          ],
           "total_funding_usd": 48000000
         }
       },
@@ -5340,18 +5440,6 @@
             "type": "string",
             "title": "Lastfundingroundamountmax",
             "description": "Maximum size of the last funding round in USD.",
-            "default": ""
-          },
-          "valuationMin": {
-            "type": "string",
-            "title": "Valuationmin",
-            "description": "Minimum Crunchbase valuation in USD.",
-            "default": ""
-          },
-          "valuationMax": {
-            "type": "string",
-            "title": "Valuationmax",
-            "description": "Maximum Crunchbase valuation in USD.",
             "default": ""
           },
           "bootstrappedOnly": {
@@ -6901,11 +6989,6 @@
             "linkedin_url": "https://www.linkedin.com/company/acme",
             "name": "Acme",
             "revenue_range": "$25M-$50M",
-            "tech_stack": [
-              "React",
-              "Python",
-              "AWS"
-            ],
             "total_funding_usd": 48000000
           },
           "credits_charged": 1,
@@ -11581,6 +11664,36 @@
             "examples": [
               "wiza"
             ]
+          },
+          "failure_kind": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Failure Kind",
+            "description": "Why a failed result failed: 'person_opted_out' (the person opted out of data enrichment; not charged, don't retry), 'miss' (no provider found data), or another kind. Null on success.",
+            "examples": [
+              null
+            ]
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error",
+            "description": "The failure reason to show the user; null on success.",
+            "examples": [
+              null
+            ]
           }
         },
         "additionalProperties": false,
@@ -12381,7 +12494,7 @@
           "status": {
             "type": "string",
             "title": "Status",
-            "description": "Outer workflow status: e.g. 'pending', 'running', 'completed', 'failed', 'cancelled'.",
+            "description": "Outer workflow status: e.g. 'pending', 'running', 'completed', 'failed', 'cancelled'. A single-person run whose result failed (no match, opted out) is 'failed'; result.failure_kind says why.",
             "examples": [
               "completed"
             ]
@@ -12457,6 +12570,21 @@
             ],
             "title": "Failed",
             "description": "Count that failed enrichment.",
+            "examples": [
+              0
+            ]
+          },
+          "opted_out": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Opted Out",
+            "description": "Of `failed`, how many were refused because the person opted out of data enrichment (bulk runs; null when not counted).",
             "examples": [
               0
             ]
@@ -12553,7 +12681,34 @@
                 "type": "null"
               }
             ],
-            "description": "Inline enriched-lead payload for terminal single-lead workflows. Always null for bulk runs (use the aggregate counters instead)."
+            "description": "Inline enriched-lead payload for terminal single-lead workflows. Always null for bulk runs (use `include_results=true` for per-contact `results`)."
+          },
+          "results": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/BulkContactResult"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Results",
+            "description": "Per-contact outcomes for a bulk run, one page at a time. Null unless polled with `include_results=true`."
+          },
+          "results_next_offset": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Results Next Offset",
+            "description": "Pass as `results_offset` for the next page; null at the end."
           },
           "credits_charged": {
             "anyOf": [

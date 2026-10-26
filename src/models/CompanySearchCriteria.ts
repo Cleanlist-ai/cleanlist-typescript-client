@@ -275,18 +275,6 @@ export interface CompanySearchCriteria {
      */
     lastFundingRoundAmountMax?: string;
     /**
-     * Minimum Crunchbase valuation in USD.
-     * @type {string}
-     * @memberof CompanySearchCriteria
-     */
-    valuationMin?: string;
-    /**
-     * Maximum Crunchbase valuation in USD.
-     * @type {string}
-     * @memberof CompanySearchCriteria
-     */
-    valuationMax?: string;
-    /**
      * Only companies with no disclosed investment.
      * @type {boolean}
      * @memberof CompanySearchCriteria
@@ -469,8 +457,6 @@ export function CompanySearchCriteriaFromJSONTyped(json: any, ignoreDiscriminato
         'ipoDateAfter': json['ipoDateAfter'] == null ? undefined : json['ipoDateAfter'],
         'lastFundingRoundAmountMin': json['lastFundingRoundAmountMin'] == null ? undefined : json['lastFundingRoundAmountMin'],
         'lastFundingRoundAmountMax': json['lastFundingRoundAmountMax'] == null ? undefined : json['lastFundingRoundAmountMax'],
-        'valuationMin': json['valuationMin'] == null ? undefined : json['valuationMin'],
-        'valuationMax': json['valuationMax'] == null ? undefined : json['valuationMax'],
         'bootstrappedOnly': json['bootstrappedOnly'] == null ? undefined : json['bootstrappedOnly'],
         'acquiredOnly': json['acquiredOnly'] == null ? undefined : json['acquiredOnly'],
         'fundingRoundTypesExclude': json['fundingRoundTypesExclude'] == null ? undefined : json['fundingRoundTypesExclude'],
@@ -542,8 +528,6 @@ export function CompanySearchCriteriaToJSONTyped(value?: CompanySearchCriteria |
         'ipoDateAfter': value['ipoDateAfter'],
         'lastFundingRoundAmountMin': value['lastFundingRoundAmountMin'],
         'lastFundingRoundAmountMax': value['lastFundingRoundAmountMax'],
-        'valuationMin': value['valuationMin'],
-        'valuationMax': value['valuationMax'],
         'bootstrappedOnly': value['bootstrappedOnly'],
         'acquiredOnly': value['acquiredOnly'],
         'fundingRoundTypesExclude': value['fundingRoundTypesExclude'],

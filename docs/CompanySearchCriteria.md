@@ -47,8 +47,6 @@ Name | Type
 `ipoDateAfter` | string
 `lastFundingRoundAmountMin` | string
 `lastFundingRoundAmountMax` | string
-`valuationMin` | string
-`valuationMax` | string
 `bootstrappedOnly` | boolean
 `acquiredOnly` | boolean
 `fundingRoundTypesExclude` | Array&lt;string&gt;
@@ -114,8 +112,6 @@ const example = {
   "ipoDateAfter": null,
   "lastFundingRoundAmountMin": null,
   "lastFundingRoundAmountMax": null,
-  "valuationMin": null,
-  "valuationMax": null,
   "bootstrappedOnly": null,
   "acquiredOnly": null,
   "fundingRoundTypesExclude": null,

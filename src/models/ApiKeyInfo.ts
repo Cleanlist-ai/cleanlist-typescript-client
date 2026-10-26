@@ -62,6 +62,12 @@ export interface ApiKeyInfo {
      */
     last_used_at?: string | null;
     /**
+     * 
+     * @type {string}
+     * @memberof ApiKeyInfo
+     */
+    expires_at?: string | null;
+    /**
      * Whether the key is currently active. Revoked keys report false.
      * @type {boolean}
      * @memberof ApiKeyInfo
@@ -98,6 +104,7 @@ export function ApiKeyInfoFromJSONTyped(json: any, ignoreDiscriminator: boolean)
         'scopes': json['scopes'],
         'created_at': json['created_at'] == null ? undefined : json['created_at'],
         'last_used_at': json['last_used_at'] == null ? undefined : json['last_used_at'],
+        'expires_at': json['expires_at'] == null ? undefined : json['expires_at'],
         'is_active': json['is_active'],
     };
 }
@@ -120,6 +127,7 @@ export function ApiKeyInfoToJSONTyped(value?: ApiKeyInfo | null, ignoreDiscrimin
         'scopes': value['scopes'],
         'created_at': value['created_at'],
         'last_used_at': value['last_used_at'],
+        'expires_at': value['expires_at'],
         'is_active': value['is_active'],
     };
 }

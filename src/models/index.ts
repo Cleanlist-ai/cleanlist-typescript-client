@@ -6,6 +6,7 @@ export * from './AddLeadsResponse';
 export * from './ApiKeyInfo';
 export * from './ApiKeysResponse';
 export * from './Body';
+export * from './BulkContactResult';
 export * from './CohortSummary';
 export * from './CompaniesFindStartResponse';
 export * from './CompaniesFindStatusResponse';
