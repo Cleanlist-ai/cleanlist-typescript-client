@@ -13,7 +13,7 @@ cd "$ROOT"
 RAW_SPEC="openapi/cleanse-api-v2.oas.json"
 GEN_SPEC="openapi/cleanse-api-v2.clean.json"
 BUILD="$ROOT/.build/ts"
-PKG_VERSION="${PKG_VERSION:-2.0.0}"
+PKG_VERSION="${PKG_VERSION:-3.0.0}"
 PYTHON="${PYTHON:-python3}"
 
 echo "==> Preparing spec (clean operationIds -> readable method names)"

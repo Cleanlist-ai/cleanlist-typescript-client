@@ -1,6 +1,6 @@
 {
   "name": "@cleanlist-ai/sdk",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Official TypeScript/JavaScript SDK for the Cleanlist API (v2) — B2B lead discovery, waterfall enrichment, lead lists, smart agents, and export.",
   "license": "MIT",
   "author": "Cleanlist <sal@cleanlist.ai>",
