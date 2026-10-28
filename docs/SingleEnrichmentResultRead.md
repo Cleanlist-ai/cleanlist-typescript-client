@@ -20,6 +20,8 @@ Name | Type
 `company` | string
 `enrichment_type` | string
 `provider` | string
+`failure_kind` | string
+`error` | string
 
 ## Example
 
@@ -41,6 +43,8 @@ const example = {
   "company": null,
   "enrichment_type": null,
   "provider": null,
+  "failure_kind": null,
+  "error": null,
 } satisfies SingleEnrichmentResultRead
 
 console.log(example)

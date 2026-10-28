@@ -110,6 +110,18 @@ export interface SingleEnrichmentResultRead {
      * @memberof SingleEnrichmentResultRead
      */
     provider?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof SingleEnrichmentResultRead
+     */
+    failure_kind?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof SingleEnrichmentResultRead
+     */
+    error?: string | null;
 }
 
 /**
@@ -144,6 +156,8 @@ export function SingleEnrichmentResultReadFromJSONTyped(json: any, ignoreDiscrim
         'company': json['company'] == null ? undefined : json['company'],
         'enrichment_type': json['enrichment_type'] == null ? undefined : json['enrichment_type'],
         'provider': json['provider'] == null ? undefined : json['provider'],
+        'failure_kind': json['failure_kind'] == null ? undefined : json['failure_kind'],
+        'error': json['error'] == null ? undefined : json['error'],
     };
 }
 
@@ -171,6 +185,8 @@ export function SingleEnrichmentResultReadToJSONTyped(value?: SingleEnrichmentRe
         'company': value['company'],
         'enrichment_type': value['enrichment_type'],
         'provider': value['provider'],
+        'failure_kind': value['failure_kind'],
+        'error': value['error'],
     };
 }
 

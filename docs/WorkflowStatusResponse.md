@@ -18,12 +18,15 @@ Name | Type
 `processed` | number
 `completed` | number
 `failed` | number
+`opted_out` | number
 `enrichment_type` | string
 `lead_list_id` | string
 `summary` | object
 `refund_status` | string
 `refund_message` | string
 `result` | [SingleEnrichmentResultRead](SingleEnrichmentResultRead.md)
+`results` | [Array&lt;BulkContactResult&gt;](BulkContactResult.md)
+`results_next_offset` | number
 `credits_charged` | number
 `credits_refunded` | number
 
@@ -46,12 +49,15 @@ const example = {
   "processed": null,
   "completed": null,
   "failed": null,
+  "opted_out": null,
   "enrichment_type": null,
   "lead_list_id": null,
   "summary": null,
   "refund_status": null,
   "refund_message": null,
   "result": null,
+  "results": null,
+  "results_next_offset": null,
   "credits_charged": null,
   "credits_refunded": null,
 } satisfies WorkflowStatusResponse

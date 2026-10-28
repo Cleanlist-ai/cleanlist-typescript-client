@@ -20,6 +20,13 @@ import {
     SingleEnrichmentResultReadToJSON,
     SingleEnrichmentResultReadToJSONTyped,
 } from './SingleEnrichmentResultRead';
+import type { BulkContactResult } from './BulkContactResult';
+import {
+    BulkContactResultFromJSON,
+    BulkContactResultFromJSONTyped,
+    BulkContactResultToJSON,
+    BulkContactResultToJSONTyped,
+} from './BulkContactResult';
 
 /**
  * 
@@ -64,7 +71,7 @@ export interface WorkflowStatusResponse {
      */
     workflow_id: string;
     /**
-     * Outer workflow status: e.g. 'pending', 'running', 'completed', 'failed', 'cancelled'.
+     * Outer workflow status: e.g. 'pending', 'running', 'completed', 'failed', 'cancelled'. A single-person run whose result failed (no match, opted out) is 'failed'; result.failure_kind says why.
      * @type {string}
      * @memberof WorkflowStatusResponse
      */
@@ -101,6 +108,12 @@ export interface WorkflowStatusResponse {
     failed?: number | null;
     /**
      * 
+     * @type {number}
+     * @memberof WorkflowStatusResponse
+     */
+    opted_out?: number | null;
+    /**
+     * 
      * @type {string}
      * @memberof WorkflowStatusResponse
      */
@@ -135,6 +148,18 @@ export interface WorkflowStatusResponse {
      * @memberof WorkflowStatusResponse
      */
     result?: SingleEnrichmentResultRead | null;
+    /**
+     * 
+     * @type {Array<BulkContactResult>}
+     * @memberof WorkflowStatusResponse
+     */
+    results?: Array<BulkContactResult> | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof WorkflowStatusResponse
+     */
+    results_next_offset?: number | null;
     /**
      * 
      * @type {number}
@@ -191,12 +216,15 @@ export function WorkflowStatusResponseFromJSONTyped(json: any, ignoreDiscriminat
         'processed': json['processed'] == null ? undefined : json['processed'],
         'completed': json['completed'] == null ? undefined : json['completed'],
         'failed': json['failed'] == null ? undefined : json['failed'],
+        'opted_out': json['opted_out'] == null ? undefined : json['opted_out'],
         'enrichment_type': json['enrichment_type'] == null ? undefined : json['enrichment_type'],
         'lead_list_id': json['lead_list_id'] == null ? undefined : json['lead_list_id'],
         'summary': json['summary'] == null ? undefined : json['summary'],
         'refund_status': json['refund_status'] == null ? undefined : json['refund_status'],
         'refund_message': json['refund_message'] == null ? undefined : json['refund_message'],
         'result': json['result'] == null ? undefined : SingleEnrichmentResultReadFromJSON(json['result']),
+        'results': json['results'] == null ? undefined : ((json['results'] as Array<any>).map(BulkContactResultFromJSON)),
+        'results_next_offset': json['results_next_offset'] == null ? undefined : json['results_next_offset'],
         'credits_charged': json['credits_charged'] == null ? undefined : json['credits_charged'],
         'credits_refunded': json['credits_refunded'] == null ? undefined : json['credits_refunded'],
     };
@@ -225,12 +253,15 @@ export function WorkflowStatusResponseToJSONTyped(value?: WorkflowStatusResponse
         'processed': value['processed'],
         'completed': value['completed'],
         'failed': value['failed'],
+        'opted_out': value['opted_out'],
         'enrichment_type': value['enrichment_type'],
         'lead_list_id': value['lead_list_id'],
         'summary': value['summary'],
         'refund_status': value['refund_status'],
         'refund_message': value['refund_message'],
         'result': SingleEnrichmentResultReadToJSON(value['result']),
+        'results': value['results'] == null ? undefined : ((value['results'] as Array<any>).map(BulkContactResultToJSON)),
+        'results_next_offset': value['results_next_offset'],
         'credits_charged': value['credits_charged'],
         'credits_refunded': value['credits_refunded'],
     };

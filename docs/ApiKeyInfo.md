@@ -13,6 +13,7 @@ Name | Type
 `scopes` | Array&lt;string | null&gt;
 `created_at` | string
 `last_used_at` | string
+`expires_at` | string
 `is_active` | boolean
 
 ## Example
@@ -29,6 +30,7 @@ const example = {
   "scopes": null,
   "created_at": null,
   "last_used_at": null,
+  "expires_at": null,
   "is_active": null,
 } satisfies ApiKeyInfo
 

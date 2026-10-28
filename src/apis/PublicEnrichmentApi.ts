@@ -67,6 +67,9 @@ export interface EnrichPersonOperationRequest {
 
 export interface EnrichmentStatusRequest {
     workflowId: string;
+    includeResults?: boolean;
+    resultsOffset?: number;
+    resultsLimit?: number;
 }
 
 /**
@@ -124,7 +127,7 @@ export class PublicEnrichmentApi extends runtime.BaseAPI {
     }
 
     /**
-     * Look up firmographics for a single company and return the full record synchronously.  Unlike person enrichment, this path is synchronous — it performs a CompanyDB single-record lookup inline (no Temporal workflow, no `workflow_id`) and returns the enriched `CompanyRecord` in the response, billing a flat 1 credit that settles before the response returns. Pass any of `domain` (most reliable), `company_id`, `company_name`, or `company_ticker`; a ticker is resolved to a domain via Finnhub (24h Redis cache) and falls back to a `company_name` fuzzy match when the symbol is unknown. `quote_id` is optional and, when present, verified and redeemed.  **📖 Docs:** https://docs.cleanlist.ai/api-reference/enrichment **📖 Docs:** https://docs.cleanlist.ai/api-reference/enrichment-types **📖 Docs:** https://docs.cleanlist.ai/guides/bulk-enrichment
+     * Look up firmographics for a single company and return the full record synchronously.  Unlike person enrichment, this path is synchronous — it performs a CompanyDB single-record lookup inline (no Temporal workflow, no `workflow_id`) and returns the enriched `CompanyRecord` in the response, billing a flat 1 credit that settles before the response returns. Pass any of `domain` (most reliable), `company_id`, `company_name`, or `company_ticker`; a ticker is resolved to a domain via Finnhub (24h Redis cache) and falls back to an exact `company_name` match when the symbol is unknown. `quote_id` is optional and, when present, verified and redeemed.  **📖 Docs:** https://docs.cleanlist.ai/api-reference/enrichment **📖 Docs:** https://docs.cleanlist.ai/api-reference/enrichment-types **📖 Docs:** https://docs.cleanlist.ai/guides/bulk-enrichment
      * Enrich a company
      */
     async enrichCompanyRaw(requestParameters: EnrichCompanyOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<EnrichCompanyResponse>> {
@@ -164,7 +167,7 @@ export class PublicEnrichmentApi extends runtime.BaseAPI {
     }
 
     /**
-     * Look up firmographics for a single company and return the full record synchronously.  Unlike person enrichment, this path is synchronous — it performs a CompanyDB single-record lookup inline (no Temporal workflow, no `workflow_id`) and returns the enriched `CompanyRecord` in the response, billing a flat 1 credit that settles before the response returns. Pass any of `domain` (most reliable), `company_id`, `company_name`, or `company_ticker`; a ticker is resolved to a domain via Finnhub (24h Redis cache) and falls back to a `company_name` fuzzy match when the symbol is unknown. `quote_id` is optional and, when present, verified and redeemed.  **📖 Docs:** https://docs.cleanlist.ai/api-reference/enrichment **📖 Docs:** https://docs.cleanlist.ai/api-reference/enrichment-types **📖 Docs:** https://docs.cleanlist.ai/guides/bulk-enrichment
+     * Look up firmographics for a single company and return the full record synchronously.  Unlike person enrichment, this path is synchronous — it performs a CompanyDB single-record lookup inline (no Temporal workflow, no `workflow_id`) and returns the enriched `CompanyRecord` in the response, billing a flat 1 credit that settles before the response returns. Pass any of `domain` (most reliable), `company_id`, `company_name`, or `company_ticker`; a ticker is resolved to a domain via Finnhub (24h Redis cache) and falls back to an exact `company_name` match when the symbol is unknown. `quote_id` is optional and, when present, verified and redeemed.  **📖 Docs:** https://docs.cleanlist.ai/api-reference/enrichment **📖 Docs:** https://docs.cleanlist.ai/api-reference/enrichment-types **📖 Docs:** https://docs.cleanlist.ai/guides/bulk-enrichment
      * Enrich a company
      */
     async enrichCompany(requestParameters: EnrichCompanyOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<EnrichCompanyResponse> {
@@ -271,7 +274,7 @@ export class PublicEnrichmentApi extends runtime.BaseAPI {
     }
 
     /**
-     * Poll the status, progress, and settled billing of an enrichment workflow started by `enrich_person`, `enrich_list`, or `enrich_by_task`.  This read is free and idempotent — call it repeatedly until `status` reaches a terminal state (`completed` / `failed` / `cancelled`). It accepts EITHER a `workflow_id` (e.g. `enrich-...` / `bulk-enrich-...`) OR an MCPTask cohort `task_id` (`cl-task_...`), resolving the latter to the workflow bound at dispatch so the agent can keep using the one handle it already has. Terminal single-lead runs include the inline enriched `result`; bulk runs report aggregate counters instead. When a prepaid-via-MCP run ends in failure, `refund_status` surfaces `pending_review` (credits are not auto-refunded).  **📖 Docs:** https://docs.cleanlist.ai/api-reference/enrichment
+     * Poll the status, progress, and settled billing of an enrichment workflow started by `enrich_person`, `enrich_list`, or `enrich_by_task`.  This read is free and idempotent — call it repeatedly until `status` reaches a terminal state (`completed` / `failed` / `cancelled`). It accepts EITHER a `workflow_id` (e.g. `enrich-...` / `bulk-enrich-...`) OR an MCPTask cohort `task_id` (`cl-task_...`), resolving the latter to the workflow bound at dispatch so the agent can keep using the one handle it already has. Terminal single-lead runs include the inline enriched `result`; bulk runs report aggregate counters, plus per-contact `results` (status, failure reason and the saved lead with email, LinkedIn URL and provider) when polled with `include_results=true`, paged by `results_offset` / `results_limit`. Per-contact records are kept for 24 hours; after that read the destination list via `GET /lead-lists/{id}/leads`. When a prepaid-via-MCP run ends in failure, `refund_status` surfaces `pending_review` (credits are not auto-refunded).  **📖 Docs:** https://docs.cleanlist.ai/api-reference/enrichment
      * Poll an enrichment workflow
      */
     async enrichmentStatusRaw(requestParameters: EnrichmentStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<WorkflowStatusResponse>> {
@@ -283,6 +286,18 @@ export class PublicEnrichmentApi extends runtime.BaseAPI {
         }
 
         const queryParameters: any = {};
+
+        if (requestParameters['includeResults'] != null) {
+            queryParameters['include_results'] = requestParameters['includeResults'];
+        }
+
+        if (requestParameters['resultsOffset'] != null) {
+            queryParameters['results_offset'] = requestParameters['resultsOffset'];
+        }
+
+        if (requestParameters['resultsLimit'] != null) {
+            queryParameters['results_limit'] = requestParameters['resultsLimit'];
+        }
 
         const headerParameters: runtime.HTTPHeaders = {};
 
@@ -309,7 +324,7 @@ export class PublicEnrichmentApi extends runtime.BaseAPI {
     }
 
     /**
-     * Poll the status, progress, and settled billing of an enrichment workflow started by `enrich_person`, `enrich_list`, or `enrich_by_task`.  This read is free and idempotent — call it repeatedly until `status` reaches a terminal state (`completed` / `failed` / `cancelled`). It accepts EITHER a `workflow_id` (e.g. `enrich-...` / `bulk-enrich-...`) OR an MCPTask cohort `task_id` (`cl-task_...`), resolving the latter to the workflow bound at dispatch so the agent can keep using the one handle it already has. Terminal single-lead runs include the inline enriched `result`; bulk runs report aggregate counters instead. When a prepaid-via-MCP run ends in failure, `refund_status` surfaces `pending_review` (credits are not auto-refunded).  **📖 Docs:** https://docs.cleanlist.ai/api-reference/enrichment
+     * Poll the status, progress, and settled billing of an enrichment workflow started by `enrich_person`, `enrich_list`, or `enrich_by_task`.  This read is free and idempotent — call it repeatedly until `status` reaches a terminal state (`completed` / `failed` / `cancelled`). It accepts EITHER a `workflow_id` (e.g. `enrich-...` / `bulk-enrich-...`) OR an MCPTask cohort `task_id` (`cl-task_...`), resolving the latter to the workflow bound at dispatch so the agent can keep using the one handle it already has. Terminal single-lead runs include the inline enriched `result`; bulk runs report aggregate counters, plus per-contact `results` (status, failure reason and the saved lead with email, LinkedIn URL and provider) when polled with `include_results=true`, paged by `results_offset` / `results_limit`. Per-contact records are kept for 24 hours; after that read the destination list via `GET /lead-lists/{id}/leads`. When a prepaid-via-MCP run ends in failure, `refund_status` surfaces `pending_review` (credits are not auto-refunded).  **📖 Docs:** https://docs.cleanlist.ai/api-reference/enrichment
      * Poll an enrichment workflow
      */
     async enrichmentStatus(requestParameters: EnrichmentStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<WorkflowStatusResponse> {
