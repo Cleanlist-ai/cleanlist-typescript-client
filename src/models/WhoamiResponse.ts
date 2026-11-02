@@ -109,6 +109,12 @@ export interface WhoamiResponse {
      * @memberof WhoamiResponse
      */
     features: Array<string | null>;
+    /**
+     * 
+     * @type {string}
+     * @memberof WhoamiResponse
+     */
+    acting_staff_email?: string | null;
 }
 
 
@@ -172,6 +178,7 @@ export function WhoamiResponseFromJSONTyped(json: any, ignoreDiscriminator: bool
         'tier': json['tier'],
         'appsumo_tier': json['appsumo_tier'] == null ? undefined : json['appsumo_tier'],
         'features': json['features'],
+        'acting_staff_email': json['acting_staff_email'] == null ? undefined : json['acting_staff_email'],
     };
 }
 
@@ -201,6 +208,7 @@ export function WhoamiResponseToJSONTyped(value?: WhoamiResponse | null, ignoreD
         'tier': value['tier'],
         'appsumo_tier': value['appsumo_tier'],
         'features': value['features'],
+        'acting_staff_email': value['acting_staff_email'],
     };
 }
 

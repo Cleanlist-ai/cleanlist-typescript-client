@@ -21,6 +21,7 @@ Name | Type
 `tier` | string
 `appsumo_tier` | number
 `features` | Array&lt;string | null&gt;
+`acting_staff_email` | string
 
 ## Example
 
@@ -44,6 +45,7 @@ const example = {
   "tier": null,
   "appsumo_tier": null,
   "features": null,
+  "acting_staff_email": null,
 } satisfies WhoamiResponse
 
 console.log(example)
