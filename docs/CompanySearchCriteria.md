@@ -11,6 +11,7 @@ Name | Type
 `companyNameMatchType` | string
 `domain` | string
 `industriesInclude` | Array&lt;string&gt;
+`naicsCodes` | Array&lt;string&gt;
 `headcountRanges` | Array&lt;string&gt;
 `revenueMin` | string
 `revenueMax` | string
@@ -76,6 +77,7 @@ const example = {
   "companyNameMatchType": null,
   "domain": null,
   "industriesInclude": null,
+  "naicsCodes": null,
   "headcountRanges": null,
   "revenueMin": null,
   "revenueMax": null,

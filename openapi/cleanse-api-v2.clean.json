@@ -5192,6 +5192,14 @@
             "title": "Industriesinclude",
             "description": "LinkedIn industries or industry group names to include."
           },
+          "naicsCodes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Naicscodes",
+            "description": "NAICS 2022 codes to include, matched against the company's primary NAICS code. A six-digit code matches exactly; a shorter code (5412, 54) matches every code under it."
+          },
           "headcountRanges": {
             "items": {
               "type": "string"
@@ -7325,16 +7333,17 @@
           "person_id": {
             "anyOf": [
               {
-                "type": "string"
+                "type": "string",
+                "format": "uuid"
               },
               {
                 "type": "null"
               }
             ],
             "title": "Person Id",
-            "description": "Cleanlist prospect/person identifier from a prior search. A strong identifier that satisfies the requirement on its own.",
+            "description": "Cleanlist person UUID of a saved lead/prospect. A strong identifier that satisfies the requirement on its own. Not a provider search id: pass linkedin_url or name + company for people found by search.",
             "examples": [
-              "prospect_5c8e"
+              "5c8e2f0a-4b1d-4e7a-9c3f-2a6b8d1e0f47"
             ]
           },
           "enrichment_type": {
@@ -12380,6 +12389,18 @@
                 "sync_to_crm"
               ]
             ]
+          },
+          "acting_staff_email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Acting Staff Email",
+            "description": "Set only when a Cleanlist staff member is working in this organization through the MCP (staff act-as). Null otherwise."
           }
         },
         "additionalProperties": false,

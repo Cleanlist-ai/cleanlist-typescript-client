@@ -59,6 +59,12 @@ export interface CompanySearchCriteria {
      */
     industriesInclude?: Array<string>;
     /**
+     * NAICS 2022 codes to include, matched against the company's primary NAICS code. A six-digit code matches exactly; a shorter code (5412, 54) matches every code under it.
+     * @type {Array<string>}
+     * @memberof CompanySearchCriteria
+     */
+    naicsCodes?: Array<string>;
+    /**
      * Headcount buckets to include (1-10 through 10001+), OR-ed.
      * @type {Array<string>}
      * @memberof CompanySearchCriteria
@@ -421,6 +427,7 @@ export function CompanySearchCriteriaFromJSONTyped(json: any, ignoreDiscriminato
         'companyNameMatchType': json['companyNameMatchType'] == null ? undefined : json['companyNameMatchType'],
         'domain': json['domain'] == null ? undefined : json['domain'],
         'industriesInclude': json['industriesInclude'] == null ? undefined : json['industriesInclude'],
+        'naicsCodes': json['naicsCodes'] == null ? undefined : json['naicsCodes'],
         'headcountRanges': json['headcountRanges'] == null ? undefined : json['headcountRanges'],
         'revenueMin': json['revenueMin'] == null ? undefined : json['revenueMin'],
         'revenueMax': json['revenueMax'] == null ? undefined : json['revenueMax'],
@@ -492,6 +499,7 @@ export function CompanySearchCriteriaToJSONTyped(value?: CompanySearchCriteria |
         'companyNameMatchType': value['companyNameMatchType'],
         'domain': value['domain'],
         'industriesInclude': value['industriesInclude'],
+        'naicsCodes': value['naicsCodes'],
         'headcountRanges': value['headcountRanges'],
         'revenueMin': value['revenueMin'],
         'revenueMax': value['revenueMax'],
