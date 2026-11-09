@@ -37,6 +37,12 @@ export interface ExportCsvRequest {
      * @memberof ExportCsvRequest
      */
     include_smart_agents?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof ExportCsvRequest
+     */
+    job_id?: string | null;
 }
 
 /**
@@ -60,6 +66,7 @@ export function ExportCsvRequestFromJSONTyped(json: any, ignoreDiscriminator: bo
         'list_id': json['list_id'],
         'columns': json['columns'] == null ? undefined : json['columns'],
         'include_smart_agents': json['include_smart_agents'] == null ? undefined : json['include_smart_agents'],
+        'job_id': json['job_id'] == null ? undefined : json['job_id'],
     };
 }
 
@@ -77,6 +84,7 @@ export function ExportCsvRequestToJSONTyped(value?: ExportCsvRequest | null, ign
         'list_id': value['list_id'],
         'columns': value['columns'],
         'include_smart_agents': value['include_smart_agents'],
+        'job_id': value['job_id'],
     };
 }
 

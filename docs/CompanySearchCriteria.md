@@ -56,6 +56,7 @@ Name | Type
 `stockSymbols` | Array&lt;string&gt;
 `domainsList` | Array&lt;string&gt;
 `companyNamesList` | Array&lt;string&gt;
+`linkedinUrls` | Array&lt;string&gt;
 `twitterHandle` | string
 `descriptionKeyword` | string
 `updatedAfter` | string
@@ -122,6 +123,7 @@ const example = {
   "stockSymbols": null,
   "domainsList": null,
   "companyNamesList": null,
+  "linkedinUrls": null,
   "twitterHandle": null,
   "descriptionKeyword": null,
   "updatedAfter": null,

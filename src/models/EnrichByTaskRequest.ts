@@ -49,7 +49,24 @@ export interface EnrichByTaskRequest {
      * @memberof EnrichByTaskRequest
      */
     quote_id?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof EnrichByTaskRequest
+     */
+    phone_waterfall?: EnrichByTaskRequestPhoneWaterfallEnum | null;
 }
+
+
+/**
+ * @export
+ */
+export const EnrichByTaskRequestPhoneWaterfallEnum = {
+    standard: 'standard',
+    gb: 'gb'
+} as const;
+export type EnrichByTaskRequestPhoneWaterfallEnum = typeof EnrichByTaskRequestPhoneWaterfallEnum[keyof typeof EnrichByTaskRequestPhoneWaterfallEnum];
+
 
 /**
  * Check if a given object implements the EnrichByTaskRequest interface.
@@ -75,6 +92,7 @@ export function EnrichByTaskRequestFromJSONTyped(json: any, ignoreDiscriminator:
         'entity_ids': json['entity_ids'] == null ? undefined : json['entity_ids'],
         'lead_list_id': json['lead_list_id'] == null ? undefined : json['lead_list_id'],
         'quote_id': json['quote_id'] == null ? undefined : json['quote_id'],
+        'phone_waterfall': json['phone_waterfall'] == null ? undefined : json['phone_waterfall'],
     };
 }
 
@@ -94,6 +112,7 @@ export function EnrichByTaskRequestToJSONTyped(value?: EnrichByTaskRequest | nul
         'entity_ids': value['entity_ids'],
         'lead_list_id': value['lead_list_id'],
         'quote_id': value['quote_id'],
+        'phone_waterfall': value['phone_waterfall'],
     };
 }
 

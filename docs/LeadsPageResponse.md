@@ -11,6 +11,7 @@ Name | Type
 `agent_instructions` | string
 `usage` | string
 `message` | string
+`snapshot_id` | string
 `presentation` | [SearchPresentation](SearchPresentation.md)
 `pending_imports` | [Array&lt;PendingImportRow&gt;](PendingImportRow.md)
 `pending_import_total` | number
@@ -32,6 +33,7 @@ const example = {
   "agent_instructions": null,
   "usage": null,
   "message": null,
+  "snapshot_id": null,
   "presentation": null,
   "pending_imports": null,
   "pending_import_total": null,

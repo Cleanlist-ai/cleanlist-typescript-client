@@ -62,7 +62,7 @@ export interface ExportJsonResponse {
      */
     leads: Array<object | null>;
     /**
-     * Total number of leads in the list (across all pages).
+     * Total number of rows in the list (across all pages), import rows not yet enriched included.
      * @type {number}
      * @memberof ExportJsonResponse
      */
@@ -73,6 +73,12 @@ export interface ExportJsonResponse {
      * @memberof ExportJsonResponse
      */
     cursor?: string | null;
+    /**
+     * Rows of this page's place in the ordering that left the list (deleted or moved) after the cursor's ordering was taken, so the page holds fewer rows than it covers. `total` minus the sum of `skipped` over every page is the number of rows returned.
+     * @type {number}
+     * @memberof ExportJsonResponse
+     */
+    skipped?: number;
 }
 
 /**
@@ -104,6 +110,7 @@ export function ExportJsonResponseFromJSONTyped(json: any, ignoreDiscriminator: 
         'leads': json['leads'],
         'total': json['total'],
         'cursor': json['cursor'] == null ? undefined : json['cursor'],
+        'skipped': json['skipped'] == null ? undefined : json['skipped'],
     };
 }
 
@@ -127,6 +134,7 @@ export function ExportJsonResponseToJSONTyped(value?: ExportJsonResponse | null,
         'leads': value['leads'],
         'total': value['total'],
         'cursor': value['cursor'],
+        'skipped': value['skipped'],
     };
 }
 

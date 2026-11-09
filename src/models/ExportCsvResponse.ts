@@ -26,40 +26,66 @@ export interface ExportCsvResponse {
      */
     list_id: string;
     /**
-     * Time-limited, SAS-signed URL to download the generated CSV file. The signature (`sig`) and expiry (`exp`) query params gate access; the link stops working after `expires_at`.
+     * 
      * @type {string}
      * @memberof ExportCsvResponse
      */
-    download_url: string;
+    job_id?: string | null;
     /**
-     * ISO-8601 UTC timestamp at which `download_url` expires. Generated URLs are valid for 24 hours.
+     * `completed` with a `download_url`, or `running` (HTTP 202): call again with `job_id`.
      * @type {string}
      * @memberof ExportCsvResponse
      */
-    expires_at: string;
+    status?: ExportCsvResponseStatusEnum;
     /**
-     * Number of data rows written to the CSV (excludes the header row).
+     * 
+     * @type {string}
+     * @memberof ExportCsvResponse
+     */
+    download_url?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ExportCsvResponse
+     */
+    expires_at?: string | null;
+    /**
+     * Number of data rows written to the CSV (excludes the header row); while running, the rows being exported.
      * @type {number}
      * @memberof ExportCsvResponse
      */
     row_count: number;
     /**
-     * Size of the generated CSV file in bytes.
+     * 
      * @type {number}
      * @memberof ExportCsvResponse
      */
-    file_size_bytes: number;
+    file_size_bytes?: number | null;
+    /**
+     * Rows of the list that changed while it was exporting (deleted, or merged into another row) and are not in the file. `row_count` + `skipped_count` is the list's row count when the export started.
+     * @type {number}
+     * @memberof ExportCsvResponse
+     */
+    skipped_count?: number;
 }
+
+
+/**
+ * @export
+ */
+export const ExportCsvResponseStatusEnum = {
+    running: 'running',
+    completed: 'completed'
+} as const;
+export type ExportCsvResponseStatusEnum = typeof ExportCsvResponseStatusEnum[keyof typeof ExportCsvResponseStatusEnum];
+
 
 /**
  * Check if a given object implements the ExportCsvResponse interface.
  */
 export function instanceOfExportCsvResponse(value: object): value is ExportCsvResponse {
     if (!('list_id' in value) || value['list_id'] === undefined) return false;
-    if (!('download_url' in value) || value['download_url'] === undefined) return false;
-    if (!('expires_at' in value) || value['expires_at'] === undefined) return false;
     if (!('row_count' in value) || value['row_count'] === undefined) return false;
-    if (!('file_size_bytes' in value) || value['file_size_bytes'] === undefined) return false;
     return true;
 }
 
@@ -74,10 +100,13 @@ export function ExportCsvResponseFromJSONTyped(json: any, ignoreDiscriminator: b
     return {
         
         'list_id': json['list_id'],
-        'download_url': json['download_url'],
-        'expires_at': json['expires_at'],
+        'job_id': json['job_id'] == null ? undefined : json['job_id'],
+        'status': json['status'] == null ? undefined : json['status'],
+        'download_url': json['download_url'] == null ? undefined : json['download_url'],
+        'expires_at': json['expires_at'] == null ? undefined : json['expires_at'],
         'row_count': json['row_count'],
-        'file_size_bytes': json['file_size_bytes'],
+        'file_size_bytes': json['file_size_bytes'] == null ? undefined : json['file_size_bytes'],
+        'skipped_count': json['skipped_count'] == null ? undefined : json['skipped_count'],
     };
 }
 
@@ -93,10 +122,13 @@ export function ExportCsvResponseToJSONTyped(value?: ExportCsvResponse | null, i
     return {
         
         'list_id': value['list_id'],
+        'job_id': value['job_id'],
+        'status': value['status'],
         'download_url': value['download_url'],
         'expires_at': value['expires_at'],
         'row_count': value['row_count'],
         'file_size_bytes': value['file_size_bytes'],
+        'skipped_count': value['skipped_count'],
     };
 }
 
