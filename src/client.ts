@@ -19,6 +19,7 @@
  * (`PublicWorkspaceApi`, `Configuration`, …); this is just sugar.
  */
 import { Configuration, ConfigurationParameters } from './runtime';
+import { DEFAULT_MAX_ATTEMPTS, Mode, ResponseMeta, retryingFetch } from './http';
 import {
     PublicEnrichmentApi,
     PublicExportApi,
@@ -38,6 +39,12 @@ export interface CleanlistOptions {
     basePath?: string;
     /** Custom `fetch` implementation (e.g. for Node < 18, or a test double). */
     fetchApi?: ConfigurationParameters['fetchApi'];
+    /**
+     * Total tries per request, the first one included (default 3). 429s and 5xx are
+     * retried with backoff, honoring `Retry-After`. Writes carry an `Idempotency-Key`
+     * that stays the same across retries. Set 1 to turn retries off.
+     */
+    maxAttempts?: number;
 }
 
 function envKey(): string | undefined {
@@ -56,6 +63,9 @@ export class Cleanlist {
     readonly enrichment: PublicEnrichmentApi;
     readonly smartAgents: PublicSmartAgentsApi;
     readonly export: PublicExportApi;
+    /** Rate-limit, mode and replay headers of the most recent response. */
+    lastResponse?: ResponseMeta;
+    private readonly keyMode: Mode;
 
     constructor(options: CleanlistOptions | string = {}) {
         const opts: CleanlistOptions = typeof options === 'string' ? { accessToken: options } : options;
@@ -66,10 +76,17 @@ export class Cleanlist {
             );
         }
 
+        this.keyMode = accessToken.startsWith('clapi_test_') ? 'test' : 'live';
+        const baseFetch = opts.fetchApi ?? ((input, init) => fetch(input, init));
         this.configuration = new Configuration({
             basePath: opts.basePath ?? DEFAULT_BASE_PATH,
             accessToken,
-            fetchApi: opts.fetchApi,
+            fetchApi: retryingFetch(baseFetch, {
+                maxAttempts: opts.maxAttempts ?? DEFAULT_MAX_ATTEMPTS,
+                onResponse: (meta) => {
+                    this.lastResponse = meta;
+                },
+            }),
         });
 
         this.workspace = new PublicWorkspaceApi(this.configuration);
@@ -78,5 +95,10 @@ export class Cleanlist {
         this.enrichment = new PublicEnrichmentApi(this.configuration);
         this.smartAgents = new PublicSmartAgentsApi(this.configuration);
         this.export = new PublicExportApi(this.configuration);
+    }
+
+    /** `test` when the server says so (`Cleanlist-Mode: test`), else what the key prefix implies. */
+    get mode(): Mode {
+        return this.lastResponse?.mode ?? this.keyMode;
     }
 }

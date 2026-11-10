@@ -41,6 +41,8 @@ console.log(me.organization_name, list.list_id);
   - [Smart Agents](#smart-agents-clsmartagents)
   - [Export](#export-clexport)
 - [Examples](#examples)
+- [Retries, idempotency and rate limits](#retries-idempotency-and-rate-limits)
+- [Verifying webhooks](#verifying-webhooks)
 - [Error handling](#error-handling)
 - [Pagination](#pagination)
 - [Using the generated API classes directly](#using-the-generated-api-classes-directly)
@@ -121,6 +123,7 @@ console.log('workflow:', job.workflow_id, '| reserved:', job.credits_reserved);
 | `accessToken` | `$CLEANLIST_API_KEY`       | Your API key. Sent as `Authorization: Bearer …`.                 |
 | `basePath`    | `https://api.cleanlist.ai` | API base URL. Use `http://localhost:8000` for local dev.         |
 | `fetchApi`    | platform `fetch`           | Custom fetch (e.g. `node-fetch`/`undici` on Node < 18, or a mock). |
+| `maxAttempts` | `3`                        | Tries per request, the first included. `1` turns retries off.    |
 
 For advanced needs (middleware, custom headers), build a `Configuration` yourself and
 pass it to the generated API classes — see
@@ -328,6 +331,41 @@ reads `CLEANLIST_API_KEY` and an optional `CLEANLIST_HOST`. Type-check them all 
 | [`06_error_handling.ts`](examples/06_error_handling.ts) | Catching `ResponseError`. | Free |
 | [`07_find_people.ts`](examples/07_find_people.ts) | People Finder: filter values, compile preview, search + next page. | Free |
 | [`08_smart_agent.ts`](examples/08_smart_agent.ts) | Run a custom AI smart-agent column and read the results. | Spends |
+
+## Retries, idempotency and rate limits
+
+A 429 or 5xx is retried with backoff, honoring `Retry-After` (a wait over a minute is
+returned to you instead). Every POST, PUT, PATCH and DELETE carries an `Idempotency-Key`
+that stays the same across its retries, so a retried write runs once. To set your own:
+
+```ts
+import { withIdempotencyKey } from '@cleanlist-ai/sdk';
+
+await cl.leadLists.createList({ createListRequest: { name: 'Q3' } }, withIdempotencyKey('order-1234'));
+```
+
+After any call, `cl.lastResponse` has the rate-limit headers and the mode:
+
+```ts
+cl.lastResponse?.rateLimit; // { limit, remaining, reset }  (reset is unix seconds)
+cl.lastResponse?.idempotentReplayed; // true when the server replayed a stored response
+cl.mode; // 'test' for a clapi_test_ key's sandbox workspace, else 'live'
+```
+
+`readResponseMeta(response)` reads the same values off any `Response`, such as
+`ResponseError.response`.
+
+## Verifying webhooks
+
+```ts
+import { verifyWebhookSignature } from '@cleanlist-ai/sdk';
+
+// rawBody: the request body exactly as received, not re-serialized JSON.
+const ok = await verifyWebhookSignature(rawBody, req.headers['cleanlist-signature'], process.env.CLEANLIST_WEBHOOK_SECRET!);
+if (!ok) return res.status(400).end();
+```
+
+Signatures older than 5 minutes are refused (`{ toleranceSeconds }` changes that).
 
 ## Error handling
 
