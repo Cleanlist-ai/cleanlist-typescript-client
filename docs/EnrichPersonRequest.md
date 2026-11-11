@@ -18,6 +18,7 @@ Name | Type
 `enrichment_type` | string
 `include_phone` | boolean
 `quote_id` | string
+`phone_waterfall` | string
 
 ## Example
 
@@ -38,6 +39,7 @@ const example = {
   "enrichment_type": null,
   "include_phone": null,
   "quote_id": null,
+  "phone_waterfall": null,
 } satisfies EnrichPersonRequest
 
 console.log(example)

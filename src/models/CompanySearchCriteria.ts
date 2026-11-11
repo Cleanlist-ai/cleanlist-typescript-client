@@ -329,6 +329,12 @@ export interface CompanySearchCriteria {
      */
     companyNamesList?: Array<string>;
     /**
+     * Company LinkedIn page URLs to match exactly; normalized to https://www.linkedin.com/company/<slug>. Values that are not a company page are dropped.
+     * @type {Array<string>}
+     * @memberof CompanySearchCriteria
+     */
+    linkedinUrls?: Array<string>;
+    /**
      * Exact Twitter handle; a leading @ is kept.
      * @type {string}
      * @memberof CompanySearchCriteria
@@ -472,6 +478,7 @@ export function CompanySearchCriteriaFromJSONTyped(json: any, ignoreDiscriminato
         'stockSymbols': json['stockSymbols'] == null ? undefined : json['stockSymbols'],
         'domainsList': json['domainsList'] == null ? undefined : json['domainsList'],
         'companyNamesList': json['companyNamesList'] == null ? undefined : json['companyNamesList'],
+        'linkedinUrls': json['linkedinUrls'] == null ? undefined : json['linkedinUrls'],
         'twitterHandle': json['twitterHandle'] == null ? undefined : json['twitterHandle'],
         'descriptionKeyword': json['descriptionKeyword'] == null ? undefined : json['descriptionKeyword'],
         'updatedAfter': json['updatedAfter'] == null ? undefined : json['updatedAfter'],
@@ -544,6 +551,7 @@ export function CompanySearchCriteriaToJSONTyped(value?: CompanySearchCriteria |
         'stockSymbols': value['stockSymbols'],
         'domainsList': value['domainsList'],
         'companyNamesList': value['companyNamesList'],
+        'linkedinUrls': value['linkedinUrls'],
         'twitterHandle': value['twitterHandle'],
         'descriptionKeyword': value['descriptionKeyword'],
         'updatedAfter': value['updatedAfter'],

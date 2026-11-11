@@ -9,6 +9,7 @@ Name | Type
 `list_id` | string
 `columns` | Array&lt;string&gt;
 `include_smart_agents` | boolean
+`job_id` | string
 
 ## Example
 
@@ -20,6 +21,7 @@ const example = {
   "list_id": null,
   "columns": null,
   "include_smart_agents": null,
+  "job_id": null,
 } satisfies ExportCsvRequest
 
 console.log(example)

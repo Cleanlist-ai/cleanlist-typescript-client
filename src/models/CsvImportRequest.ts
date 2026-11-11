@@ -48,6 +48,12 @@ export interface CsvImportRequest {
      * @type {string}
      * @memberof CsvImportRequest
      */
+    phone_waterfall?: CsvImportRequestPhoneWaterfallEnum | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof CsvImportRequest
+     */
     quote_id?: string | null;
     /**
      * 
@@ -67,6 +73,15 @@ export const CsvImportRequestEnrichmentTypeEnum = {
     full: 'full'
 } as const;
 export type CsvImportRequestEnrichmentTypeEnum = typeof CsvImportRequestEnrichmentTypeEnum[keyof typeof CsvImportRequestEnrichmentTypeEnum];
+
+/**
+ * @export
+ */
+export const CsvImportRequestPhoneWaterfallEnum = {
+    standard: 'standard',
+    gb: 'gb'
+} as const;
+export type CsvImportRequestPhoneWaterfallEnum = typeof CsvImportRequestPhoneWaterfallEnum[keyof typeof CsvImportRequestPhoneWaterfallEnum];
 
 
 /**
@@ -92,6 +107,7 @@ export function CsvImportRequestFromJSONTyped(json: any, ignoreDiscriminator: bo
         'column_mapping': json['column_mapping'],
         'dispatch_enrichment': json['dispatch_enrichment'] == null ? undefined : json['dispatch_enrichment'],
         'enrichment_type': json['enrichment_type'] == null ? undefined : json['enrichment_type'],
+        'phone_waterfall': json['phone_waterfall'] == null ? undefined : json['phone_waterfall'],
         'quote_id': json['quote_id'] == null ? undefined : json['quote_id'],
         'idempotency_key': json['idempotency_key'] == null ? undefined : json['idempotency_key'],
     };
@@ -112,6 +128,7 @@ export function CsvImportRequestToJSONTyped(value?: CsvImportRequest | null, ign
         'column_mapping': value['column_mapping'],
         'dispatch_enrichment': value['dispatch_enrichment'],
         'enrichment_type': value['enrichment_type'],
+        'phone_waterfall': value['phone_waterfall'],
         'quote_id': value['quote_id'],
         'idempotency_key': value['idempotency_key'],
     };

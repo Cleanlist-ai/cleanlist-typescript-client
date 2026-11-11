@@ -1197,7 +1197,7 @@
           "Public Lead Lists"
         ],
         "summary": "Delete a lead list",
-        "description": "Delete a list and its lead memberships. Leads survive.\n\nHard delete via `delete_with_dependencies` (mirrors the portal):\nsmart/action columns, CRM-contact links, per-user state, shares,\nraw-person stubs, and junction rows are removed; the Lead rows\nthemselves are global entities and are NOT deleted — they stay\nfindable via search_people and in any other list they belong to.\n\nOwner-only + is_protected guards mirror the portal. There is no\nin-flight-workflow guard (the portal has none either; the MCP\nconfirm-gate already prevents accidental deletes off a fuzzy name\nmatch). Re-deleting an unknown/already-deleted list returns 404.\n\nOwner-only: a non-owner gets 404 (indistinguishable from missing) and a\nprotected list gets 403 `list_protected`. Requires the `lists:write`\nscope.\n\n**📖 Docs:** https://docs.cleanlist.ai/api-reference/lead-lists · https://docs.cleanlist.ai/guides/managing-lists",
+        "description": "Delete a list and its lead memberships. Leads survive.\n\nThe list is gone at once and a background job deletes its rows (mirrors\nthe portal): smart/action columns, CRM-contact links, per-user state,\nshares, raw-person stubs, and junction rows are removed; the Lead rows\nthemselves are global entities and are NOT deleted — they stay\nfindable via search_people and in any other list they belong to.\n\nOwner-only + is_protected guards mirror the portal. There is no\nin-flight-workflow guard (the portal has none either; the MCP\nconfirm-gate already prevents accidental deletes off a fuzzy name\nmatch). Re-deleting an unknown/already-deleted list returns 404.\n\nOwner-only: a non-owner gets 404 (indistinguishable from missing) and a\nprotected list gets 403 `list_protected`. Requires the `lists:write`\nscope.\n\n**📖 Docs:** https://docs.cleanlist.ai/api-reference/lead-lists · https://docs.cleanlist.ai/guides/managing-lists",
         "operationId": "delete_list_api_v2_lead_lists__list_id__delete",
         "security": [
           {
@@ -1325,7 +1325,7 @@
           "Public Lead Lists"
         ],
         "summary": "List leads in a list",
-        "description": "Paginate leads in a list.\n\nFields like `first_name`, `last_name`, `title`, `company` come from\nthe joined Prospect + Company relations — the Lead row itself only\ncarries enrichment results (email, phone, linkedin URL).\n\nPage forward with `limit` (1–500, default 100) and the opaque `cursor`.\nThe response also carries a `task_id` cohort handle for the page so a\nfollow-up `add_person_enrichments` can operate on these leads without\nre-passing lead_ids. Requires the `lists:read` scope.\n\n**📖 Docs:** https://docs.cleanlist.ai/api-reference/lead-lists · https://docs.cleanlist.ai/guides/managing-lists",
+        "description": "Paginate leads in a list.\n\nFields like `first_name`, `last_name`, `title`, `company` come from\nthe joined Prospect + Company relations — the Lead row itself only\ncarries enrichment results (email, phone, linkedin URL).\n\nPage forward with `limit` (1–500, default 100) and the opaque `cursor`,\nor with the response's `snapshot_id` plus an `offset`. Either way the walk\nreads one frozen order, so rows added meanwhile cause no duplicates or\nskips; a snapshot that has expired answers 409 `snapshot_expired`.\nThe response also carries a `task_id` cohort handle for the page so a\nfollow-up `add_person_enrichments` can operate on these leads without\nre-passing lead_ids. Requires the `lists:read` scope.\n\n**📖 Docs:** https://docs.cleanlist.ai/api-reference/lead-lists · https://docs.cleanlist.ai/guides/managing-lists",
         "operationId": "list_leads_in_list_api_v2_lead_lists__list_id__leads_get",
         "security": [
           {
@@ -1368,6 +1368,40 @@
                 }
               ],
               "title": "Cursor"
+            }
+          },
+          {
+            "name": "snapshot_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 512
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Snapshot Id"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Offset"
             }
           }
         ],
@@ -1761,7 +1795,7 @@
           "Public Lead Lists"
         ],
         "summary": "Import leads from CSV",
-        "description": "Import a CSV into a lead list and optionally dispatch bulk enrichment.\n\nPipeline:\n    1. Authz: `lists:write` always; `enrich:write` additionally when\n       `dispatch_enrichment=True` (the workflow spends credits).\n    2. Idempotency cache lookup (org-wide, 24h TTL).\n    3. Base64 decode + parse via `parse_csv_to_rawpeople`.\n    4. If dispatching: verify quote (if provided), open reservation,\n       redeem quote.\n    5. Bulk-insert RawPeople into the list. UUIDs are stamped\n       Python-side so we can hand them to the workflow.\n    6. If dispatching: kick off `start_bulk_enrichment` with the\n       parsed prospects + raw_person_ids. The workflow's per-Lead\n       `insert_lead_to_list` activity handles prospect_count\n       updates per the existing pattern; import-only path bumps\n       prospect_count here directly.\n    7. Cache the response under `idempotency_key` (if provided).\n\nCross-list dedup: this endpoint dedupes ONLY within the upload. A\nrow whose identity already exists as a Lead elsewhere in the\nworkspace still imports as a RawPerson here; the workflow's\n`persist_enrichment_result` then deduplicates against existing\nLeads by public_identifier / prospect_id (existing behavior).\nNet effect: no duplicate Lead, but the RawPerson stub persists\nuntil the workflow processes it.\n\nSend the file as base64 in `csv_content_base64` (≤150 KB / ~600 rows)\nwith a `column_mapping` from canonical field to CSV header. Requires the\n`lists:write` scope, plus `enrich:write` when `dispatch_enrichment=true`\n(the enrichment spend). Importing rows is free; when dispatching,\nenrichment is billed on top (partial 1cr, phone_only 10cr, full 11cr per\nlead). Pass an `idempotency_key` to make retries safe.\n\n**📖 Docs:** https://docs.cleanlist.ai/guides/bulk-enrichment",
+        "description": "Import a CSV into a lead list and optionally dispatch bulk enrichment.\n\nPipeline:\n    1. Authz: `lists:write` always; `enrich:write` additionally when\n       `dispatch_enrichment=True` (the workflow spends credits).\n    2. Idempotency cache lookup (org-wide, 24h TTL).\n    3. Base64 decode + parse via `parse_csv_to_rawpeople`.\n    4. If dispatching: verify quote (if provided), open reservation,\n       redeem quote.\n    5. Bulk-insert RawPeople into the list. UUIDs are stamped\n       Python-side so we can hand them to the workflow.\n    6. If dispatching: write the imported rows as a list selection and\n       kick off `start_selection_enrichment` on it. The workflow's per-Lead\n       `insert_lead_to_list` activity handles prospect_count\n       updates per the existing pattern; import-only path bumps\n       prospect_count here directly.\n    7. Cache the response under `idempotency_key` (if provided).\n\nCross-list dedup: this endpoint dedupes ONLY within the upload. A\nrow whose identity already exists as a Lead elsewhere in the\nworkspace still imports as a RawPerson here; the workflow's\n`persist_enrichment_result` then deduplicates against existing\nLeads by public_identifier / prospect_id (existing behavior).\nNet effect: no duplicate Lead, but the RawPerson stub persists\nuntil the workflow processes it.\n\nSend the file as base64 in `csv_content_base64` (≤150 KB / ~600 rows)\nwith a `column_mapping` from canonical field to CSV header. Requires the\n`lists:write` scope, plus `enrich:write` when `dispatch_enrichment=true`\n(the enrichment spend). Importing rows is free; when dispatching,\nenrichment is billed on top (partial 1cr, phone_only 10cr, full 11cr per\nlead). Pass an `idempotency_key` to make retries safe.\n\n**📖 Docs:** https://docs.cleanlist.ai/guides/bulk-enrichment",
         "operationId": "csv_import_api_v2_lead_lists__list_id__csv_import_post",
         "security": [
           {
@@ -2053,7 +2087,7 @@
           "Public People Finder"
         ],
         "summary": "Search People",
-        "description": "Search people. FREE — credits are spent at enrichment / save time.\n\nDelegates to the internal staging handler so the 5-step filter\npipeline (location component expansion → region contains expansion\n→ column mapping → enum alias expansion → Crustdata format\ntransform) runs unchanged. We pass the caller's actual tier so\nFREE-tier callers get the 25-row preview cap.",
+        "description": "Search people. Free unless the org has a per-row search price.\n\nDelegates to the internal staging handler so the 5-step filter\npipeline (location component expansion → region contains expansion\n→ column mapping → enum alias expansion → Crustdata format\ntransform) runs unchanged. We pass the caller's actual tier so\nFREE-tier callers get the 25-row preview cap.",
         "operationId": "search_people_api_v2_people_find_post",
         "requestBody": {
           "content": {
@@ -3929,7 +3963,7 @@
           "Public Export"
         ],
         "summary": "Export a list to CSV (signed URL)",
-        "description": "Export a Lead List to CSV and return a time-limited signed download URL.\n\nStreams the list's leads through a temporary spooled file, uploads the\nresult to blob storage, and responds with a SAS-signed `download_url`\nthat expires 24 hours after generation (see `expires_at`). Pass `columns`\nto control which fields — and their order — are written, or omit it to use\nthe default column set; set `include_smart_agents=false` to skip any\nconfigured smart-agent result columns. This export is free and does not\nconsume credits.\n\n**📖 Docs:** https://docs.cleanlist.ai/guides/exporting-data",
+        "description": "Export a Lead List to CSV and return a time-limited signed download URL.\n\nStarts an export job over every row of the list (import rows not yet\nenriched come first) and waits up to 20 seconds for it. When the file is\nready the response carries a SAS-signed `download_url` that expires 24\nhours after generation (see `expires_at`). A bigger list answers HTTP 202\nwith `status: running` and a `job_id`: call again with that `job_id` to\nget the link. Pass `columns` to control which fields, and their order,\nare written, or omit it to use the default column set; set\n`include_smart_agents=false` to skip any configured smart-agent result\ncolumns. This export is free and does not consume credits.\n\n**📖 Docs:** https://docs.cleanlist.ai/guides/exporting-data",
         "operationId": "export_csv_api_v2_export_csv_signed_url_post",
         "requestBody": {
           "content": {
@@ -4056,7 +4090,7 @@
           "Public Export"
         ],
         "summary": "Export a list as JSON",
-        "description": "Export a Lead List as JSON rows returned inline in the response.\n\nReturns a page of leads (default 100, max 500 per call) projected to the\nsame columns as the CSV export and wrapped in the standard response\nenvelope. Use the opaque `cursor` from each response to fetch the next\npage; a malformed cursor returns 400 rather than silently rewinding to\npage 0. This export is free and does not consume credits.\n\n**📖 Docs:** https://docs.cleanlist.ai/guides/exporting-data",
+        "description": "Export a Lead List as JSON rows returned inline in the response.\n\nReturns a page of rows (default 100, max 500 per call) projected to the\nsame columns as the CSV export, in the same order (import rows not yet\nenriched first, then leads), wrapped in the standard response envelope.\nUse the opaque `cursor` from each response to fetch the next page; a\nmalformed cursor returns 400 rather than silently rewinding to page 0,\nand a cursor whose ordering expired (15 minutes unused) returns 409.\nThis export is free and does not consume credits.\n\n**📖 Docs:** https://docs.cleanlist.ai/guides/exporting-data",
         "operationId": "export_json_api_v2_export_json_get",
         "security": [
           {
@@ -4092,7 +4126,8 @@
             "schema": {
               "anyOf": [
                 {
-                  "type": "string"
+                  "type": "string",
+                  "maxLength": 1024
                 },
                 {
                   "type": "null"
@@ -5510,6 +5545,14 @@
             "title": "Companynameslist",
             "description": "Exact, case-sensitive company names to match."
           },
+          "linkedinUrls": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Linkedinurls",
+            "description": "Company LinkedIn page URLs to match exactly; normalized to https://www.linkedin.com/company/<slug>. Values that are not a company page are dropped."
+          },
           "twitterHandle": {
             "type": "string",
             "title": "Twitterhandle",
@@ -6001,6 +6044,25 @@
             "description": "Required when dispatch_enrichment=True. Same enum and pricing as enrich_person / enrich_list: partial (email, 1cr), phone_only (phone, 10cr), full (email + phone, 11cr).",
             "examples": [
               "full"
+            ]
+          },
+          "phone_waterfall": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "standard",
+                  "gb"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone Waterfall",
+            "description": "`gb` runs the UK phone waterfall on `phone_only` and `full` lookups: only a UK mobile ends the search. UK landlines are dropped. If no UK mobile is found, numbers from other countries are returned instead.",
+            "examples": [
+              "gb"
             ]
           },
           "quote_id": {
@@ -6614,6 +6676,25 @@
             "examples": [
               "quote_c0h0rt"
             ]
+          },
+          "phone_waterfall": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "standard",
+                  "gb"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone Waterfall",
+            "description": "`gb` runs the UK phone waterfall on `phone_only` and `full` lookups: only a UK mobile ends the search. UK landlines are dropped. If no UK mobile is found, numbers from other countries are returned instead. Person tasks only.",
+            "examples": [
+              "gb"
+            ]
           }
         },
         "additionalProperties": false,
@@ -7058,6 +7139,25 @@
                 "lead_9d2e71"
               ]
             ]
+          },
+          "phone_waterfall": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "standard",
+                  "gb"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone Waterfall",
+            "description": "`gb` runs the UK phone waterfall on `phone_only` and `full` lookups: only a UK mobile ends the search. UK landlines are dropped. If no UK mobile is found, numbers from other countries are returned instead.",
+            "examples": [
+              "gb"
+            ]
           }
         },
         "additionalProperties": false,
@@ -7388,6 +7488,25 @@
             "description": "Optional pre-approved quote from POST /credits/estimate. When present it is verified and redeemed so spend is confirmed up front; when absent the upfront credit reservation still caps cost.",
             "examples": [
               "quote_a1b2c3"
+            ]
+          },
+          "phone_waterfall": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "standard",
+                  "gb"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone Waterfall",
+            "description": "`gb` runs the UK phone waterfall on `phone_only` and `full` lookups: only a UK mobile ends the search. UK landlines are dropped. If no UK mobile is found, numbers from other countries are returned instead.",
+            "examples": [
+              "gb"
             ]
           }
         },
@@ -7993,6 +8112,19 @@
             "examples": [
               true
             ]
+          },
+          "job_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Job Id",
+            "description": "The `job_id` of an export that answered `status: running`. Send it back (with the same `list_id`) to get the download link once the file is ready; no new export starts."
           }
         },
         "additionalProperties": false,
@@ -8022,8 +8154,37 @@
               "list_7c2a91"
             ]
           },
-          "download_url": {
+          "job_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Job Id",
+            "description": "The export job; send it back to poll a running export."
+          },
+          "status": {
             "type": "string",
+            "enum": [
+              "running",
+              "completed"
+            ],
+            "title": "Status",
+            "description": "`completed` with a `download_url`, or `running` (HTTP 202): call again with `job_id`.",
+            "default": "completed"
+          },
+          "download_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Download Url",
             "description": "Time-limited, SAS-signed URL to download the generated CSV file. The signature (`sig`) and expiry (`exp`) query params gate access; the link stops working after `expires_at`.",
             "examples": [
@@ -8031,7 +8192,14 @@
             ]
           },
           "expires_at": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Expires At",
             "description": "ISO-8601 UTC timestamp at which `download_url` expires. Generated URLs are valid for 24 hours.",
             "examples": [
@@ -8041,17 +8209,33 @@
           "row_count": {
             "type": "integer",
             "title": "Row Count",
-            "description": "Number of data rows written to the CSV (excludes the header row).",
+            "description": "Number of data rows written to the CSV (excludes the header row); while running, the rows being exported.",
             "examples": [
               1284
             ]
           },
           "file_size_bytes": {
-            "type": "integer",
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "File Size Bytes",
             "description": "Size of the generated CSV file in bytes.",
             "examples": [
               402118
+            ]
+          },
+          "skipped_count": {
+            "type": "integer",
+            "title": "Skipped Count",
+            "description": "Rows of the list that changed while it was exporting (deleted, or merged into another row) and are not in the file. `row_count` + `skipped_count` is the list's row count when the export started.",
+            "default": 0,
+            "examples": [
+              0
             ]
           }
         },
@@ -8059,10 +8243,7 @@
         "type": "object",
         "required": [
           "list_id",
-          "download_url",
-          "expires_at",
-          "row_count",
-          "file_size_bytes"
+          "row_count"
         ],
         "title": "ExportCsvResponse",
         "example": {
@@ -8161,7 +8342,7 @@
           "total": {
             "type": "integer",
             "title": "Total",
-            "description": "Total number of leads in the list (across all pages).",
+            "description": "Total number of rows in the list (across all pages), import rows not yet enriched included.",
             "examples": [
               1284
             ]
@@ -8179,6 +8360,15 @@
             "description": "Opaque pagination handle for the next page. Pass it back as the `cursor` query param to continue; null when the last page has been reached.",
             "examples": [
               "100"
+            ]
+          },
+          "skipped": {
+            "type": "integer",
+            "title": "Skipped",
+            "description": "Rows of this page's place in the ordering that left the list (deleted or moved) after the cursor's ordering was taken, so the page holds fewer rows than it covers. `total` minus the sum of `skipped` over every page is the number of rows returned.",
+            "default": 0,
+            "examples": [
+              0
             ]
           }
         },
@@ -8848,6 +9038,18 @@
               }
             ],
             "title": "Message"
+          },
+          "snapshot_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Snapshot Id",
+            "description": "Names the frozen order this page was read from. Pass it back with `offset` (or keep passing `cursor`, which carries it) and a walk through the list has no duplicates or skips while rows are added. Null when no snapshot could be kept."
           },
           "presentation": {
             "anyOf": [
@@ -9987,7 +10189,7 @@
           "companyNameFilter": {
             "type": "string",
             "title": "Companynamefilter",
-            "description": "One current employer name, ANDed.",
+            "description": "One current employer name, or a website domain, as typed. With current_company_names, domains or LinkedIn URLs it is one more alternative (ORed); alone, a domain matches the employer's website exactly and a name matches by company_name_match_type.",
             "default": ""
           },
           "companyNameMatchType": {
@@ -10573,8 +10775,16 @@
             "title": "Cursor"
           },
           "credits_charged": {
-            "type": "integer",
-            "title": "Credits Charged"
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "Credits Charged",
+            "description": "Credits this page cost: 0 unless the org has a per-row search price."
           },
           "truncation_warning": {
             "anyOf": [

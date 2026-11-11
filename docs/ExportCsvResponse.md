@@ -7,10 +7,13 @@
 Name | Type
 ------------ | -------------
 `list_id` | string
+`job_id` | string
+`status` | string
 `download_url` | string
 `expires_at` | string
 `row_count` | number
 `file_size_bytes` | number
+`skipped_count` | number
 
 ## Example
 
@@ -20,10 +23,13 @@ import type { ExportCsvResponse } from '@cleanlist-ai/sdk'
 // TODO: Update the object below with actual values
 const example = {
   "list_id": null,
+  "job_id": null,
+  "status": null,
   "download_url": null,
   "expires_at": null,
   "row_count": null,
   "file_size_bytes": null,
+  "skipped_count": null,
 } satisfies ExportCsvResponse
 
 console.log(example)

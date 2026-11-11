@@ -15,6 +15,7 @@ Name | Type
 `leads` | Array&lt;object | null&gt;
 `total` | number
 `cursor` | string
+`skipped` | number
 
 ## Example
 
@@ -32,6 +33,7 @@ const example = {
   "leads": null,
   "total": null,
   "cursor": null,
+  "skipped": null,
 } satisfies ExportJsonResponse
 
 console.log(example)
