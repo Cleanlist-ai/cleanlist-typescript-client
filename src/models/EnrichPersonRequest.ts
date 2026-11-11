@@ -91,6 +91,12 @@ export interface EnrichPersonRequest {
      * @memberof EnrichPersonRequest
      */
     quote_id?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof EnrichPersonRequest
+     */
+    phone_waterfall?: EnrichPersonRequestPhoneWaterfallEnum | null;
 }
 
 
@@ -103,6 +109,15 @@ export const EnrichPersonRequestEnrichmentTypeEnum = {
     full: 'full'
 } as const;
 export type EnrichPersonRequestEnrichmentTypeEnum = typeof EnrichPersonRequestEnrichmentTypeEnum[keyof typeof EnrichPersonRequestEnrichmentTypeEnum];
+
+/**
+ * @export
+ */
+export const EnrichPersonRequestPhoneWaterfallEnum = {
+    standard: 'standard',
+    gb: 'gb'
+} as const;
+export type EnrichPersonRequestPhoneWaterfallEnum = typeof EnrichPersonRequestPhoneWaterfallEnum[keyof typeof EnrichPersonRequestPhoneWaterfallEnum];
 
 
 /**
@@ -135,6 +150,7 @@ export function EnrichPersonRequestFromJSONTyped(json: any, ignoreDiscriminator:
         'enrichment_type': json['enrichment_type'] == null ? undefined : json['enrichment_type'],
         'include_phone': json['include_phone'] == null ? undefined : json['include_phone'],
         'quote_id': json['quote_id'] == null ? undefined : json['quote_id'],
+        'phone_waterfall': json['phone_waterfall'] == null ? undefined : json['phone_waterfall'],
     };
 }
 
@@ -161,6 +177,7 @@ export function EnrichPersonRequestToJSONTyped(value?: EnrichPersonRequest | nul
         'enrichment_type': value['enrichment_type'],
         'include_phone': value['include_phone'],
         'quote_id': value['quote_id'],
+        'phone_waterfall': value['phone_waterfall'],
     };
 }
 

@@ -188,7 +188,7 @@ example().catch(console.error);
 
 Import leads from CSV
 
-Import a CSV into a lead list and optionally dispatch bulk enrichment.  Pipeline:     1. Authz: &#x60;lists:write&#x60; always; &#x60;enrich:write&#x60; additionally when        &#x60;dispatch_enrichment&#x3D;True&#x60; (the workflow spends credits).     2. Idempotency cache lookup (org-wide, 24h TTL).     3. Base64 decode + parse via &#x60;parse_csv_to_rawpeople&#x60;.     4. If dispatching: verify quote (if provided), open reservation,        redeem quote.     5. Bulk-insert RawPeople into the list. UUIDs are stamped        Python-side so we can hand them to the workflow.     6. If dispatching: kick off &#x60;start_bulk_enrichment&#x60; with the        parsed prospects + raw_person_ids. The workflow\&#39;s per-Lead        &#x60;insert_lead_to_list&#x60; activity handles prospect_count        updates per the existing pattern; import-only path bumps        prospect_count here directly.     7. Cache the response under &#x60;idempotency_key&#x60; (if provided).  Cross-list dedup: this endpoint dedupes ONLY within the upload. A row whose identity already exists as a Lead elsewhere in the workspace still imports as a RawPerson here; the workflow\&#39;s &#x60;persist_enrichment_result&#x60; then deduplicates against existing Leads by public_identifier / prospect_id (existing behavior). Net effect: no duplicate Lead, but the RawPerson stub persists until the workflow processes it.  Send the file as base64 in &#x60;csv_content_base64&#x60; (≤150 KB / ~600 rows) with a &#x60;column_mapping&#x60; from canonical field to CSV header. Requires the &#x60;lists:write&#x60; scope, plus &#x60;enrich:write&#x60; when &#x60;dispatch_enrichment&#x3D;true&#x60; (the enrichment spend). Importing rows is free; when dispatching, enrichment is billed on top (partial 1cr, phone_only 10cr, full 11cr per lead). Pass an &#x60;idempotency_key&#x60; to make retries safe.  **📖 Docs:** https://docs.cleanlist.ai/guides/bulk-enrichment
+Import a CSV into a lead list and optionally dispatch bulk enrichment.  Pipeline:     1. Authz: &#x60;lists:write&#x60; always; &#x60;enrich:write&#x60; additionally when        &#x60;dispatch_enrichment&#x3D;True&#x60; (the workflow spends credits).     2. Idempotency cache lookup (org-wide, 24h TTL).     3. Base64 decode + parse via &#x60;parse_csv_to_rawpeople&#x60;.     4. If dispatching: verify quote (if provided), open reservation,        redeem quote.     5. Bulk-insert RawPeople into the list. UUIDs are stamped        Python-side so we can hand them to the workflow.     6. If dispatching: write the imported rows as a list selection and        kick off &#x60;start_selection_enrichment&#x60; on it. The workflow\&#39;s per-Lead        &#x60;insert_lead_to_list&#x60; activity handles prospect_count        updates per the existing pattern; import-only path bumps        prospect_count here directly.     7. Cache the response under &#x60;idempotency_key&#x60; (if provided).  Cross-list dedup: this endpoint dedupes ONLY within the upload. A row whose identity already exists as a Lead elsewhere in the workspace still imports as a RawPerson here; the workflow\&#39;s &#x60;persist_enrichment_result&#x60; then deduplicates against existing Leads by public_identifier / prospect_id (existing behavior). Net effect: no duplicate Lead, but the RawPerson stub persists until the workflow processes it.  Send the file as base64 in &#x60;csv_content_base64&#x60; (≤150 KB / ~600 rows) with a &#x60;column_mapping&#x60; from canonical field to CSV header. Requires the &#x60;lists:write&#x60; scope, plus &#x60;enrich:write&#x60; when &#x60;dispatch_enrichment&#x3D;true&#x60; (the enrichment spend). Importing rows is free; when dispatching, enrichment is billed on top (partial 1cr, phone_only 10cr, full 11cr per lead). Pass an &#x60;idempotency_key&#x60; to make retries safe.  **📖 Docs:** https://docs.cleanlist.ai/guides/bulk-enrichment
 
 ### Example
 
@@ -271,7 +271,7 @@ example().catch(console.error);
 
 Delete a lead list
 
-Delete a list and its lead memberships. Leads survive.  Hard delete via &#x60;delete_with_dependencies&#x60; (mirrors the portal): smart/action columns, CRM-contact links, per-user state, shares, raw-person stubs, and junction rows are removed; the Lead rows themselves are global entities and are NOT deleted — they stay findable via search_people and in any other list they belong to.  Owner-only + is_protected guards mirror the portal. There is no in-flight-workflow guard (the portal has none either; the MCP confirm-gate already prevents accidental deletes off a fuzzy name match). Re-deleting an unknown/already-deleted list returns 404.  Owner-only: a non-owner gets 404 (indistinguishable from missing) and a protected list gets 403 &#x60;list_protected&#x60;. Requires the &#x60;lists:write&#x60; scope.  **📖 Docs:** https://docs.cleanlist.ai/api-reference/lead-lists · https://docs.cleanlist.ai/guides/managing-lists
+Delete a list and its lead memberships. Leads survive.  The list is gone at once and a background job deletes its rows (mirrors the portal): smart/action columns, CRM-contact links, per-user state, shares, raw-person stubs, and junction rows are removed; the Lead rows themselves are global entities and are NOT deleted — they stay findable via search_people and in any other list they belong to.  Owner-only + is_protected guards mirror the portal. There is no in-flight-workflow guard (the portal has none either; the MCP confirm-gate already prevents accidental deletes off a fuzzy name match). Re-deleting an unknown/already-deleted list returns 404.  Owner-only: a non-owner gets 404 (indistinguishable from missing) and a protected list gets 403 &#x60;list_protected&#x60;. Requires the &#x60;lists:write&#x60; scope.  **📖 Docs:** https://docs.cleanlist.ai/api-reference/lead-lists · https://docs.cleanlist.ai/guides/managing-lists
 
 ### Example
 
@@ -593,11 +593,11 @@ example().catch(console.error);
 
 ## listLeadsInList
 
-> LeadsPageResponse listLeadsInList(listId, limit, cursor)
+> LeadsPageResponse listLeadsInList(listId, limit, cursor, snapshotId, offset)
 
 List leads in a list
 
-Paginate leads in a list.  Fields like &#x60;first_name&#x60;, &#x60;last_name&#x60;, &#x60;title&#x60;, &#x60;company&#x60; come from the joined Prospect + Company relations — the Lead row itself only carries enrichment results (email, phone, linkedin URL).  Page forward with &#x60;limit&#x60; (1–500, default 100) and the opaque &#x60;cursor&#x60;. The response also carries a &#x60;task_id&#x60; cohort handle for the page so a follow-up &#x60;add_person_enrichments&#x60; can operate on these leads without re-passing lead_ids. Requires the &#x60;lists:read&#x60; scope.  **📖 Docs:** https://docs.cleanlist.ai/api-reference/lead-lists · https://docs.cleanlist.ai/guides/managing-lists
+Paginate leads in a list.  Fields like &#x60;first_name&#x60;, &#x60;last_name&#x60;, &#x60;title&#x60;, &#x60;company&#x60; come from the joined Prospect + Company relations — the Lead row itself only carries enrichment results (email, phone, linkedin URL).  Page forward with &#x60;limit&#x60; (1–500, default 100) and the opaque &#x60;cursor&#x60;, or with the response\&#39;s &#x60;snapshot_id&#x60; plus an &#x60;offset&#x60;. Either way the walk reads one frozen order, so rows added meanwhile cause no duplicates or skips; a snapshot that has expired answers 409 &#x60;snapshot_expired&#x60;. The response also carries a &#x60;task_id&#x60; cohort handle for the page so a follow-up &#x60;add_person_enrichments&#x60; can operate on these leads without re-passing lead_ids. Requires the &#x60;lists:read&#x60; scope.  **📖 Docs:** https://docs.cleanlist.ai/api-reference/lead-lists · https://docs.cleanlist.ai/guides/managing-lists
 
 ### Example
 
@@ -623,6 +623,10 @@ async function example() {
     limit: 56,
     // string (optional)
     cursor: cursor_example,
+    // string (optional)
+    snapshotId: snapshotId_example,
+    // number (optional)
+    offset: 56,
   } satisfies ListLeadsInListRequest;
 
   try {
@@ -645,6 +649,8 @@ example().catch(console.error);
 | **listId** | `string` |  | [Defaults to `undefined`] |
 | **limit** | `number` |  | [Optional] [Defaults to `100`] |
 | **cursor** | `string` |  | [Optional] [Defaults to `undefined`] |
+| **snapshotId** | `string` |  | [Optional] [Defaults to `undefined`] |
+| **offset** | `number` |  | [Optional] [Defaults to `undefined`] |
 
 ### Return type
 

@@ -151,7 +151,7 @@ export interface PeopleSearchResponse {
      */
     cursor?: string | null;
     /**
-     * 
+     * Credits this page cost: 0 unless the org has a per-row search price.
      * @type {number}
      * @memberof PeopleSearchResponse
      */

@@ -11,6 +11,7 @@ Name | Type
 `entity_ids` | Array&lt;string&gt;
 `lead_list_id` | string
 `quote_id` | string
+`phone_waterfall` | string
 
 ## Example
 
@@ -24,6 +25,7 @@ const example = {
   "entity_ids": null,
   "lead_list_id": null,
   "quote_id": null,
+  "phone_waterfall": null,
 } satisfies EnrichByTaskRequest
 
 console.log(example)

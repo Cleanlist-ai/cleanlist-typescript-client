@@ -15,7 +15,7 @@ All URIs are relative to *https://api.cleanlist.ai*
 
 Export a list to CSV (signed URL)
 
-Export a Lead List to CSV and return a time-limited signed download URL.  Streams the list\&#39;s leads through a temporary spooled file, uploads the result to blob storage, and responds with a SAS-signed &#x60;download_url&#x60; that expires 24 hours after generation (see &#x60;expires_at&#x60;). Pass &#x60;columns&#x60; to control which fields — and their order — are written, or omit it to use the default column set; set &#x60;include_smart_agents&#x3D;false&#x60; to skip any configured smart-agent result columns. This export is free and does not consume credits.  **📖 Docs:** https://docs.cleanlist.ai/guides/exporting-data
+Export a Lead List to CSV and return a time-limited signed download URL.  Starts an export job over every row of the list (import rows not yet enriched come first) and waits up to 20 seconds for it. When the file is ready the response carries a SAS-signed &#x60;download_url&#x60; that expires 24 hours after generation (see &#x60;expires_at&#x60;). A bigger list answers HTTP 202 with &#x60;status: running&#x60; and a &#x60;job_id&#x60;: call again with that &#x60;job_id&#x60; to get the link. Pass &#x60;columns&#x60; to control which fields, and their order, are written, or omit it to use the default column set; set &#x60;include_smart_agents&#x3D;false&#x60; to skip any configured smart-agent result columns. This export is free and does not consume credits.  **📖 Docs:** https://docs.cleanlist.ai/guides/exporting-data
 
 ### Example
 
@@ -95,7 +95,7 @@ example().catch(console.error);
 
 Export a list as JSON
 
-Export a Lead List as JSON rows returned inline in the response.  Returns a page of leads (default 100, max 500 per call) projected to the same columns as the CSV export and wrapped in the standard response envelope. Use the opaque &#x60;cursor&#x60; from each response to fetch the next page; a malformed cursor returns 400 rather than silently rewinding to page 0. This export is free and does not consume credits.  **📖 Docs:** https://docs.cleanlist.ai/guides/exporting-data
+Export a Lead List as JSON rows returned inline in the response.  Returns a page of rows (default 100, max 500 per call) projected to the same columns as the CSV export, in the same order (import rows not yet enriched first, then leads), wrapped in the standard response envelope. Use the opaque &#x60;cursor&#x60; from each response to fetch the next page; a malformed cursor returns 400 rather than silently rewinding to page 0, and a cursor whose ordering expired (15 minutes unused) returns 409. This export is free and does not consume credits.  **📖 Docs:** https://docs.cleanlist.ai/guides/exporting-data
 
 ### Example
 

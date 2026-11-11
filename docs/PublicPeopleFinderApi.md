@@ -341,7 +341,7 @@ example().catch(console.error);
 
 Search People
 
-Search people. FREE — credits are spent at enrichment / save time.  Delegates to the internal staging handler so the 5-step filter pipeline (location component expansion → region contains expansion → column mapping → enum alias expansion → Crustdata format transform) runs unchanged. We pass the caller\&#39;s actual tier so FREE-tier callers get the 25-row preview cap.
+Search people. Free unless the org has a per-row search price.  Delegates to the internal staging handler so the 5-step filter pipeline (location component expansion → region contains expansion → column mapping → enum alias expansion → Crustdata format transform) runs unchanged. We pass the caller\&#39;s actual tier so FREE-tier callers get the 25-row preview cap.
 
 ### Example
 

@@ -10,6 +10,7 @@ Name | Type
 `column_mapping` | { [key: string]: string | null; }
 `dispatch_enrichment` | boolean
 `enrichment_type` | string
+`phone_waterfall` | string
 `quote_id` | string
 `idempotency_key` | string
 
@@ -24,6 +25,7 @@ const example = {
   "column_mapping": null,
   "dispatch_enrichment": null,
   "enrichment_type": null,
+  "phone_waterfall": null,
   "quote_id": null,
   "idempotency_key": null,
 } satisfies CsvImportRequest

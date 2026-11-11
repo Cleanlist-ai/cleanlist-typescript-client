@@ -73,6 +73,12 @@ export interface LeadsPageResponse {
     message?: string | null;
     /**
      * 
+     * @type {string}
+     * @memberof LeadsPageResponse
+     */
+    snapshot_id?: string | null;
+    /**
+     * 
      * @type {SearchPresentation}
      * @memberof LeadsPageResponse
      */
@@ -146,6 +152,7 @@ export function LeadsPageResponseFromJSONTyped(json: any, ignoreDiscriminator: b
         'agent_instructions': json['agent_instructions'] == null ? undefined : json['agent_instructions'],
         'usage': json['usage'] == null ? undefined : json['usage'],
         'message': json['message'] == null ? undefined : json['message'],
+        'snapshot_id': json['snapshot_id'] == null ? undefined : json['snapshot_id'],
         'presentation': json['presentation'] == null ? undefined : SearchPresentationFromJSON(json['presentation']),
         'pending_imports': json['pending_imports'] == null ? undefined : ((json['pending_imports'] as Array<any>).map(PendingImportRowFromJSON)),
         'pending_import_total': json['pending_import_total'] == null ? undefined : json['pending_import_total'],
@@ -173,6 +180,7 @@ export function LeadsPageResponseToJSONTyped(value?: LeadsPageResponse | null, i
         'agent_instructions': value['agent_instructions'],
         'usage': value['usage'],
         'message': value['message'],
+        'snapshot_id': value['snapshot_id'],
         'presentation': SearchPresentationToJSON(value['presentation']),
         'pending_imports': value['pending_imports'] == null ? undefined : ((value['pending_imports'] as Array<any>).map(PendingImportRowToJSON)),
         'pending_import_total': value['pending_import_total'],
