@@ -89,6 +89,47 @@ def collapse_numeric_anyof(node) -> int:
     return count
 
 
+def preview_union_to_oneof(spec) -> int:
+    """Turn response ``anyOf: [X, LivePreview]`` into ``oneOf: [LivePreview, X]``.
+
+    Live calls without ``commit: true`` answer with a ``LivePreview`` instead of
+    their result. typescript-fetch merges an ``anyOf`` of objects into one
+    interface whose decoder reads every branch's required fields, so a preview
+    crashes on the other branch's arrays (``skillRefs.map`` on undefined) and a
+    committed free-form result is dropped. ``oneOf`` generates a real union that
+    picks the branch with ``instanceOf``; LivePreview's required fields
+    (``action``, ``credits_max``, ``estimate`` ...) only appear on a preview.
+    When the other branch is a free-form object the generated union would fall
+    back to ``{}`` and drop the committed result, so the schema becomes that
+    free-form object instead and callers tell a preview by ``committed === false``.
+
+    Returns the number of response schemas rewritten.
+    """
+    ref = "#/components/schemas/LivePreview"
+    count = 0
+    for item in (spec.get("paths") or {}).values():
+        for operation in item.values():
+            if not isinstance(operation, dict):
+                continue
+            for response in (operation.get("responses") or {}).values():
+                for media in ((response or {}).get("content") or {}).values():
+                    schema = (media or {}).get("schema") or {}
+                    any_of = schema.get("anyOf")
+                    if not isinstance(any_of, list) or {"$ref": ref} not in any_of:
+                        continue
+                    rest = [b for b in any_of if b != {"$ref": ref}]
+                    schema.pop("anyOf")
+                    freeform = next((b for b in rest if b.get("type") == "object" and "properties" not in b), None)
+                    if freeform is not None:
+                        # Bare, untitled: a titled free-form response changes how the
+                        # generator types every other free-form map in the spec.
+                        media["schema"] = dict(freeform)
+                    else:
+                        schema["oneOf"] = [{"$ref": ref}, *rest]
+                    count += 1
+    return count
+
+
 def main() -> int:
     if len(sys.argv) != 3:
         print(__doc__)
@@ -116,12 +157,14 @@ def main() -> int:
 
     collapsed = collapse_freeform_anyof(spec)
     collapsed += collapse_numeric_anyof(spec)
+    previews = preview_union_to_oneof(spec)
 
     dst.parent.mkdir(parents=True, exist_ok=True)
     dst.write_text(json.dumps(spec, indent=2))
     print(
         f"Prepared spec: {len(seen)} cleaned operationIds, "
-        f"{collapsed} free-form/numeric anyOf collapsed -> {dst}"
+        f"{collapsed} free-form/numeric anyOf collapsed, "
+        f"{previews} preview unions -> {dst}"
     )
     return 0
 

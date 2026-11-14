@@ -5206,15 +5206,15 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/AgentDto"
-                    },
+                  "title": "Response Set Gtm Agent Status Api V2 Gtm Agents  Agent Id  Status Post",
+                  "oneOf": [
                     {
                       "$ref": "#/components/schemas/LivePreview"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AgentDto"
                     }
-                  ],
-                  "title": "Response Set Gtm Agent Status Api V2 Gtm Agents  Agent Id  Status Post"
+                  ]
                 }
               }
             }
@@ -5368,16 +5368,8 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "anyOf": [
-                    {
-                      "type": "object",
-                      "additionalProperties": true
-                    },
-                    {
-                      "$ref": "#/components/schemas/LivePreview"
-                    }
-                  ],
-                  "title": "Response Run Gtm Agent Api V2 Gtm Agents  Agent Id  Runs Post"
+                  "type": "object",
+                  "additionalProperties": true
                 }
               }
             }
@@ -6117,15 +6109,15 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/RunPlayResponse"
-                    },
+                  "title": "Response Run Play Api V2 Plays  Playbook Id  Runs Post",
+                  "oneOf": [
                     {
                       "$ref": "#/components/schemas/LivePreview"
+                    },
+                    {
+                      "$ref": "#/components/schemas/RunPlayResponse"
                     }
-                  ],
-                  "title": "Response Run Play Api V2 Plays  Playbook Id  Runs Post"
+                  ]
                 }
               }
             }

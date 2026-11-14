@@ -200,6 +200,59 @@ test('Cleanlist: a live agent run retries a 503 idempotency_unavailable under on
     assert.equal(cl.lastResponse.status, 200);
 });
 
+const PREVIEW = {
+    committed: false,
+    action: 'agent_on',
+    description: 'Turn on Outbound',
+    credits_max: 40,
+    records_max: null,
+    effects: [],
+    required_scopes: ['agents:live'],
+    missing_scopes: [],
+    estimate: { action: 'agent_on' },
+};
+
+test('live previews decode on agent status, agent runs and play runs', async () => {
+    const fetchApi = fakeFetch([{ status: 200, body: PREVIEW }]);
+    const cl = new Cleanlist({ accessToken: 'clapi_live_abc', basePath: 'https://x', fetchApi });
+    const status = await cl.gtmAgents.setGtmAgentStatus({ agentId: 'a1', gtmAgentStatusBody: { status: 'on' } });
+    assert.equal(status.committed, false);
+    assert.equal(status.action, 'agent_on');
+    assert.deepEqual(status.effects, []);
+    assert.equal(status.skillRefs, undefined);
+    const run = await cl.gtmAgents.runGtmAgent({ agentId: 'a1', runGtmAgentBody: {} });
+    assert.equal(run.committed, false);
+    assert.equal(run.credits_max, 40);
+    const play = await cl.plays.runPlay({ playbookId: 'p1', runPlayBody: {} });
+    assert.equal(play.committed, false);
+    assert.deepEqual(play.required_scopes, ['agents:live']);
+    assert.equal(play.event_id, undefined);
+});
+
+test('committed results still decode on agent status, agent runs and play runs', async () => {
+    const agent = {
+        id: 'a1', organizationId: 'o1', ownerUserId: 'u1', name: 'Outbound', description: '',
+        selfEditInstructions: false, skillRefs: [], knowledge: {}, connections: [], tools: {},
+        triggers: [], playIds: [], limits: {}, delivery: {}, status: 'on', aiManagedTriggers: false,
+        isFavorite: false, version: 2,
+    };
+    const fetchApi = fakeFetch([{ status: 200, body: agent }]);
+    const cl = new Cleanlist({ accessToken: 'clapi_live_abc', basePath: 'https://x', fetchApi });
+    const status = await cl.gtmAgents.setGtmAgentStatus({ agentId: 'a1', gtmAgentStatusBody: { status: 'on', commit: true } });
+    assert.equal(status.status, 'on');
+    assert.deepEqual(status.skillRefs, []);
+    assert.equal(status.committed, undefined);
+
+    const runBody = { run_id: 'r1', queued: true };
+    const cl2 = new Cleanlist({ accessToken: 'clapi_live_abc', basePath: 'https://x', fetchApi: fakeFetch([{ status: 200, body: runBody }]) });
+    assert.deepEqual(await cl2.gtmAgents.runGtmAgent({ agentId: 'a1', runGtmAgentBody: { commit: true } }), runBody);
+
+    const cl3 = new Cleanlist({ accessToken: 'clapi_live_abc', basePath: 'https://x', fetchApi: fakeFetch([{ status: 200, body: { run_id: 'r2', queued: true, event_id: 'e1' } }]) });
+    const play = await cl3.plays.runPlay({ playbookId: 'p1', runPlayBody: { commit: true } });
+    assert.equal(play.event_id, 'e1');
+    assert.equal(play.run_id, 'r2');
+});
+
 test('withIdempotencyKey refuses empty and over-long keys', () => {
     assert.throws(() => withIdempotencyKey(''));
     assert.throws(() => withIdempotencyKey('k'.repeat(256)));

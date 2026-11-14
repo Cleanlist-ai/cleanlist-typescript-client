@@ -12,132 +12,27 @@
  * Do not edit the class manually.
  */
 
-import { mapValues } from '../runtime';
 import type { LivePreview } from './LivePreview';
 import {
+    instanceOfLivePreview,
     LivePreviewFromJSON,
     LivePreviewFromJSONTyped,
     LivePreviewToJSON,
-    LivePreviewToJSONTyped,
 } from './LivePreview';
 import type { RunPlayResponse } from './RunPlayResponse';
 import {
+    instanceOfRunPlayResponse,
     RunPlayResponseFromJSON,
     RunPlayResponseFromJSONTyped,
     RunPlayResponseToJSON,
-    RunPlayResponseToJSONTyped,
 } from './RunPlayResponse';
 
 /**
+ * @type ResponseRunPlayApiV2PlaysPlaybookIdRunsPost
  * 
  * @export
- * @interface ResponseRunPlayApiV2PlaysPlaybookIdRunsPost
  */
-export interface ResponseRunPlayApiV2PlaysPlaybookIdRunsPost {
-    /**
-     * 
-     * @type {string}
-     * @memberof ResponseRunPlayApiV2PlaysPlaybookIdRunsPost
-     */
-    run_id?: string;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof ResponseRunPlayApiV2PlaysPlaybookIdRunsPost
-     */
-    queued?: boolean;
-    /**
-     * 
-     * @type {string}
-     * @memberof ResponseRunPlayApiV2PlaysPlaybookIdRunsPost
-     */
-    reason?: string;
-    /**
-     * The record's event. While queued, GET /plays/{playbook_id}/events/{event_id} answers its run_id once a run takes it.
-     * @type {string}
-     * @memberof ResponseRunPlayApiV2PlaysPlaybookIdRunsPost
-     */
-    event_id: string;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof ResponseRunPlayApiV2PlaysPlaybookIdRunsPost
-     */
-    committed?: ResponseRunPlayApiV2PlaysPlaybookIdRunsPostCommittedEnum;
-    /**
-     * agent_on, run_gtm_agent or run_play.
-     * @type {string}
-     * @memberof ResponseRunPlayApiV2PlaysPlaybookIdRunsPost
-     */
-    action: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ResponseRunPlayApiV2PlaysPlaybookIdRunsPost
-     */
-    description: string;
-    /**
-     * The most it can spend.
-     * @type {number}
-     * @memberof ResponseRunPlayApiV2PlaysPlaybookIdRunsPost
-     */
-    credits_max: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ResponseRunPlayApiV2PlaysPlaybookIdRunsPost
-     */
-    records_max?: number;
-    /**
-     * What its plays can do outside Cleanlist: sends, crm_writes.
-     * @type {Array<string>}
-     * @memberof ResponseRunPlayApiV2PlaysPlaybookIdRunsPost
-     */
-    effects: Array<string>;
-    /**
-     * The opt-in scopes a key needs to commit it.
-     * @type {Array<string>}
-     * @memberof ResponseRunPlayApiV2PlaysPlaybookIdRunsPost
-     */
-    required_scopes: Array<string>;
-    /**
-     * Those this credential lacks; empty on the MCP.
-     * @type {Array<string>}
-     * @memberof ResponseRunPlayApiV2PlaysPlaybookIdRunsPost
-     */
-    missing_scopes: Array<string>;
-    /**
-     * The POST /credits/estimate body that quotes it.
-     * @type {object}
-     * @memberof ResponseRunPlayApiV2PlaysPlaybookIdRunsPost
-     */
-    estimate: object;
-}
-
-
-/**
- * @export
- */
-export const ResponseRunPlayApiV2PlaysPlaybookIdRunsPostCommittedEnum = {
-    false: false
-} as const;
-export type ResponseRunPlayApiV2PlaysPlaybookIdRunsPostCommittedEnum = typeof ResponseRunPlayApiV2PlaysPlaybookIdRunsPostCommittedEnum[keyof typeof ResponseRunPlayApiV2PlaysPlaybookIdRunsPostCommittedEnum];
-
-
-/**
- * Check if a given object implements the ResponseRunPlayApiV2PlaysPlaybookIdRunsPost interface.
- */
-export function instanceOfResponseRunPlayApiV2PlaysPlaybookIdRunsPost(value: object): value is ResponseRunPlayApiV2PlaysPlaybookIdRunsPost {
-    if (!('event_id' in value) || value['event_id'] === undefined) return false;
-    if (!('action' in value) || value['action'] === undefined) return false;
-    if (!('description' in value) || value['description'] === undefined) return false;
-    if (!('credits_max' in value) || value['credits_max'] === undefined) return false;
-    if (!('effects' in value) || value['effects'] === undefined) return false;
-    if (!('required_scopes' in value) || value['required_scopes'] === undefined) return false;
-    if (!('missing_scopes' in value) || value['missing_scopes'] === undefined) return false;
-    if (!('estimate' in value) || value['estimate'] === undefined) return false;
-    return true;
-}
+export type ResponseRunPlayApiV2PlaysPlaybookIdRunsPost = LivePreview | RunPlayResponse;
 
 export function ResponseRunPlayApiV2PlaysPlaybookIdRunsPostFromJSON(json: any): ResponseRunPlayApiV2PlaysPlaybookIdRunsPost {
     return ResponseRunPlayApiV2PlaysPlaybookIdRunsPostFromJSONTyped(json, false);
@@ -147,25 +42,19 @@ export function ResponseRunPlayApiV2PlaysPlaybookIdRunsPostFromJSONTyped(json: a
     if (json == null) {
         return json;
     }
-    return {
-        
-        'run_id': json['run_id'] == null ? undefined : json['run_id'],
-        'queued': json['queued'] == null ? undefined : json['queued'],
-        'reason': json['reason'] == null ? undefined : json['reason'],
-        'event_id': json['event_id'],
-        'committed': json['committed'] == null ? undefined : json['committed'],
-        'action': json['action'],
-        'description': json['description'],
-        'credits_max': json['credits_max'],
-        'records_max': json['records_max'] == null ? undefined : json['records_max'],
-        'effects': json['effects'],
-        'required_scopes': json['required_scopes'],
-        'missing_scopes': json['missing_scopes'],
-        'estimate': json['estimate'],
-    };
+    if (typeof json !== 'object') {
+        return json;
+    }
+    if (instanceOfLivePreview(json)) {
+        return LivePreviewFromJSONTyped(json, true);
+    }
+    if (instanceOfRunPlayResponse(json)) {
+        return RunPlayResponseFromJSONTyped(json, true);
+    }
+    return {} as any;
 }
 
-export function ResponseRunPlayApiV2PlaysPlaybookIdRunsPostToJSON(json: any): ResponseRunPlayApiV2PlaysPlaybookIdRunsPost {
+export function ResponseRunPlayApiV2PlaysPlaybookIdRunsPostToJSON(json: any): any {
     return ResponseRunPlayApiV2PlaysPlaybookIdRunsPostToJSONTyped(json, false);
 }
 
@@ -173,22 +62,15 @@ export function ResponseRunPlayApiV2PlaysPlaybookIdRunsPostToJSONTyped(value?: R
     if (value == null) {
         return value;
     }
-
-    return {
-        
-        'run_id': value['run_id'],
-        'queued': value['queued'],
-        'reason': value['reason'],
-        'event_id': value['event_id'],
-        'committed': value['committed'],
-        'action': value['action'],
-        'description': value['description'],
-        'credits_max': value['credits_max'],
-        'records_max': value['records_max'],
-        'effects': value['effects'],
-        'required_scopes': value['required_scopes'],
-        'missing_scopes': value['missing_scopes'],
-        'estimate': value['estimate'],
-    };
+    if (typeof value !== 'object') {
+        return value;
+    }
+    if (instanceOfLivePreview(value)) {
+        return LivePreviewToJSON(value as LivePreview);
+    }
+    if (instanceOfRunPlayResponse(value)) {
+        return RunPlayResponseToJSON(value as RunPlayResponse);
+    }
+    return {};
 }
 

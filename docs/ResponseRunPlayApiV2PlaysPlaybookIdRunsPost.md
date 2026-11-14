@@ -6,10 +6,6 @@
 
 Name | Type
 ------------ | -------------
-`run_id` | string
-`queued` | boolean
-`reason` | string
-`event_id` | string
 `committed` | boolean
 `action` | string
 `description` | string
@@ -19,6 +15,10 @@ Name | Type
 `required_scopes` | Array&lt;string&gt;
 `missing_scopes` | Array&lt;string&gt;
 `estimate` | object
+`run_id` | string
+`queued` | boolean
+`reason` | string
+`event_id` | string
 
 ## Example
 
@@ -27,10 +27,6 @@ import type { ResponseRunPlayApiV2PlaysPlaybookIdRunsPost } from '@cleanlist-ai/
 
 // TODO: Update the object below with actual values
 const example = {
-  "run_id": null,
-  "queued": null,
-  "reason": null,
-  "event_id": null,
   "committed": null,
   "action": null,
   "description": null,
@@ -40,6 +36,10 @@ const example = {
   "required_scopes": null,
   "missing_scopes": null,
   "estimate": null,
+  "run_id": null,
+  "queued": null,
+  "reason": null,
+  "event_id": null,
 } satisfies ResponseRunPlayApiV2PlaysPlaybookIdRunsPost
 
 console.log(example)

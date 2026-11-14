@@ -21,7 +21,6 @@ import type {
   PatchGtmAgentBody,
   PublicApiError,
   RecordsPageDto,
-  ResponseRunGtmAgentApiV2GtmAgentsAgentIdRunsPost,
   ResponseSetGtmAgentStatusApiV2GtmAgentsAgentIdStatusPost,
   RunDetailDto,
   RunGtmAgentBody,
@@ -40,8 +39,6 @@ import {
     PublicApiErrorToJSON,
     RecordsPageDtoFromJSON,
     RecordsPageDtoToJSON,
-    ResponseRunGtmAgentApiV2GtmAgentsAgentIdRunsPostFromJSON,
-    ResponseRunGtmAgentApiV2GtmAgentsAgentIdRunsPostToJSON,
     ResponseSetGtmAgentStatusApiV2GtmAgentsAgentIdStatusPostFromJSON,
     ResponseSetGtmAgentStatusApiV2GtmAgentsAgentIdStatusPostToJSON,
     RunDetailDtoFromJSON,
@@ -456,7 +453,7 @@ export class PublicGTMAgentsApi extends runtime.BaseAPI {
      * Start one live run of the agent\'s play now: a preview without ``commit``, and with it a quote and the approval its play needs. Answers ``{run_id, agent_id, status, message}``, or ``queued`` with no run yet when a CRM cleanup play waits for its scan.
      * Run Gtm Agent
      */
-    async runGtmAgentRaw(requestParameters: RunGtmAgentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ResponseRunGtmAgentApiV2GtmAgentsAgentIdRunsPost>> {
+    async runGtmAgentRaw(requestParameters: RunGtmAgentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>> {
         if (requestParameters['agentId'] == null) {
             throw new runtime.RequiredError(
                 'agentId',
@@ -501,14 +498,14 @@ export class PublicGTMAgentsApi extends runtime.BaseAPI {
             body: RunGtmAgentBodyToJSON(requestParameters['runGtmAgentBody']),
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => ResponseRunGtmAgentApiV2GtmAgentsAgentIdRunsPostFromJSON(jsonValue));
+        return new runtime.JSONApiResponse<any>(response);
     }
 
     /**
      * Start one live run of the agent\'s play now: a preview without ``commit``, and with it a quote and the approval its play needs. Answers ``{run_id, agent_id, status, message}``, or ``queued`` with no run yet when a CRM cleanup play waits for its scan.
      * Run Gtm Agent
      */
-    async runGtmAgent(requestParameters: RunGtmAgentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ResponseRunGtmAgentApiV2GtmAgentsAgentIdRunsPost> {
+    async runGtmAgent(requestParameters: RunGtmAgentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object> {
         const response = await this.runGtmAgentRaw(requestParameters, initOverrides);
         return await response.value();
     }
