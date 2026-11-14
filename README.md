@@ -361,10 +361,14 @@ reads `CLEANLIST_API_KEY` and an optional `CLEANLIST_HOST`. Type-check them all 
 
 ## Retries, idempotency and rate limits
 
-A 429 or 5xx is retried with backoff, honoring `Retry-After` (a wait over a minute is
-returned to you instead). Every POST, PATCH and DELETE carries an `Idempotency-Key` that
-stays the same across its retries, so a retried write runs once. GETs are always retried;
-any other request is retried only when it carries an `Idempotency-Key`. To set your own:
+GET, HEAD and OPTIONS are retried on network errors, 429 and 5xx, with backoff that honors
+`Retry-After` (a wait over a minute is returned to you instead). POST, PUT, PATCH and DELETE
+are retried only on a 429, a 503 `idempotency_unavailable`, or a network error with no
+response when the request carries an `Idempotency-Key`, because any other 5xx may mean the
+write already ran. `POST /api/v2/actions/confirm` and inbox replies are never retried.
+
+Every POST, PATCH and DELETE carries an `Idempotency-Key` that stays the same across its
+retries. To set your own:
 
 ```ts
 import { withIdempotencyKey } from '@cleanlist-ai/sdk';

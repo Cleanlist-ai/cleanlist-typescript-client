@@ -92,11 +92,44 @@ export function retryDelayMs(response: Response, attempt: number): number {
         const date = Date.parse(header);
         if (!Number.isNaN(date)) return Math.max(0, date - Date.now());
     }
+    return backoffMs(attempt);
+}
+
+function backoffMs(attempt: number): number {
     return Math.min(8_000, 500 * 2 ** (attempt - 1)) + Math.floor(Math.random() * 250);
 }
 
-function shouldRetry(status: number): boolean {
-    return status === 429 || status >= 500;
+/** Single-use writes that are never retried: a second try after a lost response can't be told apart from a repeat. */
+const NEVER_RETRY_PATHS = [/\/api\/v2\/actions\/confirm\/?$/, /\/api\/v2\/inbox\/threads\/[^/]+\/reply\/?$/];
+
+function requestPath(input: RequestInfo | URL): string {
+    const raw = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
+    try {
+        return new URL(raw, 'http://localhost').pathname;
+    } catch {
+        return raw.split(/[?#]/)[0];
+    }
+}
+
+/** The error envelope's `code`, read off a clone so the caller still gets the body. */
+async function errorCode(response: Response): Promise<string | undefined> {
+    try {
+        const body = await response.clone().json();
+        return body?.error?.code ?? body?.code;
+    } catch {
+        return undefined;
+    }
+}
+
+/**
+ * Reads retry on 429 and 5xx. Writes retry on 429, and on a 503 `idempotency_unavailable`
+ * (refused before the route ran). Any other 5xx on a write may have run the route, and
+ * the server doesn't store 5xx under the key, so a retry would run it again.
+ */
+async function shouldRetry(read: boolean, response: Response): Promise<boolean> {
+    if (response.status === 429) return true;
+    if (read) return response.status >= 500;
+    return response.status === 503 && (await errorCode(response)) === 'idempotency_unavailable';
 }
 
 export interface RetryingFetchOptions {
@@ -110,9 +143,10 @@ export interface RetryingFetchOptions {
 
 /**
  * Wraps `fetch` so writes carry an `Idempotency-Key` (one per call, reused on its
- * retries; a key already on the request wins) and 429s and 5xx are retried.
- * Reads are always retried; anything else only when it carries an `Idempotency-Key`,
- * so the API runs it once however many tries it takes.
+ * retries; a key already on the request wins). Reads are retried on network errors,
+ * 429s and 5xx. Writes are retried on 429s, a 503 `idempotency_unavailable`, and a
+ * network error with no response when they carry an `Idempotency-Key`; never on any
+ * other 5xx. `POST /api/v2/actions/confirm` and inbox replies are never retried.
  */
 export function retryingFetch(fetchApi: FetchAPI, options: RetryingFetchOptions = {}): FetchAPI {
     const maxAttempts = Math.max(1, Math.floor(options.maxAttempts ?? DEFAULT_MAX_ATTEMPTS));
@@ -125,11 +159,23 @@ export function retryingFetch(fetchApi: FetchAPI, options: RetryingFetchOptions 
             headers.set('Idempotency-Key', newIdempotencyKey());
         }
         const requestInit: RequestInit = { ...init, headers };
-        const retryable = READ_METHODS.has(method) || headers.has('Idempotency-Key');
+        const read = READ_METHODS.has(method);
+        const path = requestPath(input);
+        const retryable = read || !NEVER_RETRY_PATHS.some((re) => re.test(path));
+        const retryNetworkError = read || (retryable && headers.has('Idempotency-Key'));
 
         for (let attempt = 1; ; attempt++) {
-            const response = await fetchApi(input, requestInit);
-            if (retryable && attempt < maxAttempts && shouldRetry(response.status)) {
+            let response: Response;
+            try {
+                response = await fetchApi(input, requestInit);
+            } catch (err) {
+                if (retryNetworkError && attempt < maxAttempts && !init?.signal?.aborted) {
+                    await sleep(backoffMs(attempt));
+                    continue;
+                }
+                throw err;
+            }
+            if (retryable && attempt < maxAttempts && (await shouldRetry(read, response))) {
                 const delay = retryDelayMs(response, attempt);
                 if (delay <= MAX_RETRY_DELAY_MS) {
                     try {

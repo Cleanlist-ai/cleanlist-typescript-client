@@ -25,7 +25,11 @@ function fakeFetch(responses) {
 }
 
 test('retries a 429 after Retry-After and keeps one Idempotency-Key', async () => {
-    const fetchApi = fakeFetch([{ status: 429, headers: { 'Retry-After': '2' } }, { status: 503 }, { status: 201 }]);
+    const fetchApi = fakeFetch([
+        { status: 429, headers: { 'Retry-After': '2' } },
+        { status: 503, body: { error: { code: 'idempotency_unavailable' } } },
+        { status: 201 },
+    ]);
     const waits = [];
     const wrapped = retryingFetch(fetchApi, { sleep: async (ms) => void waits.push(ms) });
     const res = await wrapped('https://x/api/v2/lists', { method: 'POST', body: '{}' });
@@ -102,18 +106,83 @@ test('Cleanlist: test key prefix implies test mode; errors still throw after ret
     assert.equal(cl.lastResponse.status, 502);
 });
 
-test('a write without an Idempotency-Key is not retried; with one it is', async () => {
-    const bare = fakeFetch([{ status: 503 }, { status: 200 }]);
-    const res = await retryingFetch(bare, { sleep: async () => {} })('https://x/a', { method: 'PUT' });
-    assert.equal(res.status, 503);
+const noSleep = { sleep: async () => {} };
+
+test('a 500 or 502 on a POST is not retried', async () => {
+    for (const status of [500, 502]) {
+        const fetchApi = fakeFetch([{ status }, { status: 200 }]);
+        const res = await retryingFetch(fetchApi, noSleep)('https://x/api/v2/lists', { method: 'POST' });
+        assert.equal(res.status, status);
+        assert.equal(fetchApi.calls.length, 1);
+    }
+});
+
+test('a 503 idempotency_unavailable on a POST is retried with the same key; a bare 503 is not', async () => {
+    const fetchApi = fakeFetch([{ status: 503, body: { error: { code: 'idempotency_unavailable' } } }, { status: 201 }]);
+    const res = await retryingFetch(fetchApi, noSleep)('https://x/api/v2/lists', { method: 'POST' });
+    assert.equal(res.status, 201);
+    const [a, b] = fetchApi.calls.map((c) => c.headers.get('Idempotency-Key'));
+    assert.ok(a);
+    assert.equal(a, b);
+    const bare = fakeFetch([{ status: 503, body: { error: { code: 'service_unavailable' } } }, { status: 200 }]);
+    assert.equal((await retryingFetch(bare, noSleep)('https://x/a', { method: 'PUT' })).status, 503);
     assert.equal(bare.calls.length, 1);
-    const keyed = fakeFetch([{ status: 503 }, { status: 200 }]);
-    const ok = await retryingFetch(keyed, { sleep: async () => {} })('https://x/a', {
-        method: 'PUT',
-        headers: { 'Idempotency-Key': 'k1' },
-    });
-    assert.equal(ok.status, 200);
-    assert.equal(keyed.calls.length, 2);
+});
+
+test('a 429 on a POST is retried', async () => {
+    const fetchApi = fakeFetch([{ status: 429 }, { status: 201 }]);
+    const res = await retryingFetch(fetchApi, noSleep)('https://x/api/v2/lists', { method: 'POST' });
+    assert.equal(res.status, 201);
+    assert.equal(fetchApi.calls.length, 2);
+});
+
+test('a GET 500 is still retried', async () => {
+    const fetchApi = fakeFetch([{ status: 500 }, { status: 200 }]);
+    assert.equal((await retryingFetch(fetchApi, noSleep)('https://x/api/v2/lists', {})).status, 200);
+    assert.equal(fetchApi.calls.length, 2);
+});
+
+test('inbox reply and actions confirm are never retried', async () => {
+    for (const [url, responses] of [
+        ['https://x/api/v2/inbox/threads/t1/reply', [{ status: 502, body: { error: { code: 'send_unconfirmed' } } }]],
+        ['https://x/api/v2/inbox/threads/t1/reply', [{ status: 429 }]],
+        ['https://x/api/v2/actions/confirm', [{ status: 500 }]],
+        ['https://x/api/v2/actions/confirm?x=1', [{ status: 429 }]],
+        ['https://x/api/v2/actions/confirm', [{ status: 503, body: { error: { code: 'idempotency_unavailable' } } }]],
+    ]) {
+        const fetchApi = fakeFetch([...responses, { status: 200 }]);
+        const res = await retryingFetch(fetchApi, noSleep)(url, { method: 'POST' });
+        assert.equal(res.status, responses[0].status, url);
+        assert.equal(fetchApi.calls.length, 1, url);
+    }
+    const thrown = async () => {
+        thrown.calls = (thrown.calls ?? 0) + 1;
+        throw new TypeError('fetch failed');
+    };
+    await assert.rejects(retryingFetch(thrown, noSleep)('https://x/api/v2/actions/confirm', { method: 'POST' }));
+    assert.equal(thrown.calls, 1);
+});
+
+test('a network error is retried for reads and keyed writes', async () => {
+    const flaky = () => {
+        let n = 0;
+        const fn = async () => {
+            n++;
+            fn.calls = n;
+            if (n === 1) throw new TypeError('fetch failed');
+            return new Response('{}', { status: 200 });
+        };
+        return fn;
+    };
+    for (const method of ['GET', 'POST', 'PUT']) {
+        const fetchApi = flaky();
+        const headers = method === 'PUT' ? { 'Idempotency-Key': 'k1' } : {};
+        assert.equal((await retryingFetch(fetchApi, noSleep)('https://x/a', { method, headers })).status, 200);
+        assert.equal(fetchApi.calls, 2, method);
+    }
+    const bare = flaky();
+    await assert.rejects(retryingFetch(bare, noSleep)('https://x/a', { method: 'PUT' }));
+    assert.equal(bare.calls, 1);
 });
 
 test('Cleanlist: a live agent run retries a 503 idempotency_unavailable under one key', async () => {
