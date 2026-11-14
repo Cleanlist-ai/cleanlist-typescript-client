@@ -7,6 +7,7 @@ All URIs are relative to *https://api.cleanlist.ai*
 | [**creditsBalance**](PublicWorkspaceApi.md#creditsbalance) | **GET** /api/v2/credits/balance | Get credit balance |
 | [**creditsEstimate**](PublicWorkspaceApi.md#creditsestimate) | **POST** /api/v2/credits/estimate | Estimate cost &amp; get a signed quote |
 | [**listApiKeys**](PublicWorkspaceApi.md#listapikeys) | **GET** /api/v2/api-keys | List API keys |
+| [**listRequestLogs**](PublicWorkspaceApi.md#listrequestlogs) | **GET** /api/v2/logs | List API requests |
 | [**usageReport**](PublicWorkspaceApi.md#usagereport) | **GET** /api/v2/usage | Get usage report |
 | [**whoami**](PublicWorkspaceApi.md#whoami) | **GET** /api/v2/whoami | Get current identity &amp; entitlements |
 
@@ -232,6 +233,98 @@ This endpoint does not need any parameter.
 | **500** | Internal error. |  -  |
 | **502** | Upstream provider error. |  -  |
 | **422** | Request failed validation. |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+
+
+## listRequestLogs
+
+> RequestLogsResponse listRequestLogs(since, status, path, limit, cursor)
+
+List API requests
+
+This workspace\&#39;s API key and CLI requests, newest first: time, method, path, status, duration, route template, credits, key prefix and OAuth client. Page with &#x60;next_cursor&#x60;. Requires &#x60;admin:api_keys&#x60; and deducts no credits.
+
+### Example
+
+```ts
+import {
+  Configuration,
+  PublicWorkspaceApi,
+} from '@cleanlist-ai/sdk';
+import type { ListRequestLogsRequest } from '@cleanlist-ai/sdk';
+
+async function example() {
+  console.log("🚀 Testing @cleanlist-ai/sdk SDK...");
+  const config = new Configuration({ 
+    // Configure HTTP bearer authorization: HTTPBearer
+    accessToken: "YOUR BEARER TOKEN",
+  });
+  const api = new PublicWorkspaceApi(config);
+
+  const body = {
+    // Date | Only requests at or after this ISO 8601 time. (optional)
+    since: 2013-10-20T19:20:30+01:00,
+    // string | An exact status code (429) or a class (4xx). (optional)
+    status: status_example,
+    // string | Path prefix, matched against the raw path (/api/v2/lead-lists) or the route template (/lead-lists/{list_id}). (optional)
+    path: path_example,
+    // number (optional)
+    limit: 56,
+    // string | next_cursor from the previous page. (optional)
+    cursor: cursor_example,
+  } satisfies ListRequestLogsRequest;
+
+  try {
+    const data = await api.listRequestLogs(body);
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Run the test
+example().catch(console.error);
+```
+
+### Parameters
+
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **since** | `Date` | Only requests at or after this ISO 8601 time. | [Optional] [Defaults to `undefined`] |
+| **status** | `string` | An exact status code (429) or a class (4xx). | [Optional] [Defaults to `undefined`] |
+| **path** | `string` | Path prefix, matched against the raw path (/api/v2/lead-lists) or the route template (/lead-lists/{list_id}). | [Optional] [Defaults to `undefined`] |
+| **limit** | `number` |  | [Optional] [Defaults to `50`] |
+| **cursor** | `string` | next_cursor from the previous page. | [Optional] [Defaults to `undefined`] |
+
+### Return type
+
+[**RequestLogsResponse**](RequestLogsResponse.md)
+
+### Authorization
+
+[HTTPBearer](../README.md#HTTPBearer)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: `application/json`
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | Successful Response |  -  |
+| **422** | Request failed validation. |  -  |
+| **400** | Bad request. |  -  |
+| **401** | Authentication required or invalid. |  -  |
+| **403** | Permission denied or feature not enabled. |  -  |
+| **404** | Resource not found. |  -  |
+| **409** | Resource conflict. |  -  |
+| **429** | Rate limited. |  -  |
+| **500** | Internal error. |  -  |
+| **502** | Upstream provider error. |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 
