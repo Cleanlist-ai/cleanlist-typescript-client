@@ -15,6 +15,8 @@ Name | Type
 `filter_hash` | string
 `available_credits` | number
 `sufficient` | boolean
+`effects` | Array&lt;string&gt;
+`required_scopes` | Array&lt;string&gt;
 
 ## Example
 
@@ -32,6 +34,8 @@ const example = {
   "filter_hash": null,
   "available_credits": null,
   "sufficient": null,
+  "effects": null,
+  "required_scopes": null,
 } satisfies EstimateCostResponse
 
 console.log(example)

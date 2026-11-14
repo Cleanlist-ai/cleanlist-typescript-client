@@ -4,3 +4,5 @@ export * from './runtime';
 export * from './apis/index';
 export * from './models/index';
 export * from './client';
+export * from './http';
+export * from './webhooks';

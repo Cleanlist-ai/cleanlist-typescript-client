@@ -40,7 +40,10 @@ console.log(me.organization_name, list.list_id);
   - [Enrichment](#enrichment-clenrichment)
   - [Smart Agents](#smart-agents-clsmartagents)
   - [Export](#export-clexport)
+  - [Actions, agents, plays, tasks, inbox, data and webhooks](#actions-agents-plays-tasks-inbox-data-and-webhooks)
 - [Examples](#examples)
+- [Retries, idempotency and rate limits](#retries-idempotency-and-rate-limits)
+- [Verifying webhooks](#verifying-webhooks)
 - [Error handling](#error-handling)
 - [Pagination](#pagination)
 - [Using the generated API classes directly](#using-the-generated-api-classes-directly)
@@ -121,6 +124,7 @@ console.log('workflow:', job.workflow_id, '| reserved:', job.credits_reserved);
 | `accessToken` | `$CLEANLIST_API_KEY`       | Your API key. Sent as `Authorization: Bearer …`.                 |
 | `basePath`    | `https://api.cleanlist.ai` | API base URL. Use `http://localhost:8000` for local dev.         |
 | `fetchApi`    | platform `fetch`           | Custom fetch (e.g. `node-fetch`/`undici` on Node < 18, or a mock). |
+| `maxAttempts` | `3`                        | Tries per request, the first included. `1` turns retries off.    |
 
 For advanced needs (middleware, custom headers), build a `Configuration` yourself and
 pass it to the generated API classes — see
@@ -311,6 +315,32 @@ const data = await cl.export.exportJson({ listId: list.list_id, limit: 500 });
 for (const row of data.leads) console.log(row);
 ```
 
+### Actions, agents, plays, tasks, inbox, data and webhooks
+
+| Property | Class | Covers |
+| -------- | ----- | ------ |
+| `cl.actions` | [`PublicActionsApi`](docs/PublicActionsApi.md) | `GET /api/v2/actions`, run an action by name, confirm a card. |
+| `cl.gtmAgents` | [`PublicGTMAgentsApi`](docs/PublicGTMAgentsApi.md) | Agents, turning one on or off, live runs, run records. |
+| `cl.plays` | [`PublicPlaysApi`](docs/PublicPlaysApi.md) | Plays, play runs, play events. |
+| `cl.tasks` | [`PublicGTMTasksApi`](docs/PublicGTMTasksApi.md) | GTM tasks and the updates feed. |
+| `cl.inbox` | [`PublicInboxApi`](docs/PublicInboxApi.md) | Inbox threads and replies. |
+| `cl.signals` | [`PublicSignalsApi`](docs/PublicSignalsApi.md) | Job postings, job changes, LinkedIn posts and engagers, technology adoption, company signals. |
+| `cl.accountsData` | [`PublicAccountsDataApi`](docs/PublicAccountsDataApi.md) | Buying committee, org structure, meetings. |
+| `cl.webhooks` | [`PublicWebhooksApi`](docs/PublicWebhooksApi.md) | Webhook subscriptions and deliveries. |
+
+Batch lookups (`batchPeopleLookup`, `batchCompaniesLookup`) are on `cl.enrichment`, and the
+request log (`listRequestLogs`) is on `cl.workspace`. Live events are a WebSocket
+(`/api/v2/events/listen`), not part of this client.
+
+Turning an agent on, a live agent run and a play run spend credits and can send email or
+write to a CRM, so each takes a signed `quote_id`, a key whose scopes allow what the run
+does, and `commit: true`. Without `commit` you get a preview of what it would do.
+
+```ts
+const preview = await cl.gtmAgents.runGtmAgent({ agentId, runGtmAgentBody: { quote_id } });
+const run = await cl.gtmAgents.runGtmAgent({ agentId, runGtmAgentBody: { quote_id, commit: true } });
+```
+
 ## Examples
 
 Runnable scripts live in [`examples/`](examples/) (setup notes in
@@ -328,6 +358,46 @@ reads `CLEANLIST_API_KEY` and an optional `CLEANLIST_HOST`. Type-check them all 
 | [`06_error_handling.ts`](examples/06_error_handling.ts) | Catching `ResponseError`. | Free |
 | [`07_find_people.ts`](examples/07_find_people.ts) | People Finder: filter values, compile preview, search + next page. | Free |
 | [`08_smart_agent.ts`](examples/08_smart_agent.ts) | Run a custom AI smart-agent column and read the results. | Spends |
+
+## Retries, idempotency and rate limits
+
+A 429 or 5xx is retried with backoff, honoring `Retry-After` (a wait over a minute is
+returned to you instead). Every POST, PATCH and DELETE carries an `Idempotency-Key` that
+stays the same across its retries, so a retried write runs once. GETs are always retried;
+any other request is retried only when it carries an `Idempotency-Key`. To set your own:
+
+```ts
+import { withIdempotencyKey } from '@cleanlist-ai/sdk';
+
+await cl.leadLists.createList({ createListRequest: { name: 'Q3' } }, withIdempotencyKey('order-1234'));
+```
+
+The API keeps a key for 24 hours, per API key and route. The same key with a different
+body is a 422 `idempotency_key_mismatch`, and a repeat while the first is still running is
+a 409 `idempotency_in_progress`.
+
+After any call, `cl.lastResponse` has the rate-limit headers and the mode:
+
+```ts
+cl.lastResponse?.rateLimit; // { limit, remaining, reset }  (reset is unix seconds)
+cl.lastResponse?.idempotentReplayed; // true when the server replayed a stored response
+cl.mode; // 'test' for a clapi_test_ key, else 'live'
+```
+
+`readResponseMeta(response)` reads the same values off any `Response`, such as
+`ResponseError.response`.
+
+## Verifying webhooks
+
+```ts
+import { verifyWebhookSignature } from '@cleanlist-ai/sdk';
+
+// rawBody: the request body exactly as received, not re-serialized JSON.
+const ok = await verifyWebhookSignature(rawBody, req.headers['cleanlist-signature'], process.env.CLEANLIST_WEBHOOK_SECRET!);
+if (!ok) return res.status(400).end();
+```
+
+Signatures older than 5 minutes are refused (`{ toleranceSeconds }` changes that).
 
 ## Error handling
 
@@ -388,8 +458,10 @@ This SDK is generated with [`openapi-generator-cli`](https://openapi-generator.t
 ```bash
 # 1. Drop the latest openapi/cleanse-api-v2.oas.json in place, then:
 npm run generate   # cleans operationIds, regenerates src/, re-applies the facade
-npm run build
+npm test           # builds, then runs test/*.test.js
 ```
+
+The generator needs a Java runtime (11 or later) on `PATH`.
 
 ## Support
 
