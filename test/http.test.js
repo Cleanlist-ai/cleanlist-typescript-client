@@ -306,3 +306,17 @@ test('a Request input: its method, headers and signal drive the retry rules', as
     assert.equal(thrown.calls, 1);
     assert.deepEqual(waits, []);
 });
+
+test('an explicit signal: null detaches an aborted Request signal, so a network error is retried', async () => {
+    const ac = new AbortController();
+    ac.abort();
+    let n = 0;
+    const flaky = async () => {
+        n++;
+        if (n === 1) throw new TypeError('fetch failed');
+        return new Response('{}', { status: 200 });
+    };
+    const req = new Request('https://x/a', { signal: ac.signal });
+    assert.equal((await retryingFetch(flaky, noSleep)(req, { signal: null })).status, 200);
+    assert.equal(n, 2);
+});

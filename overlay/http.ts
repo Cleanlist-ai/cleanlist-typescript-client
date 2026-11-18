@@ -156,7 +156,7 @@ export function retryingFetch(fetchApi: FetchAPI, options: RetryingFetchOptions 
         // A Request input carries its own method, headers and signal; init overrides each one.
         const req = typeof Request !== 'undefined' && input instanceof Request ? input : undefined;
         const method = (init?.method ?? req?.method ?? 'GET').toUpperCase();
-        const signal = init?.signal ?? req?.signal;
+        const signal = init?.signal !== undefined ? init.signal : req?.signal;
         const headers = new Headers(init?.headers ?? req?.headers);
         if (WRITE_METHODS.has(method) && !headers.has('Idempotency-Key')) {
             headers.set('Idempotency-Key', newIdempotencyKey());
