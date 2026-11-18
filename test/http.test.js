@@ -276,3 +276,33 @@ test('verifyWebhookSignature', async () => {
         assert.equal(await verifyWebhookSignature(body, junk, 'whsec', { now }), false);
     }
 });
+
+test('a Request input: its method, headers and signal drive the retry rules', async () => {
+    // A POST Request to actions/confirm is never retried, even with no init.method.
+    const confirm = fakeFetch([{ status: 500 }, { status: 200 }]);
+    const req = new Request('https://x/api/v2/actions/confirm', { method: 'POST', body: '{}' });
+    assert.equal((await retryingFetch(confirm, noSleep)(req)).status, 500);
+    assert.equal(confirm.calls.length, 1);
+
+    // The Request's own headers survive, and a write still gets an Idempotency-Key.
+    const write = fakeFetch([{ status: 200 }]);
+    await retryingFetch(write, noSleep)(
+        new Request('https://x/api/v2/lists', { method: 'POST', headers: { Authorization: 'Bearer t' }, body: '{}' }),
+    );
+    assert.equal(write.calls[0].headers.get('Authorization'), 'Bearer t');
+    assert.ok(write.calls[0].headers.get('Idempotency-Key'));
+
+    // An aborted Request signal is rethrown at once, with no sleep and no second try.
+    const ac = new AbortController();
+    ac.abort();
+    const thrown = async () => {
+        thrown.calls = (thrown.calls ?? 0) + 1;
+        throw new DOMException('aborted', 'AbortError');
+    };
+    const waits = [];
+    await assert.rejects(
+        retryingFetch(thrown, { sleep: async (ms) => void waits.push(ms) })(new Request('https://x/a', { signal: ac.signal })),
+    );
+    assert.equal(thrown.calls, 1);
+    assert.deepEqual(waits, []);
+});
