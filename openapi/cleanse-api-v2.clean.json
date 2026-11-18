@@ -3,7 +3,7 @@
   "info": {
     "title": "Cleanlist API (v2)",
     "description": "Versioned public API surface (v2) for the Cleanlist MCP and direct API consumers: workspace, lead lists, enrichment, smart agents, sync, and export.",
-    "version": "2.0.0"
+    "version": "8.72.1"
   },
   "paths": {
     "/api/v2/whoami": {
@@ -1795,7 +1795,7 @@
           "Public Lead Lists"
         ],
         "summary": "Import leads from CSV",
-        "description": "Import a CSV into a lead list and optionally dispatch bulk enrichment.\n\nPipeline:\n    1. Authz: `lists:write` always; `enrich:write` additionally when\n       `dispatch_enrichment=True` (the workflow spends credits).\n    2. Idempotency cache lookup (org-wide, 24h TTL).\n    3. Base64 decode + parse via `parse_csv_to_rawpeople`.\n    4. If dispatching: verify quote (if provided), open reservation,\n       redeem quote.\n    5. Bulk-insert RawPeople into the list. UUIDs are stamped\n       Python-side so we can hand them to the workflow.\n    6. If dispatching: write the imported rows as a list selection and\n       kick off `start_selection_enrichment` on it. The workflow's per-Lead\n       `insert_lead_to_list` activity handles prospect_count\n       updates per the existing pattern; import-only path bumps\n       prospect_count here directly.\n    7. Cache the response under `idempotency_key` (if provided).\n\nCross-list dedup: this endpoint dedupes ONLY within the upload. A\nrow whose identity already exists as a Lead elsewhere in the\nworkspace still imports as a RawPerson here; the workflow's\n`persist_enrichment_result` then deduplicates against existing\nLeads by public_identifier / prospect_id (existing behavior).\nNet effect: no duplicate Lead, but the RawPerson stub persists\nuntil the workflow processes it.\n\nSend the file as base64 in `csv_content_base64` (\u2264150 KB / ~600 rows)\nwith a `column_mapping` from canonical field to CSV header. Requires the\n`lists:write` scope, plus `enrich:write` when `dispatch_enrichment=true`\n(the enrichment spend). Importing rows is free; when dispatching,\nenrichment is billed on top (partial 1cr, phone_only 10cr, full 11cr per\nlead). Pass an `idempotency_key` to make retries safe.\n\n**\ud83d\udcd6 Docs:** https://docs.cleanlist.ai/guides/bulk-enrichment",
+        "description": "Import a CSV into a lead list and optionally dispatch bulk enrichment.\n\nPipeline:\n    1. Authz: `lists:write` always; `enrich:write` additionally when\n       `dispatch_enrichment=True` (the workflow spends credits).\n    2. Idempotency cache lookup (org-wide, 24h TTL).\n    3. Base64 decode + parse via `parse_csv_to_rawpeople`.\n    4. If dispatching: verify quote (if provided), open reservation,\n       redeem quote.\n    5. Bulk-insert RawPeople into the list. UUIDs are stamped\n       Python-side so we can hand them to the workflow.\n    6. If dispatching: write the imported rows as a list selection and\n       kick off `start_selection_enrichment` on it. The workflow's per-Lead\n       `insert_lead_to_list` activity handles prospect_count\n       updates per the existing pattern; import-only path bumps\n       prospect_count here directly.\n    7. Cache the response under `idempotency_key` (if provided).\n\nCross-list dedup: this endpoint dedupes ONLY within the upload. A\nrow whose identity already exists as a Lead elsewhere in the\nworkspace still imports as a RawPerson here; the workflow's\n`persist_enrichment_result` then deduplicates against existing\nLeads by public_identifier / prospect_id (existing behavior).\nNet effect: no duplicate Lead, but the RawPerson stub persists\nuntil the workflow processes it.\n\nSend the file as base64 in `csv_content_base64` (\u226410 MB / 20,000 rows)\nwith a `column_mapping` from canonical field to CSV header. Requires the\n`lists:write` scope, plus `enrich:write` when `dispatch_enrichment=true`\n(the enrichment spend). Importing rows is free; when dispatching,\nenrichment is billed on top (partial 1cr, phone_only 10cr, full 11cr per\nlead). Pass an `idempotency_key` to make retries safe.\n\n**\ud83d\udcd6 Docs:** https://docs.cleanlist.ai/guides/bulk-enrichment",
         "operationId": "csv_import",
         "security": [
           {
@@ -5206,15 +5206,15 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/AgentDto"
-                    },
+                  "title": "Response Set Gtm Agent Status Api V2 Gtm Agents  Agent Id  Status Post",
+                  "oneOf": [
                     {
                       "$ref": "#/components/schemas/LivePreview"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AgentDto"
                     }
-                  ],
-                  "title": "Response Set Gtm Agent Status Api V2 Gtm Agents  Agent Id  Status Post"
+                  ]
                 }
               }
             }
@@ -5368,16 +5368,8 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "anyOf": [
-                    {
-                      "type": "object",
-                      "additionalProperties": true
-                    },
-                    {
-                      "$ref": "#/components/schemas/LivePreview"
-                    }
-                  ],
-                  "title": "Response Run Gtm Agent Api V2 Gtm Agents  Agent Id  Runs Post"
+                  "type": "object",
+                  "additionalProperties": true
                 }
               }
             }
@@ -6117,15 +6109,15 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/RunPlayResponse"
-                    },
+                  "title": "Response Run Play Api V2 Plays  Playbook Id  Runs Post",
+                  "oneOf": [
                     {
                       "$ref": "#/components/schemas/LivePreview"
+                    },
+                    {
+                      "$ref": "#/components/schemas/RunPlayResponse"
                     }
-                  ],
-                  "title": "Response Run Play Api V2 Plays  Playbook Id  Runs Post"
+                  ]
                 }
               }
             }
@@ -8191,7 +8183,7 @@
           "Public Signals"
         ],
         "summary": "Search Job Postings",
-        "description": "Recent job postings, newest first: the read the \"Companies start\nhiring\" trigger makes. 0.03 credits a posting returned; quote first.",
+        "description": "Recent job postings, newest first: the read the \"Companies start\nhiring\" trigger makes. 0.1 credits a posting returned; quote first.",
         "operationId": "search_job_postings",
         "requestBody": {
           "content": {
@@ -12248,6 +12240,12 @@
             "description": "Minimum LinkedIn follower count.",
             "default": ""
           },
+          "followersMax": {
+            "type": "string",
+            "title": "Followersmax",
+            "description": "Maximum LinkedIn follower count.",
+            "default": ""
+          },
           "followersGrowth6mMin": {
             "type": "string",
             "title": "Followersgrowth6Mmin",
@@ -13111,7 +13109,7 @@
           "csv_content_base64": {
             "type": "string",
             "title": "Csv Content Base64",
-            "description": "Full CSV file body, base64-encoded. UTF-8 (with or without BOM). v1 hard-caps the raw body at 150 KB / ~600 rows \u2014 past that the base64 payload starts hitting tool-call output limits in the agent before any server cap fires. Above the cap the endpoint returns 413; chunk the file upstream.",
+            "description": "Full CSV file body, base64-encoded. UTF-8 (with or without BOM). Up to 10 MB of raw CSV and 20,000 rows per call. Above 10 MB the endpoint returns 413; rows past 20,000 are skipped with reason `row_cap_exceeded`. An agent sending the file in a tool call may need smaller chunks to stay within its own output limit.",
             "examples": [
               "Zmlyc3RfbmFtZSxsYXN0X25hbWUsZW1haWwsY29tcGFueQpKYW5lLERvZSxqYW5lLmRvZUBhY21lLmlvLEFjbWUK"
             ]
@@ -22882,6 +22880,38 @@
     {
       "name": "Public Export",
       "description": "Export"
+    },
+    {
+      "name": "Public Webhooks",
+      "description": "Event webhooks and deliveries"
+    },
+    {
+      "name": "Public Actions",
+      "description": "Named actions and approval cards"
+    },
+    {
+      "name": "Public GTM Agents",
+      "description": "GTM agents and their runs"
+    },
+    {
+      "name": "Public Plays",
+      "description": "Plays run on one record"
+    },
+    {
+      "name": "Public GTM Tasks",
+      "description": "Your Engage tasks and what's new"
+    },
+    {
+      "name": "Public Inbox",
+      "description": "Inbox conversations and replies"
+    },
+    {
+      "name": "Public Signals",
+      "description": "Job postings, job changes, company signals, LinkedIn posts"
+    },
+    {
+      "name": "Public Accounts Data",
+      "description": "Buying committee, org structure and meetings"
     }
   ],
   "servers": [

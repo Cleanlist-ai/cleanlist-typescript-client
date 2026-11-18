@@ -13,7 +13,7 @@ cd "$ROOT"
 RAW_SPEC="openapi/cleanse-api-v2.oas.json"
 GEN_SPEC="openapi/cleanse-api-v2.clean.json"
 BUILD="$ROOT/.build/ts"
-PKG_VERSION="${PKG_VERSION:-3.0.2}"
+PKG_VERSION="${PKG_VERSION:-3.1.0}"
 PYTHON="${PYTHON:-python3}"
 
 echo "==> Preparing spec (clean operationIds -> readable method names)"
@@ -36,9 +36,9 @@ rm -rf "$ROOT/docs"
 [ -d "$BUILD/docs" ] && cp -R "$BUILD/docs" "$ROOT/docs" || true
 
 echo "==> Applying hand-authored overlay (Cleanlist convenience facade)"
-cp "$ROOT/overlay/client.ts" "$ROOT/src/client.ts"
+cp "$ROOT/overlay/client.ts" "$ROOT/overlay/http.ts" "$ROOT/overlay/webhooks.ts" "$ROOT/src/"
 # Re-export the facade from the barrel. Idempotent: src/index.ts is regenerated
 # fresh each run, so this appends exactly once.
-printf "export * from './client';\n" >> "$ROOT/src/index.ts"
+printf "export * from './client';\nexport * from './http';\nexport * from './webhooks';\n" >> "$ROOT/src/index.ts"
 
 echo "==> Done. Sources in src/ (run: npm install && npm run build)"

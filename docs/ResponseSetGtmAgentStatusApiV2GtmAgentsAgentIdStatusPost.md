@@ -6,12 +6,20 @@
 
 Name | Type
 ------------ | -------------
+`committed` | boolean
+`action` | string
+`description` | string
+`credits_max` | number
+`records_max` | number
+`effects` | Array&lt;string&gt;
+`required_scopes` | Array&lt;string&gt;
+`missing_scopes` | Array&lt;string&gt;
+`estimate` | object
 `id` | string
 `organizationId` | string
 `ownerUserId` | string
 `name` | string
 `markColor` | string
-`description` | string
 `goal` | string
 `instructions` | string
 `selfEditInstructions` | boolean
@@ -45,14 +53,6 @@ Name | Type
 `gaps` | [Array&lt;PlayGapDto&gt;](PlayGapDto.md)
 `quickReplies` | Array&lt;string&gt;
 `builtFrom` | [BuiltFromDto](BuiltFromDto.md)
-`committed` | boolean
-`action` | string
-`credits_max` | number
-`records_max` | number
-`effects` | Array&lt;string&gt;
-`required_scopes` | Array&lt;string&gt;
-`missing_scopes` | Array&lt;string&gt;
-`estimate` | object
 
 ## Example
 
@@ -61,12 +61,20 @@ import type { ResponseSetGtmAgentStatusApiV2GtmAgentsAgentIdStatusPost } from '@
 
 // TODO: Update the object below with actual values
 const example = {
+  "committed": null,
+  "action": null,
+  "description": null,
+  "credits_max": null,
+  "records_max": null,
+  "effects": null,
+  "required_scopes": null,
+  "missing_scopes": null,
+  "estimate": null,
   "id": null,
   "organizationId": null,
   "ownerUserId": null,
   "name": null,
   "markColor": null,
-  "description": null,
   "goal": null,
   "instructions": null,
   "selfEditInstructions": null,
@@ -100,14 +108,6 @@ const example = {
   "gaps": null,
   "quickReplies": null,
   "builtFrom": null,
-  "committed": null,
-  "action": null,
-  "credits_max": null,
-  "records_max": null,
-  "effects": null,
-  "required_scopes": null,
-  "missing_scopes": null,
-  "estimate": null,
 } satisfies ResponseSetGtmAgentStatusApiV2GtmAgentsAgentIdStatusPost
 
 console.log(example)

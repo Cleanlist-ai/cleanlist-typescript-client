@@ -588,7 +588,7 @@ example().catch(console.error);
 
 ## runGtmAgent
 
-> ResponseRunGtmAgentApiV2GtmAgentsAgentIdRunsPost runGtmAgent(agentId, runGtmAgentBody, xConfirmChannel)
+> object runGtmAgent(agentId, runGtmAgentBody, xConfirmChannel)
 
 Run Gtm Agent
 
@@ -643,7 +643,7 @@ example().catch(console.error);
 
 ### Return type
 
-[**ResponseRunGtmAgentApiV2GtmAgentsAgentIdRunsPost**](ResponseRunGtmAgentApiV2GtmAgentsAgentIdRunsPost.md)
+**object**
 
 ### Authorization
 
