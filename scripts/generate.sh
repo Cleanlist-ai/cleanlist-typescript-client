@@ -36,9 +36,9 @@ rm -rf "$ROOT/docs"
 [ -d "$BUILD/docs" ] && cp -R "$BUILD/docs" "$ROOT/docs" || true
 
 echo "==> Applying hand-authored overlay (Cleanlist convenience facade)"
-cp "$ROOT/overlay/client.ts" "$ROOT/src/client.ts"
+cp "$ROOT/overlay/client.ts" "$ROOT/overlay/http.ts" "$ROOT/overlay/webhooks.ts" "$ROOT/src/"
 # Re-export the facade from the barrel. Idempotent: src/index.ts is regenerated
 # fresh each run, so this appends exactly once.
-printf "export * from './client';\n" >> "$ROOT/src/index.ts"
+printf "export * from './client';\nexport * from './http';\nexport * from './webhooks';\n" >> "$ROOT/src/index.ts"
 
 echo "==> Done. Sources in src/ (run: npm install && npm run build)"

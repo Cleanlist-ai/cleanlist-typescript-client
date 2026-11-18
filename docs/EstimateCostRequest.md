@@ -26,7 +26,10 @@ Name | Type
 `enrichment_type` | string
 `task_id` | string
 `data_points` | Array&lt;string&gt;
+`fields` | Array&lt;string&gt;
 `entity_ids` | Array&lt;string&gt;
+`agent_id` | string
+`playbook_id` | string
 `extra` | object
 
 ## Example
@@ -56,7 +59,10 @@ const example = {
   "enrichment_type": null,
   "task_id": null,
   "data_points": null,
+  "fields": null,
   "entity_ids": null,
+  "agent_id": null,
+  "playbook_id": null,
   "extra": null,
 } satisfies EstimateCostRequest
 
