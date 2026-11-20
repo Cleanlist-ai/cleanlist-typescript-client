@@ -245,6 +245,12 @@ export interface CompanySearchCriteria {
      */
     followersMin?: string;
     /**
+     * Maximum LinkedIn follower count.
+     * @type {string}
+     * @memberof CompanySearchCriteria
+     */
+    followersMax?: string;
+    /**
      * Minimum six-month follower growth percent.
      * @type {string}
      * @memberof CompanySearchCriteria
@@ -464,6 +470,7 @@ export function CompanySearchCriteriaFromJSONTyped(json: any, ignoreDiscriminato
         'growth3mMin': json['growth3mMin'] == null ? undefined : json['growth3mMin'],
         'growth12mMin': json['growth12mMin'] == null ? undefined : json['growth12mMin'],
         'followersMin': json['followersMin'] == null ? undefined : json['followersMin'],
+        'followersMax': json['followersMax'] == null ? undefined : json['followersMax'],
         'followersGrowth6mMin': json['followersGrowth6mMin'] == null ? undefined : json['followersGrowth6mMin'],
         'followersGrowth12mMin': json['followersGrowth12mMin'] == null ? undefined : json['followersGrowth12mMin'],
         'lastFundingDateAfter': json['lastFundingDateAfter'] == null ? undefined : json['lastFundingDateAfter'],
@@ -537,6 +544,7 @@ export function CompanySearchCriteriaToJSONTyped(value?: CompanySearchCriteria |
         'growth3mMin': value['growth3mMin'],
         'growth12mMin': value['growth12mMin'],
         'followersMin': value['followersMin'],
+        'followersMax': value['followersMax'],
         'followersGrowth6mMin': value['followersGrowth6mMin'],
         'followersGrowth12mMin': value['followersGrowth12mMin'],
         'lastFundingDateAfter': value['lastFundingDateAfter'],

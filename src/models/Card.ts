@@ -49,6 +49,12 @@ export interface Card {
      * @memberof Card
      */
     expires_at: string;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof Card
+     */
+    effects?: Array<string> | null;
 }
 
 /**
@@ -77,6 +83,7 @@ export function CardFromJSONTyped(json: any, ignoreDiscriminator: boolean): Card
         'summary': json['summary'],
         'credits_required': json['credits_required'] == null ? undefined : json['credits_required'],
         'expires_at': json['expires_at'],
+        'effects': json['effects'] == null ? undefined : json['effects'],
     };
 }
 
@@ -96,6 +103,7 @@ export function CardToJSONTyped(value?: Card | null, ignoreDiscriminator: boolea
         'summary': value['summary'],
         'credits_required': value['credits_required'],
         'expires_at': value['expires_at'],
+        'effects': value['effects'],
     };
 }
 

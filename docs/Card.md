@@ -11,6 +11,7 @@ Name | Type
 `summary` | string
 `credits_required` | number
 `expires_at` | string
+`effects` | Array&lt;string&gt;
 
 ## Example
 
@@ -24,6 +25,7 @@ const example = {
   "summary": null,
   "credits_required": null,
   "expires_at": null,
+  "effects": null,
 } satisfies Card
 
 console.log(example)

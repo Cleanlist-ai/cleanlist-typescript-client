@@ -1795,7 +1795,7 @@
           "Public Lead Lists"
         ],
         "summary": "Import leads from CSV",
-        "description": "Import a CSV into a lead list and optionally dispatch bulk enrichment.\n\nPipeline:\n    1. Authz: `lists:write` always; `enrich:write` additionally when\n       `dispatch_enrichment=True` (the workflow spends credits).\n    2. Idempotency cache lookup (org-wide, 24h TTL).\n    3. Base64 decode + parse via `parse_csv_to_rawpeople`.\n    4. If dispatching: verify quote (if provided), open reservation,\n       redeem quote.\n    5. Bulk-insert RawPeople into the list. UUIDs are stamped\n       Python-side so we can hand them to the workflow.\n    6. If dispatching: write the imported rows as a list selection and\n       kick off `start_selection_enrichment` on it. The workflow's per-Lead\n       `insert_lead_to_list` activity handles prospect_count\n       updates per the existing pattern; import-only path bumps\n       prospect_count here directly.\n    7. Cache the response under `idempotency_key` (if provided).\n\nCross-list dedup: this endpoint dedupes ONLY within the upload. A\nrow whose identity already exists as a Lead elsewhere in the\nworkspace still imports as a RawPerson here; the workflow's\n`persist_enrichment_result` then deduplicates against existing\nLeads by public_identifier / prospect_id (existing behavior).\nNet effect: no duplicate Lead, but the RawPerson stub persists\nuntil the workflow processes it.\n\nSend the file as base64 in `csv_content_base64` (\u2264150 KB / ~600 rows)\nwith a `column_mapping` from canonical field to CSV header. Requires the\n`lists:write` scope, plus `enrich:write` when `dispatch_enrichment=true`\n(the enrichment spend). Importing rows is free; when dispatching,\nenrichment is billed on top (partial 1cr, phone_only 10cr, full 11cr per\nlead). Pass an `idempotency_key` to make retries safe.\n\n**\ud83d\udcd6 Docs:** https://docs.cleanlist.ai/guides/bulk-enrichment",
+        "description": "Import a CSV into a lead list and optionally dispatch bulk enrichment.\n\nPipeline:\n    1. Authz: `lists:write` always; `enrich:write` additionally when\n       `dispatch_enrichment=True` (the workflow spends credits).\n    2. Idempotency cache lookup (org-wide, 24h TTL).\n    3. Base64 decode + parse via `parse_csv_to_rawpeople`.\n    4. If dispatching: verify quote (if provided), open reservation,\n       redeem quote.\n    5. Bulk-insert RawPeople into the list. UUIDs are stamped\n       Python-side so we can hand them to the workflow.\n    6. If dispatching: write the imported rows as a list selection and\n       kick off `start_selection_enrichment` on it. The workflow's per-Lead\n       `insert_lead_to_list` activity handles prospect_count\n       updates per the existing pattern; import-only path bumps\n       prospect_count here directly.\n    7. Cache the response under `idempotency_key` (if provided).\n\nCross-list dedup: this endpoint dedupes ONLY within the upload. A\nrow whose identity already exists as a Lead elsewhere in the\nworkspace still imports as a RawPerson here; the workflow's\n`persist_enrichment_result` then deduplicates against existing\nLeads by public_identifier / prospect_id (existing behavior).\nNet effect: no duplicate Lead, but the RawPerson stub persists\nuntil the workflow processes it.\n\nSend the file as base64 in `csv_content_base64` (\u226410 MB / 20,000 rows)\nwith a `column_mapping` from canonical field to CSV header. Requires the\n`lists:write` scope, plus `enrich:write` when `dispatch_enrichment=true`\n(the enrichment spend). Importing rows is free; when dispatching,\nenrichment is billed on top (partial 1cr, phone_only 10cr, full 11cr per\nlead). Pass an `idempotency_key` to make retries safe.\n\n**\ud83d\udcd6 Docs:** https://docs.cleanlist.ai/guides/bulk-enrichment",
         "operationId": "csv_import",
         "security": [
           {
@@ -8183,7 +8183,7 @@
           "Public Signals"
         ],
         "summary": "Search Job Postings",
-        "description": "Recent job postings, newest first: the read the \"Companies start\nhiring\" trigger makes. 0.03 credits a posting returned; quote first.",
+        "description": "Recent job postings, newest first: the read the \"Companies start\nhiring\" trigger makes. 0.1 credits a posting returned; quote first.",
         "operationId": "search_job_postings",
         "requestBody": {
           "content": {
@@ -8471,7 +8471,7 @@
           "Public Signals"
         ],
         "summary": "Check Job Changes",
-        "description": "Where these people work now, from their LinkedIn profiles: the read\nthe Job history step makes. Every person named, up to 500; quote first.",
+        "description": "Where these people work now, from their LinkedIn profiles: the read\nthe Job history step makes. Every person named, up to 500; quote first.\nA retry with the same quote_id within an hour returns the first result\n(``replayed: true``) and charges nothing more.",
         "operationId": "check_job_changes",
         "requestBody": {
           "content": {
@@ -11436,6 +11436,20 @@
           "expires_at": {
             "type": "string",
             "title": "Expires At"
+          },
+          "effects": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effects"
           }
         },
         "type": "object",
@@ -12224,6 +12238,12 @@
             "type": "string",
             "title": "Followersmin",
             "description": "Minimum LinkedIn follower count.",
+            "default": ""
+          },
+          "followersMax": {
+            "type": "string",
+            "title": "Followersmax",
+            "description": "Maximum LinkedIn follower count.",
             "default": ""
           },
           "followersGrowth6mMin": {
@@ -13089,7 +13109,7 @@
           "csv_content_base64": {
             "type": "string",
             "title": "Csv Content Base64",
-            "description": "Full CSV file body, base64-encoded. UTF-8 (with or without BOM). v1 hard-caps the raw body at 150 KB / ~600 rows \u2014 past that the base64 payload starts hitting tool-call output limits in the agent before any server cap fires. Above the cap the endpoint returns 413; chunk the file upstream.",
+            "description": "Full CSV file body, base64-encoded. UTF-8 (with or without BOM). Up to 10 MB of raw CSV and 20,000 rows per call. Above 10 MB the endpoint returns 413; rows past 20,000 are skipped with reason `row_cap_exceeded`. An agent sending the file in a tool call may need smaller chunks to stay within its own output limit.",
             "examples": [
               "Zmlyc3RfbmFtZSxsYXN0X25hbWUsZW1haWwsY29tcGFueQpKYW5lLERvZSxqYW5lLmRvZUBhY21lLmlvLEFjbWUK"
             ]
@@ -21711,7 +21731,7 @@
           "commit": {
             "type": "boolean",
             "title": "Commit",
-            "description": "Needed when the change writes to the CRM; without it that call answers with a preview.",
+            "description": "Needed when the change writes to the CRM, or completes a sequence step's task (its sequence moves on); without it that call answers with a preview.",
             "default": false
           }
         },

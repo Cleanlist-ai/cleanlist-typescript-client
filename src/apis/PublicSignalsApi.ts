@@ -76,7 +76,7 @@ export interface SearchLinkedinPostsRequest {
 export class PublicSignalsApi extends runtime.BaseAPI {
 
     /**
-     * Where these people work now, from their LinkedIn profiles: the read the Job history step makes. Every person named, up to 500; quote first.
+     * Where these people work now, from their LinkedIn profiles: the read the Job history step makes. Every person named, up to 500; quote first. A retry with the same quote_id within an hour returns the first result (``replayed: true``) and charges nothing more.
      * Check Job Changes
      */
     async checkJobChangesRaw(requestParameters: CheckJobChangesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
@@ -120,7 +120,7 @@ export class PublicSignalsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Where these people work now, from their LinkedIn profiles: the read the Job history step makes. Every person named, up to 500; quote first.
+     * Where these people work now, from their LinkedIn profiles: the read the Job history step makes. Every person named, up to 500; quote first. A retry with the same quote_id within an hour returns the first result (``replayed: true``) and charges nothing more.
      * Check Job Changes
      */
     async checkJobChanges(requestParameters: CheckJobChangesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
@@ -343,7 +343,7 @@ export class PublicSignalsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Recent job postings, newest first: the read the \"Companies start hiring\" trigger makes. 0.03 credits a posting returned; quote first.
+     * Recent job postings, newest first: the read the \"Companies start hiring\" trigger makes. 0.1 credits a posting returned; quote first.
      * Search Job Postings
      */
     async searchJobPostingsRaw(requestParameters: SearchJobPostingsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
@@ -387,7 +387,7 @@ export class PublicSignalsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Recent job postings, newest first: the read the \"Companies start hiring\" trigger makes. 0.03 credits a posting returned; quote first.
+     * Recent job postings, newest first: the read the \"Companies start hiring\" trigger makes. 0.1 credits a posting returned; quote first.
      * Search Job Postings
      */
     async searchJobPostings(requestParameters: SearchJobPostingsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {

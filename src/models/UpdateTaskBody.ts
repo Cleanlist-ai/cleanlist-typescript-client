@@ -38,7 +38,7 @@ export interface UpdateTaskBody {
      */
     note?: string;
     /**
-     * Needed when the change writes to the CRM; without it that call answers with a preview.
+     * Needed when the change writes to the CRM, or completes a sequence step's task (its sequence moves on); without it that call answers with a preview.
      * @type {boolean}
      * @memberof UpdateTaskBody
      */

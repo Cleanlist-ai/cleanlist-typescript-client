@@ -20,7 +20,7 @@ All URIs are relative to *https://api.cleanlist.ai*
 
 Check Job Changes
 
-Where these people work now, from their LinkedIn profiles: the read the Job history step makes. Every person named, up to 500; quote first.
+Where these people work now, from their LinkedIn profiles: the read the Job history step makes. Every person named, up to 500; quote first. A retry with the same quote_id within an hour returns the first result (&#x60;&#x60;replayed: true&#x60;&#x60;) and charges nothing more.
 
 ### Example
 
@@ -426,7 +426,7 @@ example().catch(console.error);
 
 Search Job Postings
 
-Recent job postings, newest first: the read the \&quot;Companies start hiring\&quot; trigger makes. 0.03 credits a posting returned; quote first.
+Recent job postings, newest first: the read the \&quot;Companies start hiring\&quot; trigger makes. 0.1 credits a posting returned; quote first.
 
 ### Example
 

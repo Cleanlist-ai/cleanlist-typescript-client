@@ -42,6 +42,7 @@ Name | Type
 `growth3mMin` | string
 `growth12mMin` | string
 `followersMin` | string
+`followersMax` | string
 `followersGrowth6mMin` | string
 `followersGrowth12mMin` | string
 `lastFundingDateAfter` | string
@@ -109,6 +110,7 @@ const example = {
   "growth3mMin": null,
   "growth12mMin": null,
   "followersMin": null,
+  "followersMax": null,
   "followersGrowth6mMin": null,
   "followersGrowth12mMin": null,
   "lastFundingDateAfter": null,

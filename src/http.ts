@@ -153,8 +153,11 @@ export function retryingFetch(fetchApi: FetchAPI, options: RetryingFetchOptions 
     const sleep = options.sleep ?? ((ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms)));
 
     return async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
-        const method = (init?.method ?? 'GET').toUpperCase();
-        const headers = new Headers(init?.headers);
+        // A Request input carries its own method, headers and signal; init overrides each one.
+        const req = typeof Request !== 'undefined' && input instanceof Request ? input : undefined;
+        const method = (init?.method ?? req?.method ?? 'GET').toUpperCase();
+        const signal = init?.signal !== undefined ? init.signal : req?.signal;
+        const headers = new Headers(init?.headers ?? req?.headers);
         if (WRITE_METHODS.has(method) && !headers.has('Idempotency-Key')) {
             headers.set('Idempotency-Key', newIdempotencyKey());
         }
@@ -169,7 +172,7 @@ export function retryingFetch(fetchApi: FetchAPI, options: RetryingFetchOptions 
             try {
                 response = await fetchApi(input, requestInit);
             } catch (err) {
-                if (retryNetworkError && attempt < maxAttempts && !init?.signal?.aborted) {
+                if (retryNetworkError && attempt < maxAttempts && !signal?.aborted) {
                     await sleep(backoffMs(attempt));
                     continue;
                 }
