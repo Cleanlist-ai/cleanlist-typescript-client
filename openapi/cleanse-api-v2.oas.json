@@ -1061,7 +1061,7 @@
           "Public Lead Lists"
         ],
         "summary": "Update a lead list",
-        "description": "Rename a list (and optionally re-describe it / move it between folders).\n\nPATCH semantics: only the fields present in the body change. A `null`\n`description` clears it; a `null` `folder_id` unfiles the list; an\nomitted field is left untouched. Renaming to the current name is an\nidempotent 200 no-op. Owner-only + is_protected guards mirror the\nportal's edit path.\n\nAt least one of `name`, `description`, or `folder_id` must be present;\nan empty body is a 422. Requires the `lists:write` scope.\n\n**📖 Docs:** https://docs.cleanlist.ai/api-reference/lead-lists · https://docs.cleanlist.ai/guides/managing-lists",
+        "description": "Rename a list (and optionally re-describe it / move it between folders).\n\nPATCH semantics: only the fields present in the body change. A `null`\n`description` clears it; a `null` `folder_id` unfiles the list; an\nomitted field is left untouched. Renaming to the current name is an\nidempotent 200 no-op. Edit-access + is_protected guards mirror the\nportal's edit path.\n\nAt least one of `name`, `description`, or `folder_id` must be present;\nan empty body is a 422. Requires the `lists:write` scope.\n\n**📖 Docs:** https://docs.cleanlist.ai/api-reference/lead-lists · https://docs.cleanlist.ai/guides/managing-lists",
         "operationId": "update_list_api_v2_lead_lists__list_id__patch",
         "security": [
           {
@@ -1197,7 +1197,7 @@
           "Public Lead Lists"
         ],
         "summary": "Delete a lead list",
-        "description": "Delete a list and its lead memberships. Leads survive.\n\nThe list is gone at once and a background job deletes its rows (mirrors\nthe portal): smart/action columns, CRM-contact links, per-user state,\nshares, raw-person stubs, and junction rows are removed; the Lead rows\nthemselves are global entities and are NOT deleted — they stay\nfindable via search_people and in any other list they belong to.\n\nOwner-only + is_protected guards mirror the portal. There is no\nin-flight-workflow guard (the portal has none either; the MCP\nconfirm-gate already prevents accidental deletes off a fuzzy name\nmatch). Re-deleting an unknown/already-deleted list returns 404.\n\nOwner-only: a non-owner gets 404 (indistinguishable from missing) and a\nprotected list gets 403 `list_protected`. Requires the `lists:write`\nscope.\n\n**📖 Docs:** https://docs.cleanlist.ai/api-reference/lead-lists · https://docs.cleanlist.ai/guides/managing-lists",
+        "description": "Delete a list and its lead memberships. Leads survive.\n\nThe list is gone at once and a background job deletes its rows (mirrors\nthe portal): smart/action columns, CRM-contact links, per-user state,\nshares, raw-person stubs, and junction rows are removed; the Lead rows\nthemselves are global entities and are NOT deleted — they stay\nfindable via search_people and in any other list they belong to.\n\nEdit-access + is_protected guards mirror the portal. There is no\nin-flight-workflow guard (the portal has none either; the MCP\nconfirm-gate already prevents accidental deletes off a fuzzy name\nmatch). Re-deleting an unknown/already-deleted list returns 404.\n\nNeeds edit access, as the portal's delete does: a caller who can only\nview the list gets 403 `list_not_editable`, and a protected list 403\n`list_protected`. Requires the `lists:write` scope.\n\n**📖 Docs:** https://docs.cleanlist.ai/api-reference/lead-lists · https://docs.cleanlist.ai/guides/managing-lists",
         "operationId": "delete_list_api_v2_lead_lists__list_id__delete",
         "security": [
           {
@@ -13589,6 +13589,18 @@
           "timezone": {
             "type": "string",
             "title": "Timezone"
+          },
+          "report": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Report"
           }
         },
         "type": "object",
@@ -17198,7 +17210,7 @@
               }
             ],
             "title": "Visibility",
-            "description": "Sharing scope: 'private' (owner only), 'organization' (visible org-wide), or 'shared' (shared with specific members). Null on legacy rows.",
+            "description": "Sharing scope: 'private' (owner only), 'organization' (editable org-wide), or 'shared' (shared with specific members). Null on legacy rows.",
             "examples": [
               "organization"
             ]
