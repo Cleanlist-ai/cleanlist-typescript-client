@@ -31,6 +31,12 @@ export interface DailySummaryDto {
      * @memberof DailySummaryDto
      */
     timezone: string;
+    /**
+     * 
+     * @type {object}
+     * @memberof DailySummaryDto
+     */
+    report?: object | null;
 }
 
 /**
@@ -54,6 +60,7 @@ export function DailySummaryDtoFromJSONTyped(json: any, ignoreDiscriminator: boo
         
         'hour': json['hour'],
         'timezone': json['timezone'],
+        'report': json['report'] == null ? undefined : json['report'],
     };
 }
 
@@ -70,6 +77,7 @@ export function DailySummaryDtoToJSONTyped(value?: DailySummaryDto | null, ignor
         
         'hour': value['hour'],
         'timezone': value['timezone'],
+        'report': value['report'],
     };
 }
 

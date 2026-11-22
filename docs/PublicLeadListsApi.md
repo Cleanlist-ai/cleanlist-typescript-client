@@ -271,7 +271,7 @@ example().catch(console.error);
 
 Delete a lead list
 
-Delete a list and its lead memberships. Leads survive.  The list is gone at once and a background job deletes its rows (mirrors the portal): smart/action columns, CRM-contact links, per-user state, shares, raw-person stubs, and junction rows are removed; the Lead rows themselves are global entities and are NOT deleted — they stay findable via search_people and in any other list they belong to.  Owner-only + is_protected guards mirror the portal. There is no in-flight-workflow guard (the portal has none either; the MCP confirm-gate already prevents accidental deletes off a fuzzy name match). Re-deleting an unknown/already-deleted list returns 404.  Owner-only: a non-owner gets 404 (indistinguishable from missing) and a protected list gets 403 &#x60;list_protected&#x60;. Requires the &#x60;lists:write&#x60; scope.  **📖 Docs:** https://docs.cleanlist.ai/api-reference/lead-lists · https://docs.cleanlist.ai/guides/managing-lists
+Delete a list and its lead memberships. Leads survive.  The list is gone at once and a background job deletes its rows (mirrors the portal): smart/action columns, CRM-contact links, per-user state, shares, raw-person stubs, and junction rows are removed; the Lead rows themselves are global entities and are NOT deleted — they stay findable via search_people and in any other list they belong to.  Edit-access + is_protected guards mirror the portal. There is no in-flight-workflow guard (the portal has none either; the MCP confirm-gate already prevents accidental deletes off a fuzzy name match). Re-deleting an unknown/already-deleted list returns 404.  Needs edit access, as the portal\&#39;s delete does: a caller who can only view the list gets 403 &#x60;list_not_editable&#x60;, and a protected list 403 &#x60;list_protected&#x60;. Requires the &#x60;lists:write&#x60; scope.  **📖 Docs:** https://docs.cleanlist.ai/api-reference/lead-lists · https://docs.cleanlist.ai/guides/managing-lists
 
 ### Example
 
@@ -858,7 +858,7 @@ example().catch(console.error);
 
 Update a lead list
 
-Rename a list (and optionally re-describe it / move it between folders).  PATCH semantics: only the fields present in the body change. A &#x60;null&#x60; &#x60;description&#x60; clears it; a &#x60;null&#x60; &#x60;folder_id&#x60; unfiles the list; an omitted field is left untouched. Renaming to the current name is an idempotent 200 no-op. Owner-only + is_protected guards mirror the portal\&#39;s edit path.  At least one of &#x60;name&#x60;, &#x60;description&#x60;, or &#x60;folder_id&#x60; must be present; an empty body is a 422. Requires the &#x60;lists:write&#x60; scope.  **📖 Docs:** https://docs.cleanlist.ai/api-reference/lead-lists · https://docs.cleanlist.ai/guides/managing-lists
+Rename a list (and optionally re-describe it / move it between folders).  PATCH semantics: only the fields present in the body change. A &#x60;null&#x60; &#x60;description&#x60; clears it; a &#x60;null&#x60; &#x60;folder_id&#x60; unfiles the list; an omitted field is left untouched. Renaming to the current name is an idempotent 200 no-op. Edit-access + is_protected guards mirror the portal\&#39;s edit path.  At least one of &#x60;name&#x60;, &#x60;description&#x60;, or &#x60;folder_id&#x60; must be present; an empty body is a 422. Requires the &#x60;lists:write&#x60; scope.  **📖 Docs:** https://docs.cleanlist.ai/api-reference/lead-lists · https://docs.cleanlist.ai/guides/managing-lists
 
 ### Example
 

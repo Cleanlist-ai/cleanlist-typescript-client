@@ -8,6 +8,7 @@ Name | Type
 ------------ | -------------
 `hour` | number
 `timezone` | string
+`report` | object
 
 ## Example
 
@@ -18,6 +19,7 @@ import type { DailySummaryDto } from '@cleanlist-ai/sdk'
 const example = {
   "hour": null,
   "timezone": null,
+  "report": null,
 } satisfies DailySummaryDto
 
 console.log(example)
